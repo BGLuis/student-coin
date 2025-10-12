@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: "Student Coin API"
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database:
+      driverClassName: org.postgresql.Driver
