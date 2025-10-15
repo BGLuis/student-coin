@@ -47,15 +47,15 @@ public class PersonService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        Optional<Student> student = studentRepository.findStudentByName(name);
+        Optional<Student> student = studentRepository.findStudentByEmail(name);
         if (student.isPresent()) {
             return student.get();
         }
-        Optional<Teacher> teacher = teacherRepository.findTeacherByName(name);
+        Optional<Teacher> teacher = teacherRepository.findTeacherByEmail(name);
         if (teacher.isPresent()) {
             return teacher.get();
         }
-        Optional<? extends UserDetails> enterprise = enterpriseRepository.findEnterpriseByName(name);
+        Optional<? extends UserDetails> enterprise = enterpriseRepository.findEnterpriseByEmail(name);
         if (enterprise.isPresent()) {
             return enterprise.get();
         }
@@ -63,13 +63,13 @@ public class PersonService implements UserDetailsService {
     }
 
     public TokenDTO login(@Valid LoginDTO login) {
-        Person person = (Person) loadUserByUsername(login.name());
+        Person person = (Person) loadUserByUsername(login.email());
         Map<String, Object> claims = new HashMap<>();
         claims.put("name", person.getName());
-        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(login.name(), login.password()));
+        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(login.email(), login.password()));
         if(!authentication.isAuthenticated()) {
             throw new BadCredentialsException("Invalid credentials");
         }
-        return new TokenDTO(jwtService.generateToken(login.name(), claims));
+        return new TokenDTO(jwtService.generateToken(login.email(), claims));
     }
 }

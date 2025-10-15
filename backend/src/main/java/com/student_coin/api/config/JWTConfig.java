@@ -14,8 +14,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.crypto.SecretKey;
 import java.time.Duration;
 
-@Getter
-@Setter
 @Validated
 @ConfigurationProperties(prefix = "jwt")
 @Component
