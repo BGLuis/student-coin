@@ -32,7 +32,7 @@ Trabalho da do pelo professor [João Aramuni](https://github.com/joaopauloaramun
 
 # 💻 Como iniciar
 
-(Ainda em desevovimento/)
+(Ainda em desenvolvimento/)
 
 # 🤝 Contribuidores
 
