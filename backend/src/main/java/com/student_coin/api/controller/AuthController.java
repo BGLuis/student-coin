@@ -2,6 +2,7 @@ package com.student_coin.api.controller;
 
 import com.student_coin.api.dto.LoginDTO;
 import com.student_coin.api.dto.RegisterDTO;
+import com.student_coin.api.dto.TokenDTO;
 import com.student_coin.api.entity.Enterprise;
 import com.student_coin.api.entity.Student;
 import com.student_coin.api.service.EnterpriseService;
@@ -41,7 +42,7 @@ public class AuthController {
 
 
     @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginDTO loginData) {
+    public ResponseEntity<TokenDTO> login(@Valid @RequestBody LoginDTO loginData) {
         return ResponseEntity.status(HttpStatus.OK).body(personService.login(loginData));
     }
 }

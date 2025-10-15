@@ -1,6 +1,7 @@
 package com.student_coin.api.service;
 
 import com.student_coin.api.dto.LoginDTO;
+import com.student_coin.api.dto.TokenDTO;
 import com.student_coin.api.entity.Person;
 import com.student_coin.api.entity.Student;
 import com.student_coin.api.entity.Teacher;
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -60,21 +62,14 @@ public class PersonService implements UserDetailsService {
         throw new UsernameNotFoundException("Usuário não encontrado com o nome: " + name);
     }
 
-    public String login(@Valid LoginDTO login) {
-        System.out.println("Service.");
+    public TokenDTO login(@Valid LoginDTO login) {
         Person person = (Person) loadUserByUsername(login.name());
-        System.out.println(person.getName());
         Map<String, Object> claims = new HashMap<>();
         claims.put("name", person.getName());
-        System.out.println("tralalalala");
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(login.name(), login.password()));
-        System.out.println("tralalalala2");
-        System.out.println(authentication.isAuthenticated());
-        System.out.println("tralalalala3");
-        if(authentication.isAuthenticated()) {
-            System.out.println("If do Service.");
-            return jwtService.generateToken(login.name(), claims);
+        if(!authentication.isAuthenticated()) {
+            throw new BadCredentialsException("Invalid credentials");
         }
-        return "Failed";
+        return new TokenDTO(jwtService.generateToken(login.name(), claims));
     }
 }
