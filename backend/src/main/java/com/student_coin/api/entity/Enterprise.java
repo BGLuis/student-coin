@@ -13,9 +13,12 @@ import java.util.List;
 
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-public class Enterprise extends JuridicalPerson {
+public class Enterprise extends Person {
+
+    private String cnpj;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
