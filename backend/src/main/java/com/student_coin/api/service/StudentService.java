@@ -1,7 +1,9 @@
 package com.student_coin.api.service;
 
-import com.student_coin.api.dto.RegisterStudentDTO;
+import com.student_coin.api.dto.request.RegisterStudentRequest;
+import com.student_coin.api.dto.response.StudentResponse;
 import com.student_coin.api.entity.Student;
+import com.student_coin.api.mapper.StudentMapper;
 import com.student_coin.api.repository.StudentRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,10 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-    public Student register(@Valid RegisterStudentDTO register) {
+    @Autowired
+    private StudentMapper studentMapper;
+
+    public StudentResponse register(@Valid RegisterStudentRequest register) {
         Student student = new Student();
         student.setName(register.name());
         student.setRg(register.rg());
@@ -29,6 +34,7 @@ public class StudentService {
         student.setCpf(register.cpf());
         student.setEducationalInstitute(register.educationalInstitute());
         student.setPassword(encoder.encode(register.password()));
-        return studentRepository.save(student);
+        Student data = studentRepository.save(student);
+        return studentMapper.toStudentResponse(data);
     }
 }

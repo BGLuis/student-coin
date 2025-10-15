@@ -1,11 +1,11 @@
 package com.student_coin.api.controller;
 
-import com.student_coin.api.dto.LoginDTO;
-import com.student_coin.api.dto.RegisterEnterpriseDTO;
-import com.student_coin.api.dto.RegisterStudentDTO;
-import com.student_coin.api.dto.TokenDTO;
-import com.student_coin.api.entity.Enterprise;
-import com.student_coin.api.entity.Student;
+import com.student_coin.api.dto.request.LoginRequest;
+import com.student_coin.api.dto.request.RegisterEnterpriseRequest;
+import com.student_coin.api.dto.request.RegisterStudentRequest;
+import com.student_coin.api.dto.response.EnterpriseResponse;
+import com.student_coin.api.dto.response.StudentResponse;
+import com.student_coin.api.dto.response.TokenResponse;
 import com.student_coin.api.service.EnterpriseService;
 import com.student_coin.api.service.PersonService;
 import com.student_coin.api.service.StudentService;
@@ -32,18 +32,18 @@ public class AuthController {
     private PersonService personService;
 
     @PostMapping("/students")
-    public ResponseEntity<Student> registerStudent(@Valid @RequestBody RegisterStudentDTO userData) {
+    public ResponseEntity<StudentResponse> registerStudent(@Valid @RequestBody RegisterStudentRequest userData) {
         return ResponseEntity.status(HttpStatus.CREATED).body(studentService.register(userData));
     }
 
     @PostMapping("/enterprises")
-    public ResponseEntity<Enterprise> registerEnterprise(@Valid @RequestBody RegisterEnterpriseDTO userData) {
+    public ResponseEntity<EnterpriseResponse> registerEnterprise(@Valid @RequestBody RegisterEnterpriseRequest userData) {
         return ResponseEntity.status(HttpStatus.CREATED).body(enterpriseService.register(userData));
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO> login(@Valid @RequestBody LoginDTO loginData) {
+    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest loginData) {
         return ResponseEntity.status(HttpStatus.OK).body(personService.login(loginData));
     }
 }

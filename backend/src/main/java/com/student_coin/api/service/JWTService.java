@@ -5,10 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
@@ -23,13 +20,8 @@ public class JWTService {
 
     public JWTService(JWTConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
-        try {
-            KeyGenerator keyGen = KeyGenerator.getInstance(jwtConfig.getAlgorithm());
-            SecretKey sk = keyGen.generateKey();
-            secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-        } catch(NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        SecretKey sk = jwtConfig.getKey();
+        secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
     }
 
     public String generateToken(String username, Map<String, Object> claims) {

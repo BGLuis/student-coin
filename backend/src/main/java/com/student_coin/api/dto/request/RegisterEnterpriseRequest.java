@@ -1,6 +1,6 @@
-package com.student_coin.api.dto;
+package com.student_coin.api.dto.request;
 
-public record RegisterEnterpriseDTO(
+public record RegisterEnterpriseRequest(
         String cnpj,
         String name,
         String password,

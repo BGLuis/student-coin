@@ -2,6 +2,7 @@ package com.student_coin.api.config;
 import com.student_coin.api.entity.Person;
 import com.student_coin.api.service.JWTService;
 import com.student_coin.api.service.PersonService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -40,13 +42,23 @@ public class JWTFilter extends OncePerRequestFilter {
 
 
         if(authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
-            name = jwtService.extractUsername(token);
+            try {
+                token = authHeader.substring(7);
+                name = jwtService.extractUsername(token);
+            } catch (JwtException e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
         }
 
         if(name != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            Person userDetails = (Person) context.getBean(PersonService.class).loadUserByUsername(name);
+            Person userDetails = null;
+            try {
+               userDetails = (Person) context.getBean(PersonService.class).loadUserByUsername(name);
+            } catch (UsernameNotFoundException e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
 
             if(jwtService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =

@@ -1,6 +1,6 @@
-package com.student_coin.api.dto;
+package com.student_coin.api.dto.request;
 
-public record RegisterStudentDTO(
+public record RegisterStudentRequest(
         String name,
         String rg,
         String course,

@@ -1,7 +1,7 @@
 package com.student_coin.api.service;
 
-import com.student_coin.api.dto.LoginDTO;
-import com.student_coin.api.dto.TokenDTO;
+import com.student_coin.api.dto.request.LoginRequest;
+import com.student_coin.api.dto.response.TokenResponse;
 import com.student_coin.api.entity.Person;
 import com.student_coin.api.entity.Student;
 import com.student_coin.api.entity.Teacher;
@@ -12,7 +12,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -62,14 +61,12 @@ public class PersonService implements UserDetailsService {
         throw new UsernameNotFoundException("Usuário não encontrado com o nome: " + name);
     }
 
-    public TokenDTO login(@Valid LoginDTO login) {
-        Person person = (Person) loadUserByUsername(login.email());
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("name", person.getName());
+    public TokenResponse login(@Valid LoginRequest login) {
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(login.email(), login.password()));
-        if(!authentication.isAuthenticated()) {
-            throw new BadCredentialsException("Invalid credentials");
-        }
-        return new TokenDTO(jwtService.generateToken(login.email(), claims));
+        Map<String, Object> claims = new HashMap<>();
+        Person person = (Person) authentication.getPrincipal();
+        claims.put("name", person.getName());
+
+        return new TokenResponse(jwtService.generateToken(login.email(), claims));
     }
 }

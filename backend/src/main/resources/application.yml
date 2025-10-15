@@ -7,7 +7,7 @@ spring:
     database:
       driverClassName: org.postgresql.Driver
 jwt:
-  key: d3Vmd2hmd29pZmhnd29nZnBpd2c4dGk0dGp1NHA5dGc0dHA0dGp1dA==
+  key: ${JWT_KEY}
   algorithm: HmacSHA256
   issuer: student-coin
-  expires-in: 1d
+  expires-in: 24h
