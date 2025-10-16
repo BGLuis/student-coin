@@ -1,6 +1,6 @@
 package com.student_coin.api.dto.request;
 
-public record RegisterEnterpriseRequest(
+public record EnterpriseRequest(
         String cnpj,
         String name,
         String password,

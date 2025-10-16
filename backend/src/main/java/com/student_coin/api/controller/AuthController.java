@@ -1,8 +1,8 @@
 package com.student_coin.api.controller;
 
 import com.student_coin.api.dto.request.LoginRequest;
-import com.student_coin.api.dto.request.RegisterEnterpriseRequest;
-import com.student_coin.api.dto.request.RegisterStudentRequest;
+import com.student_coin.api.dto.request.EnterpriseRequest;
+import com.student_coin.api.dto.request.StudentRequest;
 import com.student_coin.api.dto.response.EnterpriseResponse;
 import com.student_coin.api.dto.response.StudentResponse;
 import com.student_coin.api.dto.response.TokenResponse;
@@ -32,12 +32,12 @@ public class AuthController {
     private PersonService personService;
 
     @PostMapping("/students")
-    public ResponseEntity<StudentResponse> registerStudent(@Valid @RequestBody RegisterStudentRequest userData) {
+    public ResponseEntity<StudentResponse> registerStudent(@Valid @RequestBody StudentRequest userData) {
         return ResponseEntity.status(HttpStatus.CREATED).body(studentService.register(userData));
     }
 
     @PostMapping("/enterprises")
-    public ResponseEntity<EnterpriseResponse> registerEnterprise(@Valid @RequestBody RegisterEnterpriseRequest userData) {
+    public ResponseEntity<EnterpriseResponse> registerEnterprise(@Valid @RequestBody EnterpriseRequest userData) {
         return ResponseEntity.status(HttpStatus.CREATED).body(enterpriseService.register(userData));
     }
 

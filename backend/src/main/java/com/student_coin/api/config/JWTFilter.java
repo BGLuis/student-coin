@@ -69,7 +69,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
             if(jwtService.validateToken(token, userDetails)) {
                 var authorities = userDetails.getAuthorities();
-                System.out.println("Authorities from token: " + authorities);
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

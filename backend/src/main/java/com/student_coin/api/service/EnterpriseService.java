@@ -1,6 +1,6 @@
 package com.student_coin.api.service;
 
-import com.student_coin.api.dto.request.RegisterEnterpriseRequest;
+import com.student_coin.api.dto.request.EnterpriseRequest;
 import com.student_coin.api.dto.response.EnterpriseResponse;
 import com.student_coin.api.entity.Enterprise;
 import com.student_coin.api.mapper.EnterpriseMapper;
@@ -24,7 +24,7 @@ public class EnterpriseService {
     @Autowired
     private EnterpriseMapper enterpriseMapper;
 
-    public EnterpriseResponse register(@Valid RegisterEnterpriseRequest register) {
+    public EnterpriseResponse register(@Valid EnterpriseRequest register) {
         Enterprise enterprise = new Enterprise();
         enterprise.setEmail(register.email());
         enterprise.setCnpj(register.cnpj());
