@@ -141,7 +141,7 @@ export default function EnterpriseRegister() {
                     return (
                         <div className="space-y-4">
                             <h2 className="text-xl font-semibold mb-4 text-[#333333]">Dados da Empresa</h2>
-                            <Input type="text" name="nome" label="Nome da Empresa" placeholder="Digite o nome da empresa" value={formData.nome} onChange={handleInputChange} required />
+                            <Input type="text" name="nome" label="Nome da Empresa/Razão Social" placeholder="Digite o nome da empresa" value={formData.nome} onChange={handleInputChange} required />
                             <Input type="email" name="email" label="Email" placeholder="Digite o email da empresa" value={formData.email} onChange={handleInputChange} required />
                             <Input type="text" name="cnpj" label="CNPJ" placeholder="00.000.000/0000-00" value={formData.cnpj} onChange={handleInputChange} required />
                         </div>
