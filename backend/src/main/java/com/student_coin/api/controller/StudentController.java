@@ -27,10 +27,6 @@ public class StudentController {
     @Autowired
     private StudentMapper studentMapper;
 
-    @Autowired
-    @Lazy
-    private PasswordEncoder encoder;
-
     @GetMapping("/{id}")
     public ResponseEntity<StudentResponse> findStudentByID(@PathVariable("id") Long id) {
         try {

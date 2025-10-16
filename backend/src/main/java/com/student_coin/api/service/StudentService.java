@@ -3,6 +3,7 @@ package com.student_coin.api.service;
 import com.student_coin.api.dto.request.StudentRequest;
 import com.student_coin.api.dto.response.StudentResponse;
 import com.student_coin.api.entity.Student;
+import com.student_coin.api.enums.Roles;
 import com.student_coin.api.mapper.StudentMapper;
 import com.student_coin.api.mapper.UpdateStudentMapper;
 import com.student_coin.api.repository.StudentRepository;
@@ -43,6 +44,7 @@ public class StudentService {
         student.setCpf(register.cpf());
         student.setEducationalInstitute(register.educationalInstitute());
         student.setPassword(encoder.encode(register.password()));
+        student.setRole(Roles.ROLE_STUDENT);
         Student data = studentRepository.save(student);
         return studentMapper.toStudentResponse(data);
     }

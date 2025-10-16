@@ -7,7 +7,6 @@ import org.mapstruct.Mapper;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface EnterpriseMapper {
-    EnterpriseResponse toEnterpriseResponse(Enterprise enterprise);
-
+public interface EnterpriseListMapper {
+    List<EnterpriseResponse> toEnterpriseResponse(List<Enterprise> enterprises);
 }
