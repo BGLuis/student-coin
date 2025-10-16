@@ -2,9 +2,11 @@
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Input, Button } from "@/components";
 import { useAuth } from "@/hooks";
 import { AxiosError } from "axios";
+import Link from "next/link";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -41,11 +43,21 @@ export default function Login() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
-            <div className="w-full max-w-md p-8 bg-white rounded-lg shadow">
-                <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex items-center justify-center flex-col gap-6 w-xl">
+            <div className=" w-full p-8 bg-white rounded-xl shadow">
+                <div>
+                    <div className="flex justify-center mb-6">
+                        <Image
+                            src="/image/logo.png"
+                            alt="Student Coin Logo"
+                            width={72}
+                            height={72}
+                            priority
+                        />
+                    </div>
+                    <h1 className="text-2xl font-bold text-center mb-6 text-[#333333]">Acesso ao Sistema de Moeda Estudantil</h1>
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-4 flex flex-col gap-4">
                     <Input
                         label="Email"
                         type="email"
@@ -70,36 +82,26 @@ export default function Login() {
                         </div>
                     )}
 
-                    <Button
-                        type="submit"
-                        variant="primary"
-                        className="w-full"
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? "Entrando..." : "Entrar"}
-                    </Button>
+                    <div className="flex flex-col gap-2">
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            className="w-full"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? "Entrando..." : "Entrar"}
+                        </Button>
+                        <p className="text-[#333333] text-center text-sm">Ao entrar, você concorda com os <Link href="/terms" className="underline">Termos de Uso</Link> e <Link href="/privacy" className="underline">Política de Privacidade</Link>.</p>
+                    </div>
+                    <Link href="/auth/forgot-password" className="text-center text-sm text-black underline">Esqueci minha senha</Link>
                 </form>
-
-                <div className="mt-6 text-center text-sm text-gray-600">
-                    <p>
-                        Não tem uma conta?{" "}
-                        <a
-                            href="/auth/register/student"
-                            className="text-blue-600 hover:underline"
-                        >
-                            Registre-se como estudante
-                        </a>
-                    </p>
-                    <p className="mt-2">
-                        <a
-                            href="/auth/register/enterprise"
-                            className="text-blue-600 hover:underline"
-                        >
-                            Registre-se como empresa
-                        </a>
-                    </p>
-                </div>
             </div>
+            <div className="flex w-full items-center gap-3">
+                <div className="w-full h-0.5 bg-[#666666]"></div>
+                <p className="flex-none text-[#2C2C2C] text-xl">Novo na Nossa Comunidade</p>
+                <div className="w-full h-0.5 bg-[#666666]"></div>
+            </div>
+            <Link href="/auth/register" className="rounded-full bg-white w-full py-4 text-center text-black">Criar uma Conta</Link>
         </div>
     );
 }
