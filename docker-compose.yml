@@ -55,6 +55,8 @@ services:
     image: coin-api
     container_name: coin-api
     restart: unless-stopped
+    env_file:
+      - ./backend/.env
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
