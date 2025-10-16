@@ -7,11 +7,15 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -19,22 +23,25 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Component
 public class JWTFilter extends OncePerRequestFilter {
 
-    private JWTService jwtService;
+    private final JWTService jwtService;
 
-    private ApplicationContext context;
+    private final UserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
 
         SecurityContext securityContext = SecurityContextHolder.getContext();
         if(securityContext.getAuthentication() != null) {
             filterChain.doFilter(request, response);
             return;
         }
+
 
         String authHeader = request.getHeader("Authorization");
         String token = null;
@@ -50,17 +57,19 @@ public class JWTFilter extends OncePerRequestFilter {
                 return;
             }
         }
-
         if(name != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Person userDetails = null;
+            UserDetails userDetails = null;
             try {
-               userDetails = (Person) context.getBean(PersonService.class).loadUserByUsername(name);
+               userDetails = this.userDetailsService.loadUserByUsername(name);
             } catch (UsernameNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 
+
             if(jwtService.validateToken(token, userDetails)) {
+                var authorities = userDetails.getAuthorities();
+                System.out.println("Authorities from token: " + authorities);
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -68,6 +77,5 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
-
     }
 }

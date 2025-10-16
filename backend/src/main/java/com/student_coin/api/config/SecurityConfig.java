@@ -41,10 +41,10 @@ public class SecurityConfig {
                                 "/auth/login", "/auth/enterprises")
                         .permitAll()
                         .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 

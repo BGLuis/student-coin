@@ -66,6 +66,8 @@ public class PersonService implements UserDetailsService {
         Map<String, Object> claims = new HashMap<>();
         Person person = (Person) authentication.getPrincipal();
         claims.put("name", person.getName());
+        claims.put("email", person.getEmail());
+        claims.put("roles", person.getRole());
 
         return new TokenResponse(jwtService.generateToken(login.email(), claims));
     }

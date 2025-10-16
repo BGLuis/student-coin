@@ -3,6 +3,7 @@ package com.student_coin.api.service;
 import com.student_coin.api.config.JWTConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
@@ -12,17 +13,10 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JWTService {
 
     private final JWTConfig jwtConfig;
-
-    private String secretKey;
-
-    public JWTService(JWTConfig jwtConfig) {
-        this.jwtConfig = jwtConfig;
-        SecretKey sk = jwtConfig.getKey();
-        secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-    }
 
     public String generateToken(String username, Map<String, Object> claims) {
 

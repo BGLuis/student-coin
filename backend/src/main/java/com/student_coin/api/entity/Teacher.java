@@ -1,11 +1,13 @@
 package com.student_coin.api.entity;
 
+import com.student_coin.api.enums.Roles;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +23,8 @@ public class Teacher extends Person{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        setRole((Roles.ROLE_TEACHER));
+        return List.of(new SimpleGrantedAuthority(getRole().name()));
     }
 
     @Override
@@ -31,7 +34,7 @@ public class Teacher extends Person{
 
     @Override
     public String getUsername() {
-        return this.getPersonName();
+        return this.getEmail();
     }
 
     @Override

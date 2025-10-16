@@ -8,6 +8,6 @@ spring:
       driverClassName: org.postgresql.Driver
 jwt:
   key: ${JWT_KEY}
-  algorithm: HmacSHA256
+  algorithm: HmacSHA384
   issuer: student-coin
   expires-in: 24h
