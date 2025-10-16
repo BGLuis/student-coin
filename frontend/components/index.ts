@@ -5,3 +5,4 @@ export { Textarea } from "./Textarea";
 export { Radio } from "./Radio";
 export { Checkbox } from "./Checkbox";
 export { default as Footer } from "./Footer";
+export { MultiStepForm } from "./MultiStepForm";
