@@ -2,6 +2,7 @@ package com.student_coin.api.entity;
 
 import com.student_coin.api.enums.Roles;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,10 +19,14 @@ public abstract class Person implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String name;
 
+    @NotNull
     private String password;
 
+    @NotNull
+    @Column(unique = true)
     private String email;
 
     @Enumerated(EnumType.STRING)

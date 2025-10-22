@@ -1,10 +1,10 @@
 package com.student_coin.api.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.student_coin.api.dto.request.LoginRequest;
 import com.student_coin.api.dto.request.EnterpriseRequest;
 import com.student_coin.api.dto.request.StudentRequest;
-import com.student_coin.api.dto.response.EnterpriseResponse;
-import com.student_coin.api.dto.response.StudentResponse;
 import com.student_coin.api.dto.response.TokenResponse;
 import com.student_coin.api.service.EnterpriseService;
 import com.student_coin.api.service.PersonService;
@@ -31,16 +31,18 @@ public class AuthController {
     @Autowired
     private PersonService personService;
 
-    @PostMapping("/students")
-    public ResponseEntity<StudentResponse> registerStudent(@Valid @RequestBody StudentRequest userData) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(studentService.register(userData));
+    @PostMapping
+    public ResponseEntity<?> registerEnterprise(@Valid @RequestBody JsonNode data) {
+        ObjectMapper obj = new ObjectMapper();
+        if(data.has("cpf")) {
+            StudentRequest request = obj.convertValue(data, StudentRequest.class);
+            return ResponseEntity.status(HttpStatus.CREATED).body(studentService.register(request));
+        }
+        else {
+            EnterpriseRequest request = obj.convertValue(data, EnterpriseRequest.class);
+            return ResponseEntity.status(HttpStatus.CREATED).body(enterpriseService.register(request));
+        }
     }
-
-    @PostMapping("/enterprises")
-    public ResponseEntity<EnterpriseResponse> registerEnterprise(@Valid @RequestBody EnterpriseRequest userData) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(enterpriseService.register(userData));
-    }
-
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest loginData) {
