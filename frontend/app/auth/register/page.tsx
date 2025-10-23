@@ -52,6 +52,12 @@ export default function EnterpriseRegister() {
         email: "",
         telefone: "",
 
+        endereco_logradouro: "",
+        endereco_numero: "",
+        endereco_bairro: "",
+        endereco_cidade: "",
+        endereco_estado: "",
+        endereco_complemento: "",
         endereco: "",
 
         curso: "",
@@ -97,7 +103,9 @@ export default function EnterpriseRegister() {
             }
             setCurrentStep(currentStep + 1);
         } else {
-            console.log("Dados do formulário:", formData);
+            const combined = `${formData.endereco_logradouro || ""}${formData.endereco_numero ? `, ${formData.endereco_numero}` : ""}${formData.endereco_complemento ? ` - ${formData.endereco_complemento}` : ""}${formData.endereco_bairro ? `, ${formData.endereco_bairro}` : ""}${formData.endereco_cidade ? ` - ${formData.endereco_cidade}` : ""}${formData.endereco_estado ? `/${formData.endereco_estado}` : ""}`.trim();
+            setFormData(prev => ({ ...prev, endereco: combined }));
+            console.log("Dados do formulário:", { ...formData, endereco: combined });
             alert("Formulário enviado com sucesso!");
         }
     };
@@ -148,7 +156,15 @@ export default function EnterpriseRegister() {
                 return isValidCPF(cpfDigits) ? "" : "CPF inválido";
             case "rg":
                 return v === "" ? "Campo obrigatório" : "";
-            case "endereco":
+            case "endereco_logradouro":
+                return v === "" ? "Campo obrigatório" : "";
+            case "endereco_numero":
+                return v === "" ? "Campo obrigatório" : "";
+            case "endereco_bairro":
+                return v === "" ? "Campo obrigatório" : "";
+            case "endereco_cidade":
+                return v === "" ? "Campo obrigatório" : "";
+            case "endereco_estado":
                 return v === "" ? "Campo obrigatório" : "";
             case "curso":
                 return v === "" ? "Campo obrigatório" : "";
@@ -227,7 +243,14 @@ export default function EnterpriseRegister() {
                     return (
                         <div className="space-y-4">
                             <h2 className="text-xl font-semibold mb-4 text-[#333333]">Informações de Endereço</h2>
-                            <Input type="text" name="endereco" label="Endereço" placeholder="Rua, número, bairro, cidade, estado" value={formData.endereco} onChange={handleInputChange} onBlur={handleBlur} error={touched.endereco ? errors.endereco : ""} required />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Input type="text" name="endereco_logradouro" label="Logradouro" placeholder="Rua, avenida, etc." value={formData.endereco_logradouro} onChange={handleInputChange} onBlur={handleBlur} error={touched.endereco_logradouro ? errors.endereco_logradouro : ""} required />
+                                <Input type="text" name="endereco_numero" label="Número" placeholder="Número" value={formData.endereco_numero} onChange={handleInputChange} onBlur={handleBlur} error={touched.endereco_numero ? errors.endereco_numero : ""} required />
+                                <Input type="text" name="endereco_bairro" label="Bairro" placeholder="Bairro" value={formData.endereco_bairro} onChange={handleInputChange} onBlur={handleBlur} error={touched.endereco_bairro ? errors.endereco_bairro : ""} required />
+                                <Input type="text" name="endereco_cidade" label="Cidade" placeholder="Cidade" value={formData.endereco_cidade} onChange={handleInputChange} onBlur={handleBlur} error={touched.endereco_cidade ? errors.endereco_cidade : ""} required />
+                                <Input type="text" name="endereco_estado" label="Estado" placeholder="Estado" value={formData.endereco_estado} onChange={handleInputChange} onBlur={handleBlur} error={touched.endereco_estado ? errors.endereco_estado : ""} required />
+                                <Input type="text" name="endereco_complemento" label="Complemento" placeholder="Complemento (opcional)" value={formData.endereco_complemento} onChange={handleInputChange} onBlur={handleBlur} error={touched.endereco_complemento ? errors.endereco_complemento : ""} />
+                            </div>
                         </div>
                     );
                 case 3:
@@ -276,7 +299,13 @@ export default function EnterpriseRegister() {
                         formData.cpf !== "" &&
                         formData.rg !== "";
                 case 2:
-                    return formData.endereco !== "";
+                    return (
+                        formData.endereco_logradouro !== "" &&
+                        formData.endereco_numero !== "" &&
+                        formData.endereco_bairro !== "" &&
+                        formData.endereco_cidade !== "" &&
+                        formData.endereco_estado !== ""
+                    );
                 case 3:
                     return formData.curso !== "" && formData.instituicao !== "";
                 case 4:
@@ -325,7 +354,7 @@ export default function EnterpriseRegister() {
                 case 1:
                     return ["nome", "email", "cpf", "rg"];
                 case 2:
-                    return ["endereco"];
+                    return ["endereco_logradouro", "endereco_numero", "endereco_bairro", "endereco_cidade", "endereco_estado", "endereco_complemento"];
                 case 3:
                     return ["curso", "instituicao"];
                 case 4:
@@ -355,7 +384,9 @@ export default function EnterpriseRegister() {
                 }
                 setCurrentStep(currentStep + 1);
             } else {
-                console.log("Dados do formulário:", formData);
+                const combined = `${formData.endereco_logradouro || ""}${formData.endereco_numero ? `, ${formData.endereco_numero}` : ""}${formData.endereco_complemento ? ` - ${formData.endereco_complemento}` : ""}${formData.endereco_bairro ? `, ${formData.endereco_bairro}` : ""}${formData.endereco_cidade ? ` - ${formData.endereco_cidade}` : ""}${formData.endereco_estado ? `/${formData.endereco_estado}` : ""}`.trim();
+                setFormData(prev => ({ ...prev, endereco: combined }));
+                console.log("Dados do formulário:", { ...formData, endereco: combined });
                 alert("Formulário enviado com sucesso!");
             }
         } else {
