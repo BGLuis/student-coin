@@ -100,3 +100,20 @@ Luis Henrique
 Marcela Mendes
 
 ---
+
+[repossitory-path]: bgluis/student-coin/
+[contributors-shield]: https://img.shields.io/github/contributors/bgluis/student-coin.svg?style=for-the-badge
+[contributors-url]: https://github.com/bgluis/student-coin/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/bgluis/student-coin.svg?style=for-the-badge
+[forks-url]: https://github.com/bgluis/student-coin/network/members
+[stars-shield]: https://img.shields.io/github/stars/bgluis/student-coin.svg?style=for-the-badge
+[stars-url]: https://github.com/bgluis/student-coin/stargazers
+[issues-shield]: https://img.shields.io/github/issues/bgluis/student-coin.svg?style=for-the-badge
+[issues-url]: https://github.com/bgluis/student-coin/issues
+[license-shield]: https://img.shields.io/github/license/bgluis/student-coin.svg?style=for-the-badge
+[license-url]: https://github.com/bgluis/student-coin/blob/master/LICENSE.txt
+[SpringBoot.io]: https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring&logoColor=white
+[Nextjs.io]: https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[Postgres.io]: https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white
+[Java.io]: https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white
+[TypeScript.io]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
