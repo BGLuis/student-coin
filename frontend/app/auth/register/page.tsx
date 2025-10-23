@@ -304,7 +304,7 @@ export default function EnterpriseRegister() {
         if (touched.confirmarSenha) {
             setErrors(prev => ({ ...prev, confirmarSenha: validateField("confirmarSenha", formData.confirmarSenha) }));
         }
-    }, [formData.senha]);
+    }, [formData.senha, touched.confirmarSenha, validateField, formData.confirmarSenha]);
 
     const touchFieldsOfStep = (stepIndex: number) => {
         const fields = getFieldsForStep(stepIndex);
