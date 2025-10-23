@@ -2,7 +2,7 @@
 
 import { MultiStepForm } from "@/components/MultiStepForm";
 import { Input, Select } from "@/components";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 function isValidCPF(cpf: string) {
     if (!cpf || cpf.length !== 11) return false;
@@ -138,7 +138,7 @@ export default function EnterpriseRegister() {
         setErrors(prev => ({ ...prev, [name]: error }));
     };
 
-    const validateField = (name: string, value: any) => {
+    const validateField = useCallback((name: string, value: any) => {
         const v = (value ?? "").toString().trim();
         switch (name) {
             case "tipoCadastro":
@@ -183,7 +183,7 @@ export default function EnterpriseRegister() {
             default:
                 return "";
         }
-    };
+    }, [formData.senha]);
 
     const renderPasswordStep = () => (
         <div className="space-y-4">
@@ -217,7 +217,7 @@ export default function EnterpriseRegister() {
         if (currentStep === 0) {
             return (
                 <div className="space-y-4">
-                    <h2 className="text-xl font-semibold mb-4 text-[#333333]">Qual seu perfil no Sistema de Moedas Parceiras?</h2>
+                    <h2 className="text-xl font-normal mb-6 pt-12 text-[#333333]">Qual seu perfil no Sistema de Moedas Parceiras?</h2>
                     <Select name="tipoCadastro" value={formData.tipoCadastro} onChange={handleInputChange} placeholder="Selecione uma opção" options={[{ value: "aluno", label: "Aluno" }, { value: "empresa", label: "Empresa Parceira" }]} required />
                     {touched.tipoCadastro && errors.tipoCadastro && (
                         <p className="text-red-500 text-sm">{errors.tipoCadastro}</p>
@@ -333,7 +333,7 @@ export default function EnterpriseRegister() {
         if (touched.confirmarSenha) {
             setErrors(prev => ({ ...prev, confirmarSenha: validateField("confirmarSenha", formData.confirmarSenha) }));
         }
-    }, [formData.senha, touched.confirmarSenha, validateField, formData.confirmarSenha]);
+    }, [formData.senha, formData.confirmarSenha, touched.confirmarSenha, validateField]);
 
     const touchFieldsOfStep = (stepIndex: number) => {
         const fields = getFieldsForStep(stepIndex);
@@ -396,7 +396,7 @@ export default function EnterpriseRegister() {
     };
 
     return (
-        <div className="flex items-center justify-center flex-col gap-6 w-full lg:w-3/4">
+        <div className="flex items-center justify-center flex-col gap-6 w-full lg:w-1/2">
             <MultiStepForm
                 title="Crie sua Conta"
                 steps={steps}
