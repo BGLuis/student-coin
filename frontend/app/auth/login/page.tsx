@@ -55,9 +55,9 @@ export default function Login() {
 
     return (
         <div className="flex items-center justify-center flex-col gap-6 w-xl">
-            <div className=" w-full p-8 bg-white rounded-xl shadow">
+            <div className=" w-full py-8 px-10 bg-white rounded-xl shadow">
                 <div>
-                    <div className="flex justify-center mb-6">
+                    <div className="flex justify-center mt-7 mb-12">
                         <Image
                             src="/image/logo.png"
                             alt="Student Coin Logo"
@@ -66,7 +66,7 @@ export default function Login() {
                             priority
                         />
                     </div>
-                    <h1 className="text-2xl font-medium text-center mb-6 text-[#333333]">Acesso ao Sistema de Moeda Estudantil</h1>
+                    <h1 className="text-xl font-medium text-center mb-12 text-[#333333]">Acesso ao Sistema de Moeda Estudantil</h1>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4 flex flex-col gap-4">
                     <Input
