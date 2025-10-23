@@ -16,7 +16,7 @@ export default function Footer() {
                     Política de Privacidade
                 </Link>
                 <Link href="/privacy" className="text-gray-600 hover:text-gray-800 transition-colors duration-300">
-                    @moedaestudantil
+                    @scoin
                 </Link>
             </nav>
         </footer>
