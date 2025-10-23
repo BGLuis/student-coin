@@ -7,3 +7,4 @@ export { Checkbox } from "./Checkbox";
 export { default as Footer } from "./Footer";
 export { Header } from "./Header";
 export { MultiStepForm } from "./MultiStepForm";
+export { default as Modal } from "./Modal";
