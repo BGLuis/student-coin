@@ -20,15 +20,7 @@ export default function Home() {
         <Modal
           isOpen={isConfigOpen}
           onClose={() => setIsConfigOpen(false)}
-          title="Configurações"
-        >
-          <div className="space-y-4">
-            <p className="text-gray-600">
-              Aqui você pode configurar suas preferências.
-            </p>
-            {/* Adicione aqui os controles de configuração */}
-          </div>
-        </Modal>
+        />
       </main>
 
       <Footer />
