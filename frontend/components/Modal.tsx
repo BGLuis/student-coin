@@ -12,6 +12,7 @@ interface ModalProps {
 export default function Modal({ isOpen, onClose }: ModalProps) {
   const [activeTab, setActiveTab] = useState<"conta" | "seguranca">("conta");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showUnsavedModal, setShowUnsavedModal] = useState(false);
   
   // Estados para os campos editáveis
   const [nome, setNome] = useState("Marcela Mendes Campos");
@@ -25,8 +26,36 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
   const [numero, setNumero] = useState("123");
   const [complemento, setComplemento] = useState("Apto 101");
 
-  // Estados para validação
+  // Estados para rastrear valores originais
+  const [originalValues] = useState({
+    nome: "Marcela Mendes Campos",
+    instituicao: "PUC Minas",
+    curso: "Engenharia de Software",
+    cep: "30000000",
+    estado: "Minas Gerais",
+    cidade: "Belo Horizonte",
+    bairro: "Coração Eucarístico",
+    logradouro: "Rua Feliz",
+    numero: "123",
+    complemento: "Apto 101",
+  });
+
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const hasUnsavedChanges = () => {
+    return (
+      nome !== originalValues.nome ||
+      instituicao !== originalValues.instituicao ||
+      curso !== originalValues.curso ||
+      cep !== originalValues.cep ||
+      estado !== originalValues.estado ||
+      cidade !== originalValues.cidade ||
+      bairro !== originalValues.bairro ||
+      logradouro !== originalValues.logradouro ||
+      numero !== originalValues.numero ||
+      complemento !== originalValues.complemento
+    );
+  };
 
   const validateContaForm = () => {
     const newErrors: Record<string, string> = {};
@@ -40,7 +69,6 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
     if (!bairro.trim()) newErrors.bairro = "Bairro é obrigatório";
     if (!logradouro.trim()) newErrors.logradouro = "Logradouro é obrigatório";
     if (!numero.trim()) newErrors.numero = "Número é obrigatório";
-    // Complemento é opcional
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -54,13 +82,38 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
         setShowSuccessModal(true);
       }
     } else {
-      // Lógica para salvar senha (implementar depois)
       setShowSuccessModal(true);
     }
   };
 
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
+  };
+
+  const handleCloseAttempt = () => {
+    if (hasUnsavedChanges()) {
+      setShowUnsavedModal(true);
+    } else {
+      onClose();
+    }
+  };
+
+  const handleSaveAndClose = () => {
+    if (activeTab === "conta") {
+      if (validateContaForm()) {
+        console.log("Dados salvos:", { nome, instituicao, curso, cep, estado, cidade, bairro, logradouro, numero, complemento });
+        setShowUnsavedModal(false);
+        onClose();
+      }
+    } else {
+      setShowUnsavedModal(false);
+      onClose();
+    }
+  };
+
+  const handleCloseWithoutSaving = () => {
+    setShowUnsavedModal(false);
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -70,7 +123,7 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
       {/* Overlay */}
       <div
         className="fixed inset-0 bg-black/10"
-        onClick={onClose}
+        onClick={handleCloseAttempt}
       />
       
       {/* Modal Content */}
@@ -110,7 +163,7 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
               {activeTab === "conta" ? "Conta" : "Segurança"}
             </h2>
             <button
-              onClick={onClose}
+              onClick={handleCloseAttempt}
               className="text-gray-400 hover:text-gray-600 transition-colors"
             >
               <svg
@@ -356,6 +409,52 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
               <h3 className="text-lg font-semibold text-gray-900">
                 Salvo com sucesso!
               </h3>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Alterações Não Salvas */}
+      {showUnsavedModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+          <div
+            className="fixed inset-0 bg-black/50"
+            onClick={() => setShowUnsavedModal(false)}
+          />
+          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 z-10 p-8">
+            <div className="text-center mb-6">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
+                <svg
+                  className="h-6 w-6 text-yellow-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Você tem alterações não salvas
+              </h3>
+              <p className="text-sm text-gray-500">
+                Deseja salvar as alterações antes de sair?
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <Button onClick={handleSaveAndClose} className="w-full">
+                Salvar Alterações
+              </Button>
+              <button
+                onClick={handleCloseWithoutSaving}
+                className="w-full px-4 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Prosseguir sem Salvar
+              </button>
             </div>
           </div>
         </div>
