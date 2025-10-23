@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Input, Select } from "./index";
+import Image from "next/image";
+import { Button, Input } from "./index";
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,6 +11,57 @@ interface ModalProps {
 
 export default function Modal({ isOpen, onClose }: ModalProps) {
   const [activeTab, setActiveTab] = useState<"conta" | "seguranca">("conta");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  
+  // Estados para os campos editáveis
+  const [nome, setNome] = useState("Marcela Mendes Campos");
+  const [instituicao, setInstituicao] = useState("PUC Minas");
+  const [curso, setCurso] = useState("Engenharia de Software");
+  const [cep, setCep] = useState("30000000");
+  const [estado, setEstado] = useState("Minas Gerais");
+  const [cidade, setCidade] = useState("Belo Horizonte");
+  const [bairro, setBairro] = useState("Coração Eucarístico");
+  const [logradouro, setLogradouro] = useState("Rua Feliz");
+  const [numero, setNumero] = useState("123");
+  const [complemento, setComplemento] = useState("Apto 101");
+
+  // Estados para validação
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateContaForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!nome.trim()) newErrors.nome = "Nome é obrigatório";
+    if (!instituicao.trim()) newErrors.instituicao = "Instituição é obrigatória";
+    if (!curso.trim()) newErrors.curso = "Curso é obrigatório";
+    if (!cep.trim()) newErrors.cep = "CEP é obrigatório";
+    if (!estado.trim()) newErrors.estado = "Estado é obrigatório";
+    if (!cidade.trim()) newErrors.cidade = "Cidade é obrigatória";
+    if (!bairro.trim()) newErrors.bairro = "Bairro é obrigatório";
+    if (!logradouro.trim()) newErrors.logradouro = "Logradouro é obrigatório";
+    if (!numero.trim()) newErrors.numero = "Número é obrigatório";
+    // Complemento é opcional
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSave = () => {
+    if (activeTab === "conta") {
+      if (validateContaForm()) {
+        // Salvar dados
+        console.log("Dados salvos:", { nome, instituicao, curso, cep, estado, cidade, bairro, logradouro, numero, complemento });
+        setShowSuccessModal(true);
+      }
+    } else {
+      // Lógica para salvar senha (implementar depois)
+      setShowSuccessModal(true);
+    }
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+  };
 
   if (!isOpen) return null;
 
@@ -83,14 +135,16 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
               <div className="space-y-6">
                 {/* Foto de Perfil */}
                 <div className="flex items-center gap-4">
-                  <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                    {/* Placeholder para foto */}
-                    <svg className="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                    </svg>
+                  <div className="w-20 h-20 rounded-full overflow-hidden">
+                    <Image
+                      src="/avatar.svg"
+                      alt="Foto de Perfil"
+                      width={80}
+                      height={80}
+                    />
                   </div>
                   <div>
-                    <Button variant="secondary" size="sm">
+                    <Button variant="secondary" size="sm" className="rounded-lg">
                       Alterar Foto
                     </Button>
                   </div>
@@ -102,7 +156,9 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
                     label="Nome"
                     id="nome"
                     name="nome"
-                    placeholder="Marcela Mendes Campos"
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                    error={errors.nome}
                   />
                 </div>
 
@@ -128,13 +184,17 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
                       label="Instituição de Ensino"
                       id="instituicao"
                       name="instituicao"
-                      placeholder="PUC Minas"
+                      value={instituicao}
+                      onChange={(e) => setInstituicao(e.target.value)}
+                      error={errors.instituicao}
                     />
                     <Input
                       label="Curso"
                       id="curso"
                       name="curso"
-                      placeholder="Engenharia de Software"
+                      value={curso}
+                      onChange={(e) => setCurso(e.target.value)}
+                      error={errors.curso}
                     />
                   </div>
                 </div>
@@ -147,55 +207,64 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
                       label="CEP"
                       id="cep"
                       name="cep"
-                      placeholder="30000000"
+                      value={cep}
+                      onChange={(e) => setCep(e.target.value)}
+                      error={errors.cep}
                     />
-                    <Select
+                    <Input
                       label="Estado"
                       id="estado"
                       name="estado"
-                      options={[
-                        { value: "MG", label: "Minas Gerais" },
-                        { value: "SP", label: "São Paulo" },
-                        { value: "RJ", label: "Rio de Janeiro" },
-                      ]}
+                      value={estado}
+                      onChange={(e) => setEstado(e.target.value)}
+                      error={errors.estado}
                     />
                     <Input
                       label="Cidade"
                       id="cidade"
                       name="cidade"
-                      placeholder="Belo Horizonte"
+                      value={cidade}
+                      onChange={(e) => setCidade(e.target.value)}
+                      error={errors.cidade}
                     />
                     <Input
                       label="Bairro"
                       id="bairro"
                       name="bairro"
-                      placeholder="Coração Eucarístico"
+                      value={bairro}
+                      onChange={(e) => setBairro(e.target.value)}
+                      error={errors.bairro}
                     />
                     <Input
                       label="Logradouro"
                       id="logradouro"
                       name="logradouro"
-                      placeholder="Rua Feliz"
+                      value={logradouro}
+                      onChange={(e) => setLogradouro(e.target.value)}
+                      error={errors.logradouro}
                       className="col-span-2"
                     />
                     <Input
                       label="Número"
                       id="numero"
                       name="numero"
-                      placeholder="123"
+                      value={numero}
+                      onChange={(e) => setNumero(e.target.value)}
+                      error={errors.numero}
                     />
                     <Input
                       label="Complemento"
                       id="complemento"
                       name="complemento"
-                      placeholder="123"
+                      value={complemento}
+                      onChange={(e) => setComplemento(e.target.value)}
                     />
                   </div>
                 </div>
 
                 {/* Botão Salvar */}
                 <div className="flex justify-center pt-4">
-                  <Button className="w-full max-w-2xl">
+                  <Button className="w-full max-w-2xl" onClick={handleSave}>
                     Salvar
                   </Button>
                 </div>
@@ -232,7 +301,7 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
 
                 {/* Botão Salvar */}
                 <div className="flex justify-center pt-4">
-                  <Button className="w-full max-w-2xl">
+                  <Button className="w-full max-w-2xl" onClick={handleSave}>
                     Alterar Senha
                   </Button>
                 </div>
@@ -241,6 +310,56 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
           </div>
         </div>
       </div>
+
+      {/* Modal de Sucesso */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+          <div
+            className="fixed inset-0 bg-black/50"
+            onClick={handleCloseSuccessModal}
+          />
+          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 z-10 p-8">
+            <button
+              onClick={handleCloseSuccessModal}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                <svg
+                  className="h-6 w-6 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Salvo com sucesso!
+              </h3>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
