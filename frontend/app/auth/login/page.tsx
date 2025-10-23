@@ -35,7 +35,7 @@ export default function Login() {
 
         try {
             await login({ email, password });
-            router.push("/perfil");
+            router.push("/profile");
         } catch (err) {
             if (err instanceof AxiosError) {
                 if (err.response?.status === 401) {
