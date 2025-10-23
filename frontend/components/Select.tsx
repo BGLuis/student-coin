@@ -14,6 +14,7 @@ interface SelectProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChan
     placeholder?: string;
     value?: string;
     defaultValue?: string;
+    required?: boolean;
     onChange?: (e: React.ChangeEvent<any>) => void;
     onValueChange?: (value: string) => void;
     renderOption?: (

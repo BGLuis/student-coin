@@ -4,32 +4,68 @@ import { MultiStepForm } from "@/components/MultiStepForm";
 import { Input, Select } from "@/components";
 import { useState, useEffect } from "react";
 
+function isValidCPF(cpf: string) {
+    if (!cpf || cpf.length !== 11) return false;
+    if (/^(\d)\1+$/.test(cpf)) return false;
+    const nums = cpf.split("").map((d) => parseInt(d, 10));
+    let sum = 0;
+    for (let i = 0; i < 9; i++) sum += nums[i] * (10 - i);
+    let rev = 11 - (sum % 11);
+    if (rev === 10 || rev === 11) rev = 0;
+    if (rev !== nums[9]) return false;
+    sum = 0;
+    for (let i = 0; i < 10; i++) sum += nums[i] * (11 - i);
+    rev = 11 - (sum % 11);
+    if (rev === 10 || rev === 11) rev = 0;
+    return rev === nums[10];
+}
+
+function isValidCNPJ(cnpj: string) {
+    if (!cnpj || cnpj.length !== 14) return false;
+    if (/^(\d)\1+$/.test(cnpj)) return false;
+    const nums = cnpj.split("").map((d) => parseInt(d, 10));
+    const calc = (digits: number[]) => {
+        let sum = 0;
+        let pos = digits.length - 7;
+        for (let i = digits.length - 1; i >= 0; i--) {
+            sum += digits[i] * pos--;
+            if (pos < 2) pos = 9;
+        }
+        const res = sum % 11;
+        return res < 2 ? 0 : 11 - res;
+    };
+    const d1 = calc(nums.slice(0, 12));
+    if (d1 !== nums[12]) return false;
+    const d2 = calc(nums.slice(0, 13));
+    return d2 === nums[13];
+}
+
 export default function EnterpriseRegister() {
     const [currentStep, setCurrentStep] = useState(0);
     const [validatedSteps, setValidatedSteps] = useState<number[]>([]);
     const [formData, setFormData] = useState({
         tipoCadastro: "",
-        // Aluno - Dados Pessoais
+
         nome: "",
         cpf: "",
         rg: "",
         email: "",
         telefone: "",
-        // Aluno - Endereço
+
         endereco: "",
-        // Aluno - Acadêmico
+
         curso: "",
         instituicao: "",
-        // Empresa
+
         cnpj: "",
-        // Senha
+
         senha: "",
         confirmarSenha: "",
     });
 
-    // estado para mensagens de erro por campo
+
     const [errors, setErrors] = useState<Record<string, string>>({});
-    // campos "touched" para decidir quando mostrar erros
+
     const [touched, setTouched] = useState<Record<string, boolean>>({});
 
     const getSteps = () => {
@@ -79,7 +115,7 @@ export default function EnterpriseRegister() {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-        // limpar erro do campo quando o usuário digita
+
         setErrors(prev => ({ ...prev, [name]: "" }));
         if (name === "tipoCadastro" && value !== formData.tipoCadastro) {
             setValidatedSteps([0]);
@@ -103,12 +139,13 @@ export default function EnterpriseRegister() {
                 return v === "" ? "Campo obrigatório" : "";
             case "email":
                 if (v === "") return "Campo obrigatório";
-                // validação simples de email
+
                 return /\S+@\S+\.\S+/.test(v) ? "" : "Email inválido";
             case "cpf":
                 if (v === "") return "Campo obrigatório";
-                // aceitar apenas dígitos para checagem rápida
-                return v.replace(/\D/g, "").length === 11 ? "" : "CPF inválido";
+
+                const cpfDigits = v.replace(/\D/g, "");
+                return isValidCPF(cpfDigits) ? "" : "CPF inválido";
             case "rg":
                 return v === "" ? "Campo obrigatório" : "";
             case "endereco":
@@ -119,7 +156,8 @@ export default function EnterpriseRegister() {
                 return v === "" ? "Campo obrigatório" : "";
             case "cnpj":
                 if (v === "") return "Campo obrigatório";
-                return v.replace(/\D/g, "").length === 14 ? "" : "CNPJ inválido";
+                const cnpjDigits = v.replace(/\D/g, "");
+                return isValidCNPJ(cnpjDigits) ? "" : "CNPJ inválido";
             case "senha":
                 if (v === "") return "Campo obrigatório";
                 return v.length >= 6 ? "" : "Senha deve ter ao menos 6 caracteres";
@@ -180,7 +218,7 @@ export default function EnterpriseRegister() {
                             <Input type="text" name="nome" label="Nome Completo" placeholder="Digite seu nome completo" value={formData.nome} onChange={handleInputChange} onBlur={handleBlur} error={touched.nome ? errors.nome : ""} required />
                             <Input type="email" name="email" label="Email" placeholder="Digite seu email" value={formData.email} onChange={handleInputChange} onBlur={handleBlur} error={touched.email ? errors.email : ""} required />
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <Input type="text" name="cpf" label="CPF" placeholder="000.000.000-00" value={formData.cpf} onChange={handleInputChange} onBlur={handleBlur} error={touched.cpf ? errors.cpf : ""} required />
+                                <Input mask="cpf" type="text" name="cpf" label="CPF" placeholder="000.000.000-00" value={formData.cpf} onChange={handleInputChange} onBlur={handleBlur} error={touched.cpf ? errors.cpf : ""} required />
                                 <Input type="text" name="rg" label="RG" placeholder="00.000.000-0" value={formData.rg} onChange={handleInputChange} onBlur={handleBlur} error={touched.rg ? errors.rg : ""} required />
                             </div>
                         </div>
@@ -214,7 +252,7 @@ export default function EnterpriseRegister() {
                             <h2 className="text-xl font-semibold mb-4 text-[#333333]">Dados da Empresa</h2>
                             <Input type="text" name="nome" label="Nome da Empresa/Razão Social" placeholder="Digite o nome da empresa" value={formData.nome} onChange={handleInputChange} onBlur={handleBlur} error={touched.nome ? errors.nome : ""} required />
                             <Input type="email" name="email" label="Email" placeholder="Digite o email da empresa" value={formData.email} onChange={handleInputChange} onBlur={handleBlur} error={touched.email ? errors.email : ""} required />
-                            <Input type="text" name="cnpj" label="CNPJ" placeholder="00.000.000/0000-00" value={formData.cnpj} onChange={handleInputChange} onBlur={handleBlur} error={touched.cnpj ? errors.cnpj : ""} required />
+                            <Input mask="cnpj" type="text" name="cnpj" label="CNPJ" placeholder="00.000.000/0000-00" value={formData.cnpj} onChange={handleInputChange} onBlur={handleBlur} error={touched.cnpj ? errors.cnpj : ""} required />
                         </div>
                     );
                 case 2:
@@ -232,12 +270,12 @@ export default function EnterpriseRegister() {
         }
         if (formData.tipoCadastro === "aluno") {
             switch (currentStep) {
-                case 1: // Informações Pessoais
+                case 1:
                     return formData.nome !== "" &&
                         formData.email !== "" &&
                         formData.cpf !== "" &&
                         formData.rg !== "";
-                case 2: // Informações de Endereço
+                case 2:
                     return formData.endereco !== "";
                 case 3:
                     return formData.curso !== "" && formData.instituicao !== "";
@@ -262,9 +300,7 @@ export default function EnterpriseRegister() {
         return false;
     };
 
-    // Quando o usuário tenta avançar e o passo atual não é válido, marcar os campos do passo como "touched" para exibir erros
     useEffect(() => {
-        // revalidar confirmarSenha quando senha muda
         if (touched.confirmarSenha) {
             setErrors(prev => ({ ...prev, confirmarSenha: validateField("confirmarSenha", formData.confirmarSenha) }));
         }
@@ -311,7 +347,6 @@ export default function EnterpriseRegister() {
         return [];
     };
 
-    // Atualiza o comportamento do botão Next para forçar exibição de erros caso o passo seja inválido
     const handleNextWithValidation = () => {
         if (isStepValid()) {
             if (currentStep < steps.length - 1) {
@@ -324,7 +359,7 @@ export default function EnterpriseRegister() {
                 alert("Formulário enviado com sucesso!");
             }
         } else {
-            // marcar campos como tocados para mostrar erros
+
             touchFieldsOfStep(currentStep);
         }
     };

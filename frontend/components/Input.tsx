@@ -1,17 +1,97 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+type MaskType = "cpf" | "cnpj" | "phone";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     error?: string;
+    mask?: MaskType | ((digits: string) => string);
+}
+
+function digitsOnly(value: string) {
+    return (value ?? "").toString().replace(/\D/g, "");
+}
+
+function formatCPF(d: string) {
+    d = d.slice(0, 11);
+    if (d.length <= 3) return d;
+    if (d.length <= 6) return `${d.slice(0, 3)}.${d.slice(3)}`;
+    if (d.length <= 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
+    return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
+}
+
+function formatCNPJ(d: string) {
+    d = d.slice(0, 14);
+    if (d.length <= 2) return d;
+    if (d.length <= 5) return `${d.slice(0, 2)}.${d.slice(2)}`;
+    if (d.length <= 8) return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5)}`;
+    if (d.length <= 12) return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8)}`;
+    return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8, 12)}-${d.slice(12)}`;
+}
+
+function formatPhone(d: string) {
+    d = d.slice(0, 11);
+    if (d.length <= 2) return `(${d}`;
+    if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+    return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-    ({ label, error, className = "", type, ...props }, ref) => {
+    ({ label, error, className = "", type, mask, value, onChange, ...rest }, ref) => {
         const [showPassword, setShowPassword] = useState(false);
         const isPassword = type === "password";
         const inputType = isPassword && showPassword ? "text" : type;
+        const valueProp = (value ?? (rest as any).value) as string | undefined;
+
+        const format = typeof mask === "function"
+            ? mask
+            : mask === "cpf"
+                ? (d: string) => formatCPF(d)
+                : mask === "cnpj"
+                    ? (d: string) => formatCNPJ(d)
+                    : mask === "phone"
+                        ? (d: string) => formatPhone(d)
+                        : undefined;
+
+        const [displayValue, setDisplayValue] = useState<string>(() =>
+            format ? format(digitsOnly(valueProp ?? "")) : (valueProp ?? "")
+        );
+
+        useEffect(() => {
+            const next = format ? format(digitsOnly(valueProp ?? "")) : (valueProp ?? "");
+            setDisplayValue(next);
+        }, [valueProp, format]);
+
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const raw = e.target.value;
+            if (!format) {
+                if (onChange) return onChange(e);
+                return;
+            }
+
+            const digits = digitsOnly(raw);
+            const masked = format(digits);
+
+            setDisplayValue(masked);
+
+            const fakeEvent = {
+                target: { name: (rest as any).name ?? "", value: masked },
+                currentTarget: { name: (rest as any).name ?? "", value: masked },
+                preventDefault: () => {},
+                stopPropagation: () => {},
+                nativeEvent: {},
+            } as unknown as React.ChangeEvent<HTMLInputElement>;
+
+            try {
+                if (onChange) onChange(fakeEvent);
+            } catch (err) {
+
+                console.warn("Input: erro ao chamar onChange custom", err);
+            }
+        };
 
         return (
             <div className="flex flex-col gap-2">
@@ -58,7 +138,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 ${error ? "ring-2 ring-red-500" : ""}
                 ${className}
               `}
-                    {...props}
+                    {...rest}
+                    value={displayValue}
+                    onChange={handleChange}
                 />
                 {error && (
                     <span className="text-sm text-red-500">{error}</span>
