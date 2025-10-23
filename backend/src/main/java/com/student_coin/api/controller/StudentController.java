@@ -29,13 +29,7 @@ public class StudentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<StudentResponse> findStudentByID(@PathVariable("id") Long id) {
-        try {
             return ResponseEntity.ok(studentMapper.toStudentResponse(studentService.findById(id)));
-        }
-        catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(null);
-        }
     }
 
     @GetMapping
@@ -45,14 +39,8 @@ public class StudentController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<StudentResponse> update(@PathVariable("id") Long id, @RequestBody StudentRequest data) {
-        try {
         Student student = studentService.findById(id);
         return ResponseEntity.ok().body(studentService.update(student, data));
-        }
-        catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(null);
-        }
     }
 
     @DeleteMapping("/me")
