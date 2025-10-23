@@ -92,11 +92,11 @@ Certifique-se de ter o **Docker** e o **Docker Compose** instalados em sua máqu
 ## 🤝 Contribuição
 
 Gabriel Assis
+
 João Pedro Peres
+
 Luis Henrique
+
 Marcela Mendes
 
 ---
-
-
-goColor=white
