@@ -33,14 +33,21 @@ services:
     ports:
       - "${APP_PORT}:3000"
     volumes:
-      - ./frontend/src:/usr/src/app/src
-      - ./frontend/public:/usr/src/app/public
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - WATCHPACK_POLLING=true
     develop:
       watch:
+        - action: sync
+          path: ./frontend
+          target: /app
+          ignore:
+            - node_modules/
+            - .next/
         - action: rebuild
           path: ./frontend/package.json
-        - action: rebuild
-          path: ./frontend/tsconfig.json
     depends_on:
       - api
 
@@ -48,6 +55,8 @@ services:
     image: coin-api
     container_name: coin-api
     restart: unless-stopped
+    env_file:
+      - ./backend/.env
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
