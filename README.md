@@ -87,19 +87,12 @@ Certifique-se de ter o **Docker** e o **Docker Compose** instalados em sua máqu
     O frontend estará acessível em `http://localhost:4200`.
     O backend (API) estará acessível em `http://localhost:13000`.
 
----
 
 ## 🤝 Contribuição
 
-Gabriel Assis
-
-João Pedro Peres
-
-Luis Henrique
-
-Marcela Mendes
-
----
+ <a href = "https://github.com/bgluis/student-coin/graphs/contributors">
+   <img src = "https://contrib.rocks/image?repo=bgluis/student-coin"/>
+ </a>
 
 [repossitory-path]: bgluis/student-coin/
 [contributors-shield]: https://img.shields.io/github/contributors/bgluis/student-coin.svg?style=for-the-badge
