@@ -1,7 +1,9 @@
 package com.student_coin.api.entity;
 
 import com.student_coin.api.enums.Roles;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,8 @@ import java.util.List;
 @Setter
 public class Enterprise extends Person {
 
+    @NotNull
+    @Column(unique = true)
     private String cnpj;
 
     @Override

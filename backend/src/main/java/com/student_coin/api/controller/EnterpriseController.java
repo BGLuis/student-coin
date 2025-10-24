@@ -26,13 +26,7 @@ public class EnterpriseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<EnterpriseResponse> findEnterpriseByID(@PathVariable("id") Long id) {
-        try {
-            return ResponseEntity.ok(enterpriseMapper.toEnterpriseResponse(enterpriseService.findById(id)));
-        }
-        catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(null);
-        }
+        return ResponseEntity.ok(enterpriseMapper.toEnterpriseResponse(enterpriseService.findById(id)));
     }
 
     @GetMapping
@@ -42,14 +36,8 @@ public class EnterpriseController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<EnterpriseResponse> update(@PathVariable("id") Long id, @RequestBody EnterpriseRequest data) {
-        try {
             Enterprise enterprise = enterpriseService.findById(id);
             return ResponseEntity.ok().body(enterpriseService.update(enterprise, data));
-        }
-        catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(null);
-        }
     }
 
     @DeleteMapping("/me")

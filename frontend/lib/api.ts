@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosResponse } from "axios";
 
 interface ApiErrorResponse {
     message: string;
@@ -6,7 +6,7 @@ interface ApiErrorResponse {
     error?: string;
 }
 
-const API_BASE_URL = process.env.API_URL || "http://localhost:8080";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 const api: AxiosInstance = axios.create({
     baseURL: API_BASE_URL,
@@ -32,7 +32,7 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-    (response) => {
+    (response: AxiosResponse) => {
         return response;
     },
     (error: AxiosError<ApiErrorResponse>) => {

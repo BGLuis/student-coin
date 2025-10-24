@@ -60,7 +60,7 @@ export const MultiStepForm: React.FC<MultiStepFormProps> = ({
         <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-lg">
             {/* Título Fixo */}
             <div className="mb-8 text-center">
-                <div className="flex justify-center mb-6">
+                <div className="flex justify-center mt-7 mb-12">
                     <Image
                         src="/image/logo.png"
                         alt="Student Coin Logo"
@@ -69,12 +69,13 @@ export const MultiStepForm: React.FC<MultiStepFormProps> = ({
                         priority
                     />
                 </div>
-                <h1 className="text-3xl font-bold text-gray-800">{title}</h1>
-                <p className="text-[#333333] text-center text-sm">Já possui uma conta? <Link href="/login" className="underline">Entrar</Link>.</p>
+                <h1 className="text-4xl font-medium text-gray-800 mb-2">{title}</h1>
+                <p className="text-[#333333] font-regular text-center text-md">Já possui uma conta? <Link href="/login" className="underline text-black">Entrar</Link>.</p>
+        
             </div>
 
             {/* Visualização dos Passos */}
-            <div className="mb-8">
+            <div className="mb-8 mt-16">
                 <div className="flex items-center justify-between">
                     {steps.map((step, index) => (
                         <React.Fragment key={index}>

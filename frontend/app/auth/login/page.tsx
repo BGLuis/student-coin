@@ -17,6 +17,17 @@ export default function Login() {
     const { login } = useAuth();
     const router = useRouter();
 
+    const isEmailValid = (email: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const isPasswordValid = (password: string) => {
+        return password.length >= 8;
+    };
+
+    const isFormValid = isEmailValid(email) && isPasswordValid(password);
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setError("");
@@ -24,7 +35,7 @@ export default function Login() {
 
         try {
             await login({ email, password });
-            router.push("/perfil");
+            router.push("/profile");
         } catch (err) {
             if (err instanceof AxiosError) {
                 if (err.response?.status === 401) {
@@ -44,9 +55,9 @@ export default function Login() {
 
     return (
         <div className="flex items-center justify-center flex-col gap-6 w-xl">
-            <div className=" w-full p-8 bg-white rounded-xl shadow">
+            <div className=" w-full py-8 px-10 bg-white rounded-xl shadow">
                 <div>
-                    <div className="flex justify-center mb-6">
+                    <div className="flex justify-center mt-7 mb-12">
                         <Image
                             src="/image/logo.png"
                             alt="Student Coin Logo"
@@ -55,11 +66,11 @@ export default function Login() {
                             priority
                         />
                     </div>
-                    <h1 className="text-2xl font-bold text-center mb-6 text-[#333333]">Acesso ao Sistema de Moeda Estudantil</h1>
+                    <h1 className="text-xl font-medium text-center mb-12 text-[#333333]">Acesso ao Sistema de Moeda Estudantil</h1>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4 flex flex-col gap-4">
                     <Input
-                        label="Email"
+                        label="Email ou CPF"
                         type="email"
                         placeholder="seu@email.com"
                         value={email}
@@ -68,7 +79,7 @@ export default function Login() {
                     />
 
                     <Input
-                        label="Senha"
+                        label="Sua Senha"
                         type="password"
                         placeholder="••••••••"
                         value={password}
@@ -87,7 +98,7 @@ export default function Login() {
                             type="submit"
                             variant="primary"
                             className="w-full"
-                            disabled={isSubmitting}
+                            disabled={!isFormValid || isSubmitting}
                         >
                             {isSubmitting ? "Entrando..." : "Entrar"}
                         </Button>
@@ -97,9 +108,9 @@ export default function Login() {
                 </form>
             </div>
             <div className="flex w-full items-center gap-3">
-                <div className="w-full h-0.5 bg-[#666666]"></div>
-                <p className="flex-none text-[#2C2C2C] text-xl">Novo na Nossa Comunidade</p>
-                <div className="w-full h-0.5 bg-[#666666]"></div>
+                <div className="w-full h-0.5 bg-[#FFFFFF]"></div>
+                <p className="flex-none text-[#FFFFFF] text-xl">Novo na Nossa Comunidade</p>
+                <div className="w-full h-0.5 bg-[#FFFFFF]"></div>
             </div>
             <Link href="/auth/register" className="rounded-full bg-white w-full py-4 text-center text-black">Criar uma Conta</Link>
         </div>
