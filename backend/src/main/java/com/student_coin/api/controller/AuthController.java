@@ -10,7 +10,9 @@ import com.student_coin.api.service.EnterpriseService;
 import com.student_coin.api.service.PersonService;
 import com.student_coin.api.service.StudentService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,15 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@AllArgsConstructor
 public class AuthController {
-
-    @Autowired
     private StudentService studentService;
-
-    @Autowired
     private EnterpriseService enterpriseService;
-
-    @Autowired
     private PersonService personService;
 
     @PostMapping

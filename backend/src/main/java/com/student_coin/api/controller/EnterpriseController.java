@@ -6,9 +6,10 @@ import com.student_coin.api.dto.response.EnterpriseResponse;
 import com.student_coin.api.entity.Enterprise;
 import com.student_coin.api.mapper.EnterpriseMapper;
 import com.student_coin.api.service.EnterpriseService;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +17,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/enterprises")
+@AllArgsConstructor
 public class EnterpriseController {
-
-    @Autowired
     private EnterpriseService enterpriseService;
-
-    @Autowired
     private EnterpriseMapper enterpriseMapper;
 
     @GetMapping("/{id}")

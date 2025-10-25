@@ -1,11 +1,8 @@
 package com.student_coin.api.service;
 
 import com.student_coin.api.dto.request.EnterpriseRequest;
-import com.student_coin.api.dto.request.StudentRequest;
 import com.student_coin.api.dto.response.EnterpriseResponse;
-import com.student_coin.api.dto.response.StudentResponse;
 import com.student_coin.api.entity.Enterprise;
-import com.student_coin.api.entity.Student;
 import com.student_coin.api.enums.Roles;
 import com.student_coin.api.mapper.EnterpriseListMapper;
 import com.student_coin.api.mapper.EnterpriseMapper;
@@ -13,7 +10,9 @@ import com.student_coin.api.mapper.UpdateEnterpriseMapper;
 import com.student_coin.api.repository.EnterpriseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,22 +21,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class EnterpriseService {
-
-    @Autowired
     @Lazy
     private PasswordEncoder encoder;
 
-    @Autowired
     private EnterpriseRepository enterpriseRepository;
-
-    @Autowired
     private EnterpriseMapper enterpriseMapper;
-
-    @Autowired
     private EnterpriseListMapper listMapper;
-
-    @Autowired
     private UpdateEnterpriseMapper updateEnterpriseMapper;
 
     public EnterpriseResponse register(@Valid EnterpriseRequest register) {

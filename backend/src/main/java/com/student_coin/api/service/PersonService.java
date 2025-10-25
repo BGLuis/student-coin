@@ -9,8 +9,8 @@ import com.student_coin.api.repository.EnterpriseRepository;
 import com.student_coin.api.repository.StudentRepository;
 import com.student_coin.api.repository.TeacherRepository;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.AllArgsConstructor;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,24 +24,12 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class PersonService implements UserDetailsService {
-
-
-    @Autowired
-    @Lazy
     private AuthenticationManager authManager;
-
-    @Autowired
-    @Lazy
     private JWTService jwtService;
-
-    @Autowired
     private StudentRepository studentRepository;
-
-    @Autowired
     private EnterpriseRepository enterpriseRepository;
-
-    @Autowired
     private TeacherRepository teacherRepository;
 
     @Override

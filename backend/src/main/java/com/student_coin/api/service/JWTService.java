@@ -1,25 +1,26 @@
 package com.student_coin.api.service;
 
 import com.student_coin.api.config.JWTConfig;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import javax.crypto.SecretKey;
-import java.util.Base64;
+
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 
-@Service
-@RequiredArgsConstructor
-public class JWTService {
+import lombok.AllArgsConstructor;
 
-    private final JWTConfig jwtConfig;
+@Service
+@AllArgsConstructor
+public class JWTService {
+    private JWTConfig jwtConfig;
 
     public String generateToken(String username, Map<String, Object> claims) {
-
         return Jwts.builder()
                 .claims()
                 .add(claims)

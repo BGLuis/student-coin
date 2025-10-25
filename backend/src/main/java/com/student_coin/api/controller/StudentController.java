@@ -5,26 +5,20 @@ import com.student_coin.api.dto.response.StudentResponse;
 import com.student_coin.api.entity.Student;
 import com.student_coin.api.mapper.StudentMapper;
 import com.student_coin.api.service.StudentService;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.function.EntityResponse;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 @RestController
 @RequestMapping("/students")
+@AllArgsConstructor
 public class StudentController {
-
-    @Autowired
     private StudentService studentService;
-
-    @Autowired
     private StudentMapper studentMapper;
 
     @GetMapping("/{id}")

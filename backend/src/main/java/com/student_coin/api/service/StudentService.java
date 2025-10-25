@@ -9,9 +9,7 @@ import com.student_coin.api.mapper.UpdateStudentMapper;
 import com.student_coin.api.repository.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,18 +18,11 @@ import java.util.List;
 
 @Service
 public class StudentService {
-
-    @Autowired
     @Lazy
     private PasswordEncoder encoder;
 
-    @Autowired
     private StudentRepository studentRepository;
-
-    @Autowired
     private StudentMapper studentMapper;
-
-    @Autowired
     private UpdateStudentMapper updateStudentMapper;
 
     public StudentResponse register(@Valid StudentRequest register) {
