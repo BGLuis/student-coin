@@ -9,6 +9,7 @@ import com.student_coin.api.mapper.UpdateStudentMapper;
 import com.student_coin.api.repository.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class StudentService {
     @Lazy
     private PasswordEncoder encoder;

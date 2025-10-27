@@ -60,6 +60,7 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         } catch (MalformedJwtException  ex) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         } catch (MissingAuthorizationHeaderException ex) {}
 
         filterChain.doFilter(request, response);
