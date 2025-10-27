@@ -58,10 +58,10 @@ public class JWTFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 securityContext.setAuthentication(authToken);
             }
-
-            filterChain.doFilter(request, response);
-        }  catch (MalformedJwtException | MissingAuthorizationHeaderException ex) {
+        } catch (MalformedJwtException  ex) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        }
+        } catch (MissingAuthorizationHeaderException ex) {}
+
+        filterChain.doFilter(request, response);
     }
 }
