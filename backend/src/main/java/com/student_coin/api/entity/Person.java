@@ -32,6 +32,9 @@ public abstract class Person implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Roles role;
 
+    @OneToOne
+    private Account account;
+
     public String getPersonPassword(){
         return this.password;
     }
