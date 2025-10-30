@@ -41,4 +41,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         RestErrorMessage message = new RestErrorMessage(status, exception.getMessage());
         return ResponseEntity.status(status).body(message);
     }
+
+    @ExceptionHandler(NotEnoughBalanceException.class)
+    public ResponseEntity<RestErrorMessage> handleNotEnoughBalance(
+            NotEnoughBalanceException exception
+    ) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        RestErrorMessage message = new RestErrorMessage(status, exception.getMessage());
+        return ResponseEntity.status(status).body(message);
+    }
 }

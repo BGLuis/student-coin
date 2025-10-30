@@ -5,6 +5,7 @@ import com.student_coin.api.entity.Account;
 import com.student_coin.api.entity.RewardTransaction;
 import com.student_coin.api.entity.Student;
 import com.student_coin.api.entity.Teacher;
+import com.student_coin.api.exception.NotEnoughBalanceException;
 import com.student_coin.api.repository.AccountRepository;
 import com.student_coin.api.repository.RewardTransactionRepository;
 import com.student_coin.api.repository.StudentRepository;
@@ -24,6 +25,10 @@ public class AccountService {
     private final AccountRepository accountRepository;
 
     private void processTransaction(Account origin, Account destination, Integer value) {
+        if (origin.getBalance().compareTo(value) < 0) {
+            throw new NotEnoughBalanceException("You have not enough balance");
+        }
+
         origin.setBalance(origin.getBalance() - value);
         destination.setBalance(destination.getBalance() + value);
 

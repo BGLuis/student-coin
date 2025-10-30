@@ -6,15 +6,15 @@ import com.student_coin.api.dto.response.RedeemTransactionResponse;
 import com.student_coin.api.entity.Teacher;
 import com.student_coin.api.mapper.RewardTransactionMapper;
 import com.student_coin.api.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController("/account")
+@RestController
+@RequestMapping("/account")
 @AllArgsConstructor
 public class AccountController {
     private final AccountService accountService;
@@ -22,12 +22,16 @@ public class AccountController {
     private final RewardTransactionMapper rewardTransactionMapper;
 
     @PutMapping("/reward/{uuid}")
-    public ResponseEntity<RewardTransactionResponse> rewardStudent(Authentication authentication, @PathVariable String uuid, @RequestBody RewardTransactionRequest reward) {
+    public ResponseEntity<RewardTransactionResponse> rewardStudent(
+            Authentication authentication,
+            @PathVariable @Valid @UUID String uuid,
+            @Valid @RequestBody RewardTransactionRequest reward
+    ) {
         return ResponseEntity.ok(rewardTransactionMapper.toRewardResponse(accountService.rewardStudent((Teacher) authentication.getPrincipal(), uuid, reward)));
     }
 
     @PutMapping("/redeem/{uuid}")
-    public ResponseEntity<RedeemTransactionResponse> redeemAdvantage(@PathVariable String uuid) {
+    public ResponseEntity<RedeemTransactionResponse> redeemAdvantage(@PathVariable @Valid @UUID String uuid) {
         return null;
     }
 }
