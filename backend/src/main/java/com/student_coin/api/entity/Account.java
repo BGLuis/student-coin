@@ -10,5 +10,6 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer balance;
+    @Column(nullable = false)
+    private Integer balance = 0;
 }
