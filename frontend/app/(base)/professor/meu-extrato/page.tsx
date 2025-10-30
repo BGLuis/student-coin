@@ -108,26 +108,47 @@ export default function MeuExtratoProfessor() {
     });
 
     return (
-        <div className="bg-gray-50 py-8 px-6">
-            <div className="max-w-7xl mx-auto">
-                {/* Breadcrumb */}
-                <div className="flex items-end gap-2 mb-6 text-base text-gray-600">
-                    <Link href="/" className="hover:text-teal-600">
-                        <svg className="w-8 h-8 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
-                    </Link>
-                    <span className="pb-0.5">›</span>
-                    <span className="text-gray-800 font-medium pb-0.5">MEU EXTRATO</span>
-                </div>
+        <>
+            <style jsx>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: #14b8a6;
+                    border-radius: 3px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: #0d9488;
+                }
+                .custom-scrollbar {
+                    scrollbar-width: thin;
+                    scrollbar-color: #14b8a6 transparent;
+                }
+            `}</style>
+            <div className="bg-gray-50 h-full overflow-hidden py-4 px-6 pt-10">
+                <div className="max-w-7xl mx-auto h-full flex flex-col">
+                    {/* Breadcrumb */}
+                    <div className="flex items-end gap-3 mb-6 text-base text-gray-600 flex-shrink-0 -ml-24">
+                        <Link href="/" className="hover:text-teal-600">
+                            <svg className="w-8 h-8 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                        </Link>
+                        <span className="pb-0.5">›</span>
+                        <span className="text-gray-800 font-medium pb-0.5">MEU EXTRATO</span>
+                    </div>
 
-                {/* Título */}
-                <h1 className="text-3xl font-semibold text-gray-900 mb-8">
-                    Meu Extrato de Moedas Estudantis
-                </h1>
+                    {/* Título */}
+                    <h1 className="text-2xl font-semibold text-gray-900 mb-6 flex-shrink-0">
+                        Meu Extrato de Moedas Estudantis
+                    </h1>
 
-                {/* Card Principal */}
-                <div className="bg-white rounded-lg shadow-sm p-6">
+                    {/* Card Principal com scroll interno */}
+                    <div className="bg-white rounded-lg shadow-sm flex-1 min-h-0 flex flex-col">
+                        <div className="overflow-y-auto custom-scrollbar p-6 flex-1">
                     {/* Filtros e Busca */}
                     <div className="flex flex-col lg:flex-row gap-4 mb-6">
                         {/* Filtros */}
@@ -289,8 +310,10 @@ export default function MeuExtratoProfessor() {
                             Nenhuma transação encontrada
                         </div>
                     )}
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
