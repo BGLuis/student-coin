@@ -1,11 +1,10 @@
 package com.student_coin.api.dto.response;
 
-import java.time.LocalDateTime;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-public record RewardTransactionResponse(
-        String uuid,
-        Integer value,
-        LocalDateTime createdAt,
-        String motive
-) {
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class RewardTransactionResponse extends TransactionResponse {
+    private String motive;
 }
