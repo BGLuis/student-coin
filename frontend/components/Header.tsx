@@ -5,12 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Modal } from "./index";
+import { useUser } from "@/contexts/UserContext";
 
 export const Header: React.FC = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isConfigOpen, setIsConfigOpen] = useState(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const router = useRouter();
+    const { userType } = useUser();
 
     const handleMouseEnter = () => {
         if (timeoutRef.current) {
@@ -34,6 +36,44 @@ export const Header: React.FC = () => {
         router.push("/auth/login");
     };
 
+    // Configuração específica por tipo de usuário
+    const getUserConfig = () => {
+        switch(userType) {
+            case 'aluno':
+                return {
+                    links: [
+                        { href: '/', label: 'Home' },
+                        { href: '/loja-vantagens', label: 'Loja de Vantagens' },
+                        { href: '/meu-extrato', label: 'Meu Extrato' }
+                    ],
+                    showCoins: true,
+                    coinBalance: 100
+                };
+            case 'professor':
+                return {
+                    links: [
+                        { href: '/', label: 'Home' },
+                        { href: '/professor/enviar-moedas', label: 'Enviar Moeda' },
+                        { href: '/professor/meu-extrato', label: 'Meu Extrato' }
+                    ],
+                    showCoins: true,
+                    coinBalance: 100
+                };
+            case 'empresa':
+                return {
+                    links: [
+                        { href: '/', label: 'Home' },
+                        { href: '/gerenciar-vantagens', label: 'Gerenciar Vantagens' },
+                        { href: '/conferencia', label: 'Conferência' }
+                    ],
+                    showCoins: false,
+                    coinBalance: 0
+                };
+        }
+    };
+
+    const config = getUserConfig();
+
     return (
         <>
             <header className="w-full bg-white border-b border-gray-200">
@@ -54,43 +94,45 @@ export const Header: React.FC = () => {
                     <div className="flex items-center gap-6">
                         {/* Navigation Links */}
                         <nav className="flex gap-6">
-                            <Link 
-                                href="/resgatar" 
-                                className="text-gray-600 hover:text-gray-800 transition-colors duration-300"
-                            >
-                                Resgatar
-                            </Link>
-                            <Link 
-                                href="/transacoes" 
-                                className="text-gray-600 hover:text-gray-800 transition-colors duration-300"
-                            >
-                                Transações
-                            </Link>
+                            {config.links.map((link) => (
+                                <Link 
+                                    key={link.href}
+                                    href={link.href} 
+                                    className="text-gray-600 hover:text-gray-800 transition-colors duration-300"
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
                         </nav>
 
                         {/* Coin Balance */}
-                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-teal-400">
-                            <Image
-                                src="/image/logo.png"
-                                alt="Coin"
-                                width={20}
-                                height={20}
-                            />
-                            <span className="font-normal text-gray-800">100</span>
-                        </div>
+                        {config.showCoins && (
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-teal-400">
+                                <Image
+                                    src="/image/logo.png"
+                                    alt="Coin"
+                                    width={28}
+                                    height={28}
+                                />
+                                <span className="font-normal text-gray-800">{config.coinBalance}</span>
+                            </div>
+                        )}
 
                         {/* Notifications */}
-                        <button className="w-10 h-10 flex items-center justify-center bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200">
+                        <button 
+                            className="flex items-center justify-center rounded-lg transition-colors" 
+                            style={{ backgroundColor: '#FFEED1', width: '40px', height: '40px' }}
+                        >
                             <svg
-                                className="w-6 h-6 text-yellow-700"
+                                className="w-7 h-7"
                                 fill="none"
-                                stroke="currentColor"
+                                stroke="#FFA412"
+                                strokeWidth={1.5}
                                 viewBox="0 0 24 24"
                             >
                                 <path
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    strokeWidth={2}
                                     d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
                                 />
                             </svg>
