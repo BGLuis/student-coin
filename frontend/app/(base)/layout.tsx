@@ -17,12 +17,12 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
     className = "",
 }) => {
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="h-screen flex flex-col overflow-hidden">
             {/* Header */}
             {showHeader && <Header />}
 
             {/* Main Content */}
-            <main className={`flex-grow ${backgroundColor} ${className}`}>
+            <main className={`flex-1 overflow-hidden ${backgroundColor} ${className}`}>
                 {children}
             </main>
 
