@@ -76,11 +76,13 @@ services:
     ports:
       - "${API_PORT}:8080"
     volumes:
-      - ./backend:/api
+      - ./backend/src:/api/src
     develop:
       watch:
         - action: rebuild
-          path: ./backend/pom.xml
+          path: ./backend/build.gradle.kts
+        - action: rebuild
+          path: ./backend/settings.gradle.kts
         - action: rebuild
           path: ./backend/src/main/resources/application.yml
 
