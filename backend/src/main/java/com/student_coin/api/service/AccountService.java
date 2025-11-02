@@ -9,6 +9,7 @@ import com.student_coin.api.repository.AccountRepository;
 import com.student_coin.api.repository.RewardTransactionRepository;
 import com.student_coin.api.repository.StudentRepository;
 import com.student_coin.api.repository.TransactionRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,11 +27,9 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
 
-    private void processTransaction(Account origin, Account destination, Integer value) {
-        if (origin.getBalance().compareTo(value) < 0) {
-            throw new NotEnoughBalanceException("You have not enough balance");
-        }
+    private final EntityManager entityManager;
 
+    private void processTransaction(Account origin, Account destination, Integer value) {
         origin.setBalance(origin.getBalance() - value);
         destination.setBalance(destination.getBalance() + value);
 
@@ -44,6 +43,10 @@ public class AccountService {
     }
 
     private RewardTransaction processReward(RewardTransaction transaction) {
+        if (transaction.getOrigin().getBalance().compareTo(transaction.getValue()) < 0) {
+            throw new NotEnoughBalanceException("You have not enough balance");
+        }
+
         this.processTransaction(transaction.getOrigin(), transaction.getDestination(), transaction.getValue());
         return transaction;
     }
@@ -58,11 +61,12 @@ public class AccountService {
         Student student = studentRepository.findById(reward.studentId()).orElseThrow(
                 () -> new EntityNotFoundException("Student with id: " + reward.studentId() + " not found")
         );
+        Teacher managedTeacher = entityManager.merge(teacher);
 
         Optional<RewardTransaction> optionalTransaction = rewardTransactionRepository.findByUuid(uuid);
         RewardTransaction transaction = optionalTransaction.map(this::rollbackTransaction).orElseGet(() -> generateDefaultRewardTransaction(uuid));
         transaction.setValue(reward.value());
-        transaction.setOrigin(teacher.getAccount());
+        transaction.setOrigin(managedTeacher.getAccount());
         transaction.setDestination(student.getAccount());
         transaction.setMotive(reward.motive());
 
