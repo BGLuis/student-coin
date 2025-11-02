@@ -32,7 +32,7 @@ public abstract class Person implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Roles role;
 
-    @OneToOne
+    @OneToOne(fetch =  FetchType.EAGER, cascade = CascadeType.ALL)
     private Account account;
 
     public String getPersonPassword(){

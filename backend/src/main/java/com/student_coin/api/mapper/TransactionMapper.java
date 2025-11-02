@@ -2,18 +2,24 @@ package com.student_coin.api.mapper;
 
 import com.student_coin.api.dto.response.RedeemTransactionResponse;
 import com.student_coin.api.dto.response.RewardTransactionResponse;
+import com.student_coin.api.dto.response.TransactionResponse;
 import com.student_coin.api.entity.RewardTransaction;
 import com.student_coin.api.entity.Transaction;
 import com.student_coin.api.entity.TransactionRedeem;
 import org.mapstruct.Mapper;
+import org.mapstruct.SubclassExhaustiveStrategy;
 import org.mapstruct.SubclassMapping;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
-
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", subclassExhaustiveStrategy = SubclassExhaustiveStrategy.RUNTIME_EXCEPTION)
 public interface TransactionMapper {
     RewardTransactionResponse toRewardResponse(RewardTransaction rewardTransaction);
+
     @SubclassMapping(source = TransactionRedeem.class, target = RedeemTransactionResponse.class)
     @SubclassMapping(source = RewardTransaction.class, target = RewardTransactionResponse.class)
-    Class<?> toTransactionResponse(Transaction transactionList);
+    TransactionResponse toTransactionResponse(Transaction transaction);
+
+    default Page<TransactionResponse> toTransactionResponsePage(Page<Transaction> transactionList) {
+        return transactionList.map(this::toTransactionResponse);
+    }
 }

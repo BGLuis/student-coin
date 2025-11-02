@@ -1,5 +1,6 @@
 package com.student_coin.api.service;
 
+import com.student_coin.api.dto.BalanceDTO;
 import com.student_coin.api.dto.request.BalanceRequest;
 import com.student_coin.api.dto.request.RewardTransactionRequest;
 import com.student_coin.api.entity.*;
@@ -9,10 +10,10 @@ import com.student_coin.api.repository.RewardTransactionRepository;
 import com.student_coin.api.repository.StudentRepository;
 import com.student_coin.api.repository.TransactionRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -65,13 +66,28 @@ public class AccountService {
         transaction.setDestination(student.getAccount());
         transaction.setMotive(reward.motive());
 
-        return this.processReward(transaction);
+        return this.transactionRepository.save(this.processReward(transaction));
     }
 
-    public Page<Transaction> getBalance(
+    @Transactional(readOnly = true)
+    public BalanceDTO getBalance(
             Person target,
             BalanceRequest filters
     ) {
-        return this.transactionRepository.findAllByDestination_IdOrOrigin_Id(target.getId(), target.getId(), filters.pageable())
+        Page<Transaction> transactions = this.transactionRepository.findAllByDestination_IdOrOrigin_Id(
+                target.getId(),
+                target.getId(),
+                filters.pageable()
+        ).map(transaction -> {
+            if (transaction.getOrigin().equals(target.getAccount())) {
+                transaction.setValue(-transaction.getValue());
+            }
+            return transaction;
+        });
+
+        return new BalanceDTO(
+                target.getAccount().getBalance(),
+                transactions
+        );
     }
 }
