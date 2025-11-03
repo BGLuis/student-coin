@@ -9,5 +9,5 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @DiscriminatorValue(value = "REDEEM")
 public class TransactionRedeem extends Transaction {
-    private String cupom;
+    private String coupon;
 }

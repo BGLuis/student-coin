@@ -6,5 +6,5 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class RedeemTransactionResponse extends TransactionResponse {
-    private String cupom;
+    private String coupon;
 }
