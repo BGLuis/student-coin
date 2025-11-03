@@ -2,12 +2,15 @@ package com.student_coin.api.service;
 
 import com.student_coin.api.dto.request.StudentRequest;
 import com.student_coin.api.dto.response.StudentResponse;
+import com.student_coin.api.entity.Account;
 import com.student_coin.api.entity.Student;
 import com.student_coin.api.enums.Roles;
 import com.student_coin.api.mapper.StudentMapper;
 import com.student_coin.api.mapper.UpdateStudentMapper;
+import com.student_coin.api.repository.AccountRepository;
 import com.student_coin.api.repository.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Lazy;
@@ -24,9 +27,11 @@ public class StudentService {
     private PasswordEncoder encoder;
 
     private StudentRepository studentRepository;
+    private AccountRepository accountRepository;
     private StudentMapper studentMapper;
     private UpdateStudentMapper updateStudentMapper;
 
+    @Transactional
     public StudentResponse register(@Valid StudentRequest register) {
         Student student = new Student();
         student.setName(register.name());
@@ -38,6 +43,10 @@ public class StudentService {
         student.setEducationalInstitute(register.educationalInstitute());
         student.setPassword(encoder.encode(register.password()));
         student.setRole(Roles.ROLE_STUDENT);
+
+        Account account = this.accountRepository.save(new Account());
+        student.setAccount(account);
+
         Student data = studentRepository.save(student);
         return studentMapper.toStudentResponse(data);
     }

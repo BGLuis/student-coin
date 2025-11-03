@@ -6,6 +6,12 @@ spring:
       ddl-auto: update
     database:
       driverClassName: org.postgresql.Driver
+
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
+    test-connection: true
+
 jwt:
   key: ${JWT_KEY}
   algorithm: HmacSHA384
