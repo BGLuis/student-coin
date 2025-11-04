@@ -1,8 +1,7 @@
 package com.student_coin.api.entity;
 
 import com.student_coin.api.enums.Roles;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +24,9 @@ public class Enterprise extends Person {
     @NotNull
     @Column(unique = true)
     private String cnpj;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Advantage> advantages;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

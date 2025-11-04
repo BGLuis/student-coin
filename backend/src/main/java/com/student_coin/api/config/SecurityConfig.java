@@ -49,6 +49,8 @@ public class SecurityConfig {
                         .hasAnyAuthority(String.valueOf(Roles.ROLE_TEACHER))
                         .requestMatchers(HttpMethod.PUT, "/account/redeem/*")
                         .hasAnyAuthority(String.valueOf(Roles.ROLE_STUDENT))
+                        .requestMatchers(HttpMethod.POST, "/enterprises/advantage")
+                        .hasAnyAuthority(String.valueOf(Roles.ROLE_ENTERPRISE))
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

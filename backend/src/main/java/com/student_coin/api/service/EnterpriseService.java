@@ -1,14 +1,19 @@
 package com.student_coin.api.service;
 
+import com.student_coin.api.dto.AdvantagesDTO;
+import com.student_coin.api.dto.request.AdvantageRequest;
 import com.student_coin.api.dto.request.EnterpriseRequest;
 import com.student_coin.api.dto.response.EnterpriseResponse;
 import com.student_coin.api.entity.Account;
+import com.student_coin.api.entity.Advantage;
 import com.student_coin.api.entity.Enterprise;
 import com.student_coin.api.enums.Roles;
+import com.student_coin.api.mapper.AdvantageMapper;
 import com.student_coin.api.mapper.EnterpriseListMapper;
 import com.student_coin.api.mapper.EnterpriseMapper;
 import com.student_coin.api.mapper.UpdateEnterpriseMapper;
 import com.student_coin.api.repository.AccountRepository;
+import com.student_coin.api.repository.AdvantageRepository;
 import com.student_coin.api.repository.EnterpriseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -17,6 +22,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,9 +38,11 @@ public class EnterpriseService {
 
     private EnterpriseRepository enterpriseRepository;
     private AccountRepository accountRepository;
+    private AdvantageRepository advantageRepository;
     private EnterpriseMapper enterpriseMapper;
     private EnterpriseListMapper listMapper;
     private UpdateEnterpriseMapper updateEnterpriseMapper;
+    private AdvantageMapper advantageMapper;
 
     @Transactional
     public EnterpriseResponse register(@Valid EnterpriseRequest register) {
@@ -70,5 +79,48 @@ public class EnterpriseService {
         }
         enterpriseRepository.save(enterprise);
         return enterpriseMapper.toEnterpriseResponse(enterprise);
+    }
+
+    public Advantage registerAdvantage(Enterprise enterprise, AdvantageRequest advantageRequest) {
+        Advantage advantage = this.advantageMapper.toAdvantage(advantageRequest);
+        advantage.setEnterprise(enterprise);
+        return this.advantageRepository.save(advantage);
+    }
+
+    public AdvantagesDTO findAdvantages(Pageable filters, Long enterpriseId) {
+        Enterprise enterprise = this.findById(enterpriseId);
+        Page<Advantage> advantages = this.advantageRepository.findByEnterprise(filters, enterprise);
+
+        return new AdvantagesDTO(
+                enterprise,
+                advantages
+        );
+    }
+
+    public Advantage updateAdvantage(
+            Long advantageId,
+            AdvantageRequest advantageRequest,
+            Enterprise enterprise
+    ) {
+        Advantage advantage = this.advantageRepository.findById(advantageId)
+                .orElseThrow(() -> new EntityNotFoundException("Advantage not found"));
+
+        if (!advantage.getEnterprise().getId().equals(enterprise.getId())) {
+            throw new SecurityException("You do not have permission to update this advantage");
+        }
+
+        this.advantageMapper.toAdvantage(advantageRequest, advantage);
+        return this.advantageRepository.save(advantage);
+    }
+
+    public void deleteAdvantage(Long advantageId, Enterprise enterprise) {
+        Advantage advantage = this.advantageRepository.findById(advantageId)
+                .orElseThrow(() -> new EntityNotFoundException("Advantage not found"));
+
+        if (!advantage.getEnterprise().getId().equals(enterprise.getId())) {
+            throw new SecurityException("You do not have permission to delete this advantage");
+        }
+
+        this.advantageRepository.delete(advantage);
     }
 }
