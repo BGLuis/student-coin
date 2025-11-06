@@ -33,23 +33,45 @@ export default function Login() {
         setError("");
         setIsSubmitting(true);
 
+        console.log('[Login] Iniciando processo de login para:', email);
+
         try {
             await login({ email, password });
+            console.log('[Login] Login bem-sucedido! Redirecionando...');
             router.push("/profile");
         } catch (err) {
+            console.error('[Login] Erro durante o login:', err);
+
             if (err instanceof AxiosError) {
+                console.error('[Login] Detalhes do erro:', {
+                    status: err.response?.status,
+                    statusText: err.response?.statusText,
+                    data: err.response?.data,
+                    headers: err.response?.headers
+                });
+
                 if (err.response?.status === 401) {
                     setError("Email ou senha incorretos");
+                } else if (err.response?.status === 403) {
+                    setError("Acesso negado. Verifique suas permissões.");
+                } else if (err.response?.status === 500) {
+                    setError("Erro no servidor. Tente novamente mais tarde.");
                 } else if (err.response?.data?.message) {
                     setError(err.response.data.message);
+                } else if (err.code === 'ECONNABORTED') {
+                    setError("Tempo de conexão esgotado. Verifique sua internet.");
+                } else if (err.code === 'ERR_NETWORK') {
+                    setError("Erro de rede. Verifique se o servidor está acessível.");
                 } else {
-                    setError("Erro ao fazer login. Tente novamente.");
+                    setError(`Erro ao fazer login: ${err.message}`);
                 }
             } else {
+                console.error('[Login] Erro desconhecido:', err);
                 setError("Erro inesperado. Tente novamente.");
             }
         } finally {
             setIsSubmitting(false);
+            console.log('[Login] Processo de login finalizado');
         }
     };
 
