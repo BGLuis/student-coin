@@ -7,14 +7,17 @@ import com.student_coin.api.entity.RewardTransaction;
 import com.student_coin.api.entity.Transaction;
 import com.student_coin.api.entity.TransactionRedeem;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.SubclassExhaustiveStrategy;
 import org.mapstruct.SubclassMapping;
 import org.springframework.data.domain.Page;
 
 @Mapper(componentModel = "spring", subclassExhaustiveStrategy = SubclassExhaustiveStrategy.RUNTIME_EXCEPTION)
 public interface TransactionMapper {
+    @Mapping(target = "createdAt", source = "createTime")
     RewardTransactionResponse toRewardResponse(RewardTransaction rewardTransaction);
 
+    @Mapping(target = "createdAt", source = "createTime")
     @SubclassMapping(source = TransactionRedeem.class, target = RedeemTransactionResponse.class)
     @SubclassMapping(source = RewardTransaction.class, target = RewardTransactionResponse.class)
     TransactionResponse toTransactionResponse(Transaction transaction);
