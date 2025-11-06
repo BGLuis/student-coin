@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<body>
+<div th:replace="~{email/base :: layout}">
+    <div th:fragment="content">
+        <div class="greeting">
+            Olá, <span th:text="${studentName}">Aluno</span>! 🎁
+        </div>
+
+        <div class="content-body">
+            <p>Temos novidades para você! Uma nova vantagem foi adicionada à nossa Loja de Vantagens.</p>
+        </div>
+
+        <div class="info-box" style="background-color: #f0fdf4; border-left-color: #22c55e;">
+            <h3 style="color: #14532d;">🎯 Nova Vantagem Disponível</h3>
+            <p style="color: #15803d;"><strong>Vantagem:</strong> <span th:text="${advantageName}">Nome da Vantagem</span></p>
+            <p style="color: #15803d;"><strong>Custo:</strong> <span th:text="${cost}">0</span> moedas</p>
+            <p style="color: #15803d;"><strong>Empresa:</strong> <span th:text="${enterpriseName}">Empresa</span></p>
+            <p th:if="${description}" style="color: #15803d; margin-top: 10px;" th:text="${description}">Descrição</p>
+        </div>
+
+        <div class="content-body">
+            <p>
+                Você possui <strong th:text="${currentBalance}">0</strong> moedas no momento. 
+                <span th:if="${canAfford}">
+                    Você já tem moedas suficientes para resgatar esta vantagem! 🎉
+                </span>
+                <span th:unless="${canAfford}">
+                    Continue acumulando moedas para poder resgatar esta vantagem.
+                </span>
+            </p>
+            
+            <p style="margin-top: 15px;">
+                Não perca essa oportunidade! Confira os detalhes e resgate sua vantagem antes que as unidades se esgotem.
+            </p>
+        </div>
+
+        <div class="button-container">
+            <a href="http://localhost:3000/vantagens" class="button">
+                Ver Vantagem
+            </a>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="content-body" style="font-size: 14px; color: #6b7280;">
+            <p>
+                💡 <strong>Dica:</strong> Quanto mais você participa e se destaca, mais moedas acumula! 
+                Continue se dedicando para aproveitar vantagens incríveis.
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

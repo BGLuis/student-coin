@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<body>
+<div th:replace="~{email/base :: layout}">
+    <div th:fragment="content">
+        <div class="greeting">
+            Olá, <span th:text="${studentName}">Aluno</span>! 📊
+        </div>
+
+        <div class="content-body">
+            <p>Aqui está o resumo das suas atividades no <strong>Student Coin</strong> durante o mês de 
+            <strong th:text="${month}">Mês</strong>.</p>
+        </div>
+
+        <div class="info-box" style="background-color: #eff6ff; border-left-color: #3b82f6;">
+            <h3 style="color: #1e3a8a;">📈 Resumo Mensal</h3>
+            <p style="color: #1e40af;"><strong>Moedas Recebidas:</strong> <span th:text="${coinsReceived}">0</span></p>
+            <p style="color: #1e40af;"><strong>Moedas Gastas:</strong> <span th:text="${coinsSpent}">0</span></p>
+            <p style="color: #1e40af;"><strong>Saldo Atual:</strong> <span th:text="${currentBalance}">0</span></p>
+            <p style="color: #1e40af;"><strong>Vantagens Resgatadas:</strong> <span th:text="${advantagesRedeemed}">0</span></p>
+        </div>
+
+        <div th:if="${topTransaction != null}" style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+            <h3 style="color: #92400e; margin: 0 0 10px 0;">🏆 Maior Transação do Mês</h3>
+            <p style="color: #78350f; margin: 5px 0;">
+                <strong>Você recebeu <span th:text="${topTransactionAmount}">0</span> moedas</strong>
+            </p>
+            <p style="color: #78350f; margin: 5px 0;">
+                <strong>De:</strong> <span th:text="${topTransactionFrom}">Professor</span>
+            </p>
+            <p style="color: #78350f; margin: 5px 0;">
+                <strong>Motivo:</strong> <span th:text="${topTransactionReason}">Motivo</span>
+            </p>
+        </div>
+
+        <div class="content-body">
+            <p th:if="${coinsReceived > 0}">
+                Parabéns pelo seu desempenho este mês! Continue assim e acumule ainda mais moedas.
+            </p>
+            <p th:if="${coinsReceived == 0}">
+                Que tal aumentar sua participação nas atividades? Quanto mais você se destaca, mais moedas pode ganhar!
+            </p>
+            
+            <p style="margin-top: 15px;">
+                Acompanhe suas transações e veja como você pode continuar evoluindo na plataforma.
+            </p>
+        </div>
+
+        <div class="button-container">
+            <a href="http://localhost:3000/meu-extrato" class="button">
+                Ver Extrato Completo
+            </a>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="content-body" style="font-size: 14px; color: #6b7280;">
+            <p>
+                📅 Este relatório refere-se ao período de <strong th:text="${startDate}">01/01/2024</strong> 
+                a <strong th:text="${endDate}">31/01/2024</strong>.
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
