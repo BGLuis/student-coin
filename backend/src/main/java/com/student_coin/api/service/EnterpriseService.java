@@ -34,6 +34,7 @@ public class EnterpriseService {
     private EnterpriseMapper enterpriseMapper;
     private EnterpriseListMapper listMapper;
     private UpdateEnterpriseMapper updateEnterpriseMapper;
+    private EmailService emailService;
 
     @Transactional
     public EnterpriseResponse register(@Valid EnterpriseRequest register) {
@@ -48,6 +49,10 @@ public class EnterpriseService {
         enterprise.setAccount(account);
 
         Enterprise data = enterpriseRepository.save(enterprise);
+
+        // Enviar email de boas-vindas
+        emailService.sendWelcomeEmail(data.getEmail(), data.getName(), "Empresa");
+
         return enterpriseMapper.toEnterpriseResponse(data);
     }
 

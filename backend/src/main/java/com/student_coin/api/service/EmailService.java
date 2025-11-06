@@ -1,0 +1,136 @@
+package com.student_coin.api.service;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+
+import java.util.Map;
+
+@Slf4j
+@Service
+@AllArgsConstructor
+public class EmailService {
+
+    private final JavaMailSender mailSender;
+    private final TemplateEngine templateEngine;
+
+    public void sendEmail(String to, String subject, String templateName, Map<String, Object> variables) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        Context context = new Context();
+        context.setVariables(variables);
+
+        String htmlContent = templateEngine.process(templateName, context);
+
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(htmlContent, true);
+        helper.setFrom("noreply@studentcoin.com");
+
+        mailSender.send(message);
+        log.info("Email enviado com sucesso para: {}", to);
+    }
+
+    @Async
+    public void sendEmailAsync(String to, String subject, String templateName, Map<String, Object> variables) {
+        try {
+            sendEmail(to, subject, templateName, variables);
+        } catch (MessagingException e) {
+            log.error("Erro ao enviar email para: {}", to, e);
+        }
+    }
+
+    public void sendWelcomeEmail(String to, String name, String role) {
+        Map<String, Object> variables = Map.of(
+                "name", name,
+                "role", role,
+                "loginUrl", "http://localhost:4200/auth/login"
+        );
+
+        sendEmailAsync(to, "Bem-vindo ao Student Coin!", "email/welcome", variables);
+    }
+
+    public void sendCoinsReceivedEmail(String to, String studentName, int amount, String teacherName, String reason, String category) {
+        Map<String, Object> variables = Map.of(
+                "studentName", studentName,
+                "amount", amount,
+                "teacherName", teacherName,
+                "reason", reason,
+                "category", category,
+                "extractUrl", "http://localhost:4200/meu-extrato"
+        );
+
+        sendEmailAsync(to, "Você recebeu moedas! 🎉", "email/coins-received", variables);
+    }
+
+    public void sendCoinsSentEmail(String to, String teacherName, String studentName, int amount, int newBalance) {
+        Map<String, Object> variables = Map.of(
+                "teacherName", teacherName,
+                "studentName", studentName,
+                "amount", amount,
+                "newBalance", newBalance,
+                "extractUrl", "http://localhost:4200/professor/meu-extrato"
+        );
+
+        sendEmailAsync(to, "Confirmação de envio de moedas", "email/coins-sent", variables);
+    }
+
+    public void sendAdvantageRedeemedEmail(String to, String studentName, String advantageName, int cost, int newBalance, String code) {
+        Map<String, Object> variables = Map.of(
+                "studentName", studentName,
+                "advantageName", advantageName,
+                "cost", cost,
+                "newBalance", newBalance,
+                "code", code != null ? code : "N/A",
+                "hasCode", code != null
+        );
+
+        sendEmailAsync(to, "Vantagem resgatada com sucesso! 🎁", "email/advantage-redeemed", variables);
+    }
+
+    public void sendPasswordResetEmail(String to, String name, String token) {
+        Map<String, Object> variables = Map.of(
+                "name", name,
+                "resetUrl", "http://localhost:4200/auth/reset-password?token=" + token,
+                "expirationTime", "24 horas"
+        );
+
+        sendEmailAsync(to, "Recuperação de Senha - Student Coin", "email/password-reset", variables);
+    }
+
+    public void sendNewAdvantageEmail(String to, String enterpriseName, String advantageName,
+                                      String description, int cost) {
+        Map<String, Object> variables = Map.of(
+                "enterpriseName", enterpriseName,
+                "advantageName", advantageName,
+                "description", description,
+                "cost", cost
+        );
+
+        sendEmailAsync(to, "Nova Vantagem Disponível! 🎁", "email/new-advantage", variables);
+    }
+
+    public void sendNewAdvantageEmail(String to, String enterpriseName, String advantageName,
+                                      String description, int cost, Integer quantity,
+                                      String expirationDate, Integer userBalance) {
+        Map<String, Object> variables = Map.of(
+                "enterpriseName", enterpriseName,
+                "advantageName", advantageName,
+                "description", description,
+                "cost", cost,
+                "quantity", quantity != null ? quantity : "",
+                "expirationDate", expirationDate != null ? expirationDate : "",
+                "userBalance", userBalance != null ? userBalance : ""
+        );
+
+        sendEmailAsync(to, "Nova Vantagem Disponível! 🎁", "email/new-advantage", variables);
+    }
+}
