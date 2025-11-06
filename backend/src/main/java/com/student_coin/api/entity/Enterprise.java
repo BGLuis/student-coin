@@ -25,7 +25,7 @@ public class Enterprise extends Person {
     @Column(unique = true)
     private String cnpj;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy ="enterprise", fetch = FetchType.LAZY)
     private List<Advantage> advantages;
 
     @Override
