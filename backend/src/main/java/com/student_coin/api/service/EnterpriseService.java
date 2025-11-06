@@ -19,7 +19,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
