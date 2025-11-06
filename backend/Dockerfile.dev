@@ -6,7 +6,6 @@ RUN chmod +x ./scripts/*.sh
 
 COPY gradle ./gradle
 COPY gradlew *.gradle.kts ./
-COPY .gradle ./.gradle
 
 RUN ./gradlew clean build
 
