@@ -139,14 +139,15 @@ export const Header: React.FC = () => {
                         </button>
 
                         {/* User Menu */}
-                        <div className="relative">
+                        <div className="relative flex items-center">
                             <button
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}
-                                className="hover:opacity-80 transition-opacity"
+                                className="flex items-center justify-center hover:opacity-80 transition-opacity"
+                                style={{ width: '40px', height: '40px' }}
                             >
                                 <Image
-                                    src="avatar.svg"
+                                    src="/avatar.svg"
                                     alt="User Avatar"
                                     width={40}
                                     height={40}
@@ -158,7 +159,7 @@ export const Header: React.FC = () => {
                                 <div
                                     onMouseEnter={handleMouseEnter}
                                     onMouseLeave={handleMouseLeave}
-                                    className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+                                    className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
                                 >
                                     <button
                                         onClick={handleConfigClick}

@@ -158,7 +158,7 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
         {/* Content Area */}
         <div className="flex-1 flex flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b">
+          <div className="flex items-center justify-between p-6 pl-12 border-b">
             <h2 className="text-2xl font-semibold text-gray-800">
               {activeTab === "conta" ? "Conta" : "Segurança"}
             </h2>
