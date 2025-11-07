@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<body>
+<div th:replace="~{email/base :: layout}">
+    <div th:fragment="content">
+        <div class="greeting">
+            Olá, Professor(a) <span th:text="${teacherName}">Professor</span>! ✅
+        </div>
+
+        <div class="content-body">
+            <p>Seu envio de moedas foi realizado com sucesso!</p>
+            
+            <p>Você reconheceu o mérito do(a) aluno(a) <strong th:text="${studentName}">Nome do Aluno</strong> 
+            e enviou moedas como forma de reconhecimento.</p>
+        </div>
+
+        <div class="amount" style="color: #dc2626;">
+            - <span th:text="${amount}">0</span> moedas
+        </div>
+
+        <div class="info-box">
+            <h3 style="color: #0f766e;">📝 Detalhes do Envio</h3>
+            <p><strong>Aluno:</strong> <span th:text="${studentName}">Nome</span></p>
+            <p><strong>Motivo:</strong> <span th:text="${reason}">Reconhecimento</span></p>
+            <p><strong>Data:</strong> <span th:text="${date}">01/01/2024</span></p>
+            <p><strong>Seu Saldo Restante:</strong> <span th:text="${remainingBalance}">0</span> moedas</p>
+        </div>
+
+        <div class="content-body">
+            <p>
+                Obrigado por reconhecer o mérito estudantil! Seu gesto incentiva o aluno a continuar 
+                se dedicando e alcançando resultados cada vez melhores.
+            </p>
+            <p style="margin-top: 15px;">
+                Você ainda tem <strong th:text="${remainingBalance}">0</strong> moedas disponíveis 
+                para distribuir neste semestre.
+            </p>
+        </div>
+
+        <div class="button-container">
+            <a href="http://localhost:3000/professor/meu-extrato" class="button">
+                Ver Meu Histórico
+            </a>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="content-body" style="font-size: 14px; color: #6b7280;">
+            <p>
+                📊 Acompanhe todas as suas transações e veja o impacto positivo que você está gerando!
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

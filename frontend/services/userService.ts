@@ -1,51 +1,81 @@
-import api from "@/lib/api";
+import { authService } from "./authService";
+import { studentService, Student, StudentUpdateRequest } from "./studentService";
+import { enterpriseService, Enterprise, EnterpriseUpdateRequest } from "./enterpriseService";
 
-export interface UserProfile {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-    cpf?: string;
-    cnpj?: string;
-    university?: string;
-    companyName?: string;
-    avatar?: string;
-    createdAt: string;
-    updatedAt: string;
-}
+export type UserProfile = Student | Enterprise;
 
-export interface UpdateProfileData {
-    name?: string;
-    email?: string;
-    avatar?: string;
-    university?: string;
-    companyName?: string;
-}
+export type UpdateProfileData = StudentUpdateRequest | EnterpriseUpdateRequest;
 
 export const userService = {
-    getProfile: async (): Promise<UserProfile> => {
-        const response = await api.get<UserProfile>("/users/profile");
-        return response.data;
+    // Obtém o perfil do usuário baseado no role do token
+    getProfile: async (userId: number): Promise<UserProfile> => {
+        const role = authService.getUserRole();
+
+        if (role === "ROLE_STUDENT" || role === "ROLE_TEACHER") {
+            return await studentService.getById(userId);
+        } else if (role === "ROLE_ENTERPRISE") {
+            return await enterpriseService.getById(userId);
+        }
+
+        throw new Error("Role não identificado no token");
     },
 
-    updateProfile: async (data: UpdateProfileData): Promise<UserProfile> => {
-        const response = await api.put<UserProfile>("/users/profile", data);
-        return response.data;
+    // Atualiza o perfil baseado no role
+    updateProfile: async (userId: number, data: UpdateProfileData): Promise<UserProfile> => {
+        const role = authService.getUserRole();
+
+        if (role === "ROLE_STUDENT" || role === "ROLE_TEACHER") {
+            return await studentService.update(userId, data as StudentUpdateRequest);
+        } else if (role === "ROLE_ENTERPRISE") {
+            return await enterpriseService.update(userId, data as EnterpriseUpdateRequest);
+        }
+
+        throw new Error("Role não identificado no token");
     },
 
-    getUserById: async (id: string): Promise<UserProfile> => {
-        const response = await api.get<UserProfile>(`/users/${id}`);
-        return response.data;
+    // Obtém usuário por ID (genérico)
+    getUserById: async (id: number): Promise<UserProfile> => {
+        const role = authService.getUserRole();
+
+        if (role === "ROLE_STUDENT" || role === "ROLE_TEACHER") {
+            return await studentService.getById(id);
+        } else if (role === "ROLE_ENTERPRISE") {
+            return await enterpriseService.getById(id);
+        }
+
+        throw new Error("Role não identificado no token");
     },
 
-    changePassword: async (oldPassword: string, newPassword: string): Promise<void> => {
-        await api.put("/users/password", {
-            oldPassword,
-            newPassword,
-        });
-    },
-
+    // Deleta a conta baseado no role
     deleteAccount: async (): Promise<void> => {
-        await api.delete("/users/profile");
+        const role = authService.getUserRole();
+
+        if (role === "ROLE_STUDENT" || role === "ROLE_TEACHER") {
+            await studentService.deleteAccount();
+        } else if (role === "ROLE_ENTERPRISE") {
+            await enterpriseService.deleteAccount();
+        } else {
+            throw new Error("Role não identificado no token");
+        }
+    },
+
+    // Obtém informações do token
+    getTokenInfo: () => {
+        return authService.decodeToken();
+    },
+
+    // Verifica se é estudante
+    isStudent: (): boolean => {
+        return authService.getUserRole() === "ROLE_STUDENT";
+    },
+
+    // Verifica se é professor
+    isTeacher: (): boolean => {
+        return authService.getUserRole() === "ROLE_TEACHER";
+    },
+
+    // Verifica se é empresa
+    isEnterprise: (): boolean => {
+        return authService.getUserRole() === "ROLE_ENTERPRISE";
     },
 };

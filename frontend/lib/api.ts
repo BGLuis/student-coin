@@ -20,6 +20,13 @@ api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
         const token = localStorage.getItem("access_token");
 
+        console.log('[API] Fazendo requisição:', {
+            method: config.method?.toUpperCase(),
+            url: config.url,
+            baseURL: config.baseURL,
+            hasToken: !!token
+        });
+
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -27,16 +34,30 @@ api.interceptors.request.use(
         return config;
     },
     (error: AxiosError) => {
+        console.error('[API] Erro no request interceptor:', error);
         return Promise.reject(error);
     }
 );
 
 api.interceptors.response.use(
     (response: AxiosResponse) => {
+        console.log('[API] Resposta recebida:', {
+            status: response.status,
+            url: response.config.url,
+            dataType: typeof response.data
+        });
         return response;
     },
     (error: AxiosError<ApiErrorResponse>) => {
+        console.error('[API] Erro na resposta:', {
+            status: error.response?.status,
+            url: error.config?.url,
+            message: error.response?.data?.message || error.message,
+            data: error.response?.data
+        });
+
         if (error.response?.status === 401) {
+            console.warn('[API] Erro 401 - Não autorizado. Redirecionando para login...');
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
 
@@ -46,11 +67,11 @@ api.interceptors.response.use(
         }
 
         if (error.response?.status === 403) {
-            console.error("Acesso negado");
+            console.error('[API] Erro 403 - Acesso negado');
         }
 
         if (error.response?.status === 500) {
-            console.error("Erro interno do servidor");
+            console.error('[API] Erro 500 - Erro interno do servidor');
         }
 
         return Promise.reject(error);

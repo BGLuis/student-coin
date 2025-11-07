@@ -10,7 +10,10 @@ export interface StudentRegisterData {
     email: string;
     password: string;
     cpf: string;
-    university?: string;
+    rg?: string;
+    course?: string;
+    address?: string;
+    educationalInstitute?: string;
 }
 
 export interface EnterpriseRegisterData {
@@ -18,92 +21,89 @@ export interface EnterpriseRegisterData {
     email: string;
     password: string;
     cnpj: string;
-    companyName: string;
 }
 
 export interface AuthResponse {
-    access_token: string;
-    refresh_token?: string;
-    token_type: string;
-    expires_in?: number;
-    user?: {
-        id: string;
-        email: string;
-        name: string;
-        role: string;
-    };
+    token: string;
 }
 
 export const authService = {
     login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-        const response = await api.post<AuthResponse>("/auth/login", credentials);
+        try {
+            console.log('[AuthService] Tentando login com email:', credentials.email);
+            const response = await api.post<AuthResponse>("/auth/login", credentials);
 
-        if (response.data.access_token) {
-            localStorage.setItem("access_token", response.data.access_token);
-        }
-        if (response.data.refresh_token) {
-            localStorage.setItem("refresh_token", response.data.refresh_token);
-        }
+            console.log('[AuthService] Resposta do login recebida:', {
+                status: response.status,
+                hasToken: !!response.data.token
+            });
 
-        return response.data;
+            if (response.data.token) {
+                localStorage.setItem("access_token", response.data.token);
+                console.log('[AuthService] Token salvo no localStorage');
+            } else {
+                console.error('[AuthService] Resposta não contém token:', response.data);
+            }
+
+            return response.data;
+        } catch (error: any) {
+            console.error('[AuthService] Erro no login:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
+            throw error;
+        }
     },
 
     registerStudent: async (data: StudentRegisterData): Promise<AuthResponse> => {
-        const response = await api.post<AuthResponse>("/auth/register/student", data);
+        try {
+            console.log('[AuthService] Registrando estudante:', data.email);
 
-        if (response.data.access_token) {
-            localStorage.setItem("access_token", response.data.access_token);
-        }
-        if (response.data.refresh_token) {
-            localStorage.setItem("refresh_token", response.data.refresh_token);
-        }
+            // Backend usa POST /auth e detecta automaticamente por CPF
+            // Nota: O backend não retorna token no registro, apenas os dados do usuário
+            const registerResponse = await api.post("/auth", data);
+            console.log('[AuthService] Estudante registrado com sucesso:', registerResponse.data);
 
-        return response.data;
+            // Fazer login automaticamente após o registro
+            console.log('[AuthService] Fazendo login automático após registro');
+            return await authService.login({ email: data.email, password: data.password });
+        } catch (error: any) {
+            console.error('[AuthService] Erro no registro de estudante:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
+            throw error;
+        }
     },
 
     registerEnterprise: async (data: EnterpriseRegisterData): Promise<AuthResponse> => {
-        const response = await api.post<AuthResponse>("/auth/register/enterprise", data);
-
-        if (response.data.access_token) {
-            localStorage.setItem("access_token", response.data.access_token);
-        }
-        if (response.data.refresh_token) {
-            localStorage.setItem("refresh_token", response.data.refresh_token);
-        }
-
-        return response.data;
-    },
-
-    logout: async (): Promise<void> => {
         try {
-            await api.post("/auth/logout");
-        } catch (error) {
-            console.error("Erro ao fazer logout:", error);
-        } finally {
-            localStorage.removeItem("access_token");
-            localStorage.removeItem("refresh_token");
+            console.log('[AuthService] Registrando empresa:', data.email);
+
+            // Backend usa POST /auth e detecta automaticamente por CNPJ
+            // Nota: O backend não retorna token no registro, apenas os dados do usuário
+            const registerResponse = await api.post("/auth", data);
+            console.log('[AuthService] Empresa registrada com sucesso:', registerResponse.data);
+
+            // Fazer login automaticamente após o registro
+            console.log('[AuthService] Fazendo login automático após registro');
+            return await authService.login({ email: data.email, password: data.password });
+        } catch (error: any) {
+            console.error('[AuthService] Erro no registro de empresa:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
+            throw error;
         }
     },
 
-    refreshToken: async (): Promise<AuthResponse> => {
-        const refreshToken = localStorage.getItem("refresh_token");
-
-        if (!refreshToken) {
-            throw new Error("Refresh token não encontrado");
-        }
-
-        const response = await api.post<AuthResponse>("/auth/refresh", {
-            refresh_token: refreshToken,
-        });
-
-        if (response.data.access_token) {
-            localStorage.setItem("access_token", response.data.access_token);
-        }
-        if (response.data.refresh_token) {
-            localStorage.setItem("refresh_token", response.data.refresh_token);
-        }
-
-        return response.data;
+    logout: (): void => {
+        console.log('[AuthService] Fazendo logout');
+        // Logout apenas no frontend removendo tokens
+        localStorage.removeItem("access_token");
     },
 
     isAuthenticated: (): boolean => {
@@ -114,5 +114,40 @@ export const authService = {
     getToken: (): string | null => {
         if (typeof window === "undefined") return null;
         return localStorage.getItem("access_token");
+    },
+
+    // Decodifica o token JWT para extrair informações
+    decodeToken: (): { name: string; email: string; roles: string } | null => {
+        if (typeof window === "undefined") return null;
+
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+            console.log('[AuthService] Nenhum token encontrado para decodificar');
+            return null;
+        }
+
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            console.log('[AuthService] Token decodificado com sucesso:', {
+                name: payload.name,
+                email: payload.email,
+                roles: payload.roles
+            });
+            return {
+                name: payload.name,
+                email: payload.email,
+                roles: payload.roles
+            };
+        } catch (error) {
+            console.error('[AuthService] Erro ao decodificar token:', error);
+            return null;
+        }
+    },
+
+    getUserRole: (): "ROLE_STUDENT" | "ROLE_TEACHER" | "ROLE_ENTERPRISE" | null => {
+        const decoded = authService.decodeToken();
+        const role = decoded?.roles as "ROLE_STUDENT" | "ROLE_TEACHER" | "ROLE_ENTERPRISE" | null;
+        console.log('[AuthService] Role do usuário:', role);
+        return role;
     },
 };
