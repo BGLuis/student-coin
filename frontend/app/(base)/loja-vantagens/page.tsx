@@ -21,7 +21,7 @@ export default function LojaVantagens() {
     const [modalAberto, setModalAberto] = useState(false);
 
     // Saldo mockado do estudante
-    const saldoEstudante = 850;
+    const saldoEstudante = 100;
 
     // Categorias disponíveis
     const categorias = [
@@ -162,7 +162,7 @@ export default function LojaVantagens() {
     const vantagensFiltradas = vantagens.filter(vantagem => {
         const matchCategoria = categoriaFiltro === "Todas" || vantagem.categoria === categoriaFiltro;
         const matchBusca = vantagem.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          vantagem.empresa.toLowerCase().includes(searchTerm.toLowerCase());
+            vantagem.empresa.toLowerCase().includes(searchTerm.toLowerCase());
         return matchCategoria && matchBusca;
     });
 
@@ -178,12 +178,12 @@ export default function LojaVantagens() {
 
     const resgatar = () => {
         if (!vantagemSelecionada) return;
-        
+
         if (saldoEstudante < vantagemSelecionada.custo) {
             alert("Saldo insuficiente!");
             return;
         }
-        
+
         // Aqui seria a lógica de resgate
         console.log("Resgatando:", vantagemSelecionada);
         alert(`Vantagem "${vantagemSelecionada.nome}" resgatada com sucesso!`);
@@ -223,11 +223,10 @@ export default function LojaVantagens() {
                                 <button
                                     key={cat}
                                     onClick={() => setCategoriaFiltro(cat)}
-                                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                                        categoriaFiltro === cat
+                                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${categoriaFiltro === cat
                                             ? "bg-teal-500 text-white shadow-md"
                                             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                    }`}
+                                        }`}
                                 >
                                     {cat}
                                 </button>
@@ -279,15 +278,15 @@ export default function LojaVantagens() {
                                                     {vantagem.estoque} disponíveis
                                                 </span>
                                             </div>
-                                            
+
                                             <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[48px]">
                                                 {vantagem.nome}
                                             </h3>
-                                            
+
                                             <p className="text-sm text-gray-600 mb-4 line-clamp-2 min-h-[40px]">
                                                 {vantagem.descricao}
                                             </p>
-                                            
+
                                             <p className="text-xs text-gray-500 mb-3">
                                                 {vantagem.empresa}
                                             </p>
@@ -321,7 +320,7 @@ export default function LojaVantagens() {
             {/* Modal de Detalhes */}
             {modalAberto && vantagemSelecionada && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={fecharModal}>
-                    <div 
+                    <div
                         className="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     >
@@ -338,13 +337,13 @@ export default function LojaVantagens() {
                             <h2 className="text-3xl font-bold text-gray-900 mb-4">
                                 {vantagemSelecionada.nome}
                             </h2>
-                            
+
                             <div className="space-y-4 mb-6">
                                 <div>
                                     <p className="text-sm font-medium text-gray-500 mb-1">Descrição</p>
                                     <p className="text-gray-700">{vantagemSelecionada.descricao}</p>
                                 </div>
-                                
+
                                 <div>
                                     <p className="text-sm font-medium text-gray-500 mb-1">Empresa Parceira</p>
                                     <p className="text-gray-700">{vantagemSelecionada.empresa}</p>
