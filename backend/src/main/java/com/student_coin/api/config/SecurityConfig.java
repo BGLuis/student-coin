@@ -45,6 +45,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,
                                 "/auth/login", "/auth")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs", "/v3/api-docs/*", "/swagger-ui/*")
+                        .permitAll()
                         .requestMatchers(HttpMethod.PUT, "/account/reward/*")
                         .hasAnyAuthority(String.valueOf(Roles.ROLE_TEACHER))
                         .requestMatchers(HttpMethod.PUT, "/account/redeem/*")
