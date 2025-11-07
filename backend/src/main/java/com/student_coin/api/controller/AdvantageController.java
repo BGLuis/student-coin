@@ -12,9 +12,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/advantages")
@@ -45,11 +48,11 @@ public class AdvantageController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdvantageResponse> registerAdvantage(
             Authentication authentication,
-            @RequestBody @Valid AdvantageRequest advantage
-    ) {
+            @ModelAttribute @Valid AdvantageRequest advantage
+    ) throws IOException {
         AdvantageResponse response = this.advantageMapper.toResponse(
                 advantageService.register(
                         (Enterprise) authentication.getPrincipal(),

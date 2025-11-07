@@ -12,6 +12,20 @@ spring:
     port: ${SMTP_PORT}
     test-connection: true
 
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
+  batch:
+    jdbc:
+      platform:
+
+aws:
+  access-key: ${AWS_ACCESS_KEY_ID}
+  secret-key: ${AWS_SECRET_ACCESS_KEY}
+  region: ${AWS_REGION}
+  s3-url: ${S3_ENDPOINT_URL}
+
 jwt:
   key: ${JWT_KEY}
   algorithm: HmacSHA384

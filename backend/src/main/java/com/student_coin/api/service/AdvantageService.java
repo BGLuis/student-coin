@@ -1,5 +1,10 @@
 package com.student_coin.api.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
+import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.student_coin.api.dto.request.AdvantageRequest;
 import com.student_coin.api.entity.Advantage;
 import com.student_coin.api.entity.Enterprise;
@@ -10,6 +15,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -17,6 +26,8 @@ public class AdvantageService {
     private final AdvantageRepository advantageRepository;
 
     private final AdvantageMapper advantageMapper;
+
+    private final AmazonS3 s3Client;
 
     public Page<Advantage> findAll(Pageable filters) {
         return this.advantageRepository.findAll(filters);
@@ -28,10 +39,19 @@ public class AdvantageService {
         return advantage.getEnterprise();
     }
 
-    public Advantage register(Enterprise enterprise, AdvantageRequest advantageRequest) {
+    public Advantage register(Enterprise enterprise, AdvantageRequest advantageRequest) throws IOException {
+        String imageUrl = this.saveImage(UUID.randomUUID().toString(), advantageRequest.image());
+
         Advantage advantage = this.advantageMapper.toAdvantage(advantageRequest);
         advantage.setEnterprise(enterprise);
+        advantage.setImageUrl(imageUrl);
         return this.advantageRepository.save(advantage);
+    }
+
+    private String saveImage(String uuid, MultipartFile image) throws IOException {
+        InitiateMultipartUploadRequest initRequest = new InitiateMultipartUploadRequest("bucket", uuid);
+        s3Client.initiateMultipartUpload(initRequest);
+        return s3Client.getUrl("student-coin-bucket", uuid).toString();
     }
 
     public Advantage update(

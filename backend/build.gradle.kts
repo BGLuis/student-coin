@@ -38,6 +38,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("io.jsonwebtoken:jjwt-api:0.13.0")
+	implementation("com.amazonaws:aws-java-sdk-s3:1.11.163")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("org.postgresql:postgresql")
