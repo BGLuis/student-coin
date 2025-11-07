@@ -19,15 +19,13 @@ export default function GerenciarVantagensPage() {
             id: 1,
             nome: "Desconto em Livros",
             descricao: "20% de desconto em livros técnicos",
-            custo: 50,
-            imagem: "/image/placeholder.png"
+            custo: 50
         },
         {
             id: 2,
             nome: "Vale Café",
             descricao: "Vale de R$ 10 para café na cantina",
-            custo: 30,
-            imagem: "/image/placeholder.png"
+            custo: 30
         }
     ]);
 
