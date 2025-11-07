@@ -1,13 +1,32 @@
 spring:
-  application:
-    name: "Student Coin API"
-  jpa:
-    hibernate:
-      ddl-auto: update
-    database:
-      driverClassName: org.postgresql.Driver
+    application:
+        name: 'Student Coin API'
+    jpa:
+        hibernate:
+            ddl-auto: update
+        database:
+            driverClassName: org.postgresql.Driver
+
+    mail:
+        host: ${SMTP_HOST}
+        port: ${SMTP_PORT}
+        test-connection: true
+        properties:
+            mail:
+                smtp:
+                    auth: false
+                    starttls:
+                        enable: false
+
+    thymeleaf:
+        prefix: classpath:/templates/
+        suffix: .html
+        mode: HTML
+        encoding: UTF-8
+        cache: false
+
 jwt:
-  key: ${JWT_KEY}
-  algorithm: HmacSHA384
-  issuer: student-coin
-  expires-in: 24h
+    key: ${JWT_KEY}
+    algorithm: HmacSHA384
+    issuer: student-coin
+    expires-in: 24h

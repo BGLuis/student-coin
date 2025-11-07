@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<body>
+<div th:replace="~{email/base :: layout}">
+    <div th:fragment="content">
+        <div class="greeting">
+            Parabéns, <span th:text="${studentName}">Aluno</span>! 🎉
+        </div>
+
+        <div class="content-body">
+            <p>Você recebeu um reconhecimento especial!</p>
+            
+            <p>O(A) professor(a) <strong th:text="${teacherName}">Nome do Professor</strong> 
+            reconheceu seu mérito e enviou moedas para você.</p>
+        </div>
+
+        <div class="amount">
+            + <span th:text="${amount}">0</span> moedas
+        </div>
+
+        <div class="info-box">
+            <h3 style="color: #0f766e;">📝 Detalhes da Transação</h3>
+            <p><strong>Motivo:</strong> <span th:text="${reason}">Reconhecimento de mérito</span></p>
+            <p><strong>Data:</strong> <span th:text="${date}">01/01/2024</span></p>
+            <p><strong>Novo Saldo:</strong> <span th:text="${newBalance}">0</span> moedas</p>
+        </div>
+
+        <div class="content-body">
+            <p>
+                Continue se destacando! Cada moeda é um reconhecimento do seu esforço e dedicação.
+                Você pode acumular moedas e trocá-las por vantagens incríveis em nossa plataforma.
+            </p>
+        </div>
+
+        <div class="button-container">
+            <a href="http://localhost:3000/meu-extrato" class="button">
+                Ver Meu Extrato
+            </a>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="content-body" style="font-size: 14px; color: #6b7280;">
+            <p>
+                💡 <strong>Dica:</strong> Confira a Loja de Vantagens para ver o que você pode resgatar com suas moedas!
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

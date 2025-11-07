@@ -1,11 +1,14 @@
 FROM eclipse-temurin:21-jdk
 
 WORKDIR /api
-COPY .mvn/ ./.mvn
-COPY mvnw pom.xml ./
+COPY scripts/ ./scripts
+RUN chmod +x ./scripts/*.sh
 
-RUN ./mvnw dependency:go-offline
+COPY gradle ./gradle
+COPY gradlew *.gradle.kts ./
+
+RUN ./gradlew clean build
 
 COPY ./src ./
 
-CMD [ "./mvnw", "spring-boot:run" ]
+ENTRYPOINT ["./scripts/start.sh"]

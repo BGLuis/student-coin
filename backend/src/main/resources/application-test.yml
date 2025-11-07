@@ -1,0 +1,5 @@
+spring:
+  mail:
+    test-connection: false
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
