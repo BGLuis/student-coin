@@ -1,7 +1,6 @@
 package com.student_coin.api.service;
 
 import com.student_coin.api.dto.AdvantagesDTO;
-import com.student_coin.api.dto.request.AdvantageRequest;
 import com.student_coin.api.dto.request.EnterpriseRequest;
 import com.student_coin.api.dto.response.EnterpriseResponse;
 import com.student_coin.api.entity.Account;
@@ -80,13 +79,7 @@ public class EnterpriseService {
         return enterpriseMapper.toEnterpriseResponse(enterprise);
     }
 
-    public Advantage registerAdvantage(Enterprise enterprise, AdvantageRequest advantageRequest) {
-        Advantage advantage = this.advantageMapper.toAdvantage(advantageRequest);
-        advantage.setEnterprise(enterprise);
-        return this.advantageRepository.save(advantage);
-    }
-
-    public AdvantagesDTO findAdvantages(Pageable filters, Long enterpriseId) {
+    public AdvantagesDTO findAllAdvantages(Pageable filters, Long enterpriseId) {
         Enterprise enterprise = this.findById(enterpriseId);
         Page<Advantage> advantages = this.advantageRepository.findByEnterprise(filters, enterprise);
 
@@ -94,32 +87,5 @@ public class EnterpriseService {
                 enterprise,
                 advantages
         );
-    }
-
-    public Advantage updateAdvantage(
-            Long advantageId,
-            AdvantageRequest advantageRequest,
-            Enterprise enterprise
-    ) {
-        Advantage advantage = this.advantageRepository.findById(advantageId)
-                .orElseThrow(() -> new EntityNotFoundException("Advantage not found"));
-
-        if (!advantage.getEnterprise().getId().equals(enterprise.getId())) {
-            throw new SecurityException("You do not have permission to update this advantage");
-        }
-
-        this.advantageMapper.toAdvantage(advantageRequest, advantage);
-        return this.advantageRepository.save(advantage);
-    }
-
-    public void deleteAdvantage(Long advantageId, Enterprise enterprise) {
-        Advantage advantage = this.advantageRepository.findById(advantageId)
-                .orElseThrow(() -> new EntityNotFoundException("Advantage not found"));
-
-        if (!advantage.getEnterprise().getId().equals(enterprise.getId())) {
-            throw new SecurityException("You do not have permission to delete this advantage");
-        }
-
-        this.advantageRepository.delete(advantage);
     }
 }
