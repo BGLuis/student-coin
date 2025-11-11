@@ -6,6 +6,7 @@ import com.student_coin.api.entity.Student;
 import com.student_coin.api.mapper.StudentMapper;
 import com.student_coin.api.service.StudentService;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,10 @@ public class StudentController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<StudentResponse> update(@PathVariable("id") Long id, @RequestBody StudentRequest data) {
+    public ResponseEntity<StudentResponse> update(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody StudentRequest data
+    ) {
         Student student = studentService.findById(id);
         return ResponseEntity.ok().body(studentService.update(student, data));
     }

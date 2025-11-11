@@ -30,6 +30,7 @@ public class StudentService {
     private AccountRepository accountRepository;
     private StudentMapper studentMapper;
     private UpdateStudentMapper updateStudentMapper;
+    private EmailService emailService;
 
     @Transactional
     public StudentResponse register(@Valid StudentRequest register) {
@@ -48,6 +49,10 @@ public class StudentService {
         student.setAccount(account);
 
         Student data = studentRepository.save(student);
+
+        // Enviar email de boas-vindas
+        emailService.sendWelcomeEmail(data.getEmail(), data.getName(), "Aluno");
+
         return studentMapper.toStudentResponse(data);
     }
 

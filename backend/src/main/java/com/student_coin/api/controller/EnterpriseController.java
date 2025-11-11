@@ -8,6 +8,7 @@ import com.student_coin.api.mapper.AdvantageMapper;
 import com.student_coin.api.mapper.EnterpriseMapper;
 import com.student_coin.api.service.EnterpriseService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
@@ -36,7 +37,10 @@ public class EnterpriseController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<EnterpriseResponse> update(@PathVariable("id") Long id, @RequestBody EnterpriseRequest data) {
+    public ResponseEntity<EnterpriseResponse> update(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody EnterpriseRequest data
+    ) {
             Enterprise enterprise = enterpriseService.findById(id);
             return ResponseEntity.ok().body(enterpriseService.update(enterprise, data));
     }

@@ -40,11 +40,15 @@ services:
     ports:
       - "${APP_PORT}:3000"
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app:cached
       - /app/node_modules
       - /app/.next
     environment:
+      - NODE_ENV=development
       - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+      - NEXT_TELEMETRY_DISABLED=1
+      - TURBOPACK_WATCH_POLL=1000
     develop:
       watch:
         - action: sync

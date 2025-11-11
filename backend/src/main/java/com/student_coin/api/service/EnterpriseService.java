@@ -7,7 +7,6 @@ import com.student_coin.api.entity.Account;
 import com.student_coin.api.entity.Advantage;
 import com.student_coin.api.entity.Enterprise;
 import com.student_coin.api.enums.Roles;
-import com.student_coin.api.mapper.AdvantageMapper;
 import com.student_coin.api.mapper.EnterpriseListMapper;
 import com.student_coin.api.mapper.EnterpriseMapper;
 import com.student_coin.api.mapper.UpdateEnterpriseMapper;
@@ -40,7 +39,7 @@ public class EnterpriseService {
     private EnterpriseMapper enterpriseMapper;
     private EnterpriseListMapper listMapper;
     private UpdateEnterpriseMapper updateEnterpriseMapper;
-    private AdvantageMapper advantageMapper;
+    private EmailService emailService;
 
     @Transactional
     public EnterpriseResponse register(@Valid EnterpriseRequest register) {
@@ -55,6 +54,9 @@ public class EnterpriseService {
         enterprise.setAccount(account);
 
         Enterprise data = enterpriseRepository.save(enterprise);
+
+        emailService.sendWelcomeEmail(data.getEmail(), data.getName(), "Empresa");
+
         return enterpriseMapper.toEnterpriseResponse(data);
     }
 
@@ -72,7 +74,7 @@ public class EnterpriseService {
 
     public EnterpriseResponse update(Enterprise enterprise, EnterpriseRequest data) {
         updateEnterpriseMapper.updateEnterpriseFromRequest(data, enterprise);
-        if(data.password() != null) {
+        if (data.password() != null) {
             enterprise.setPassword(encoder.encode(data.password()));
         }
         enterpriseRepository.save(enterprise);
@@ -85,7 +87,6 @@ public class EnterpriseService {
 
         return new AdvantagesDTO(
                 enterprise,
-                advantages
-        );
+                advantages);
     }
 }

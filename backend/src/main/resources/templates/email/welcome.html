@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org"
+	lang="pt-BR"
+>
+	<body>
+		<div th:replace="~{email/base :: layout}">
+			<div th:fragment="content">
+				<div class="greeting">
+					Olá, <span th:text="${name}">Usuário</span>! 👋
+				</div>
+
+				<div class="content-body">
+					<p>
+						Seja muito bem-vindo(a) ao
+						<strong>Student Coin</strong>!
+					</p>
+
+					<p>
+						É um prazer tê-lo(a) conosco como
+						<span
+							class="highlight"
+							th:text="${role}"
+							>usuário</span
+						>. Nossa plataforma foi criada para reconhecer e
+						recompensar o mérito estudantil através de um sistema
+						inovador de moedas digitais.
+					</p>
+
+					<div class="info-box">
+						<h3>🎯 Como funciona?</h3>
+						<p th:if="${role == 'Aluno'}">
+							• Receba moedas de seus professores por
+							reconhecimento de mérito<br />
+							• Acumule moedas através de bom desempenho e
+							participação<br />
+							• Troque suas moedas por vantagens oferecidas por
+							empresas parceiras
+						</p>
+						<p th:if="${role == 'Professor'}">
+							• Distribua moedas para reconhecer o mérito de seus
+							alunos<br />
+							• Categorize os tipos de reconhecimento<br />
+							• Acompanhe o histórico de todas as suas transações
+						</p>
+						<p th:if="${role == 'Empresa'}">
+							• Cadastre vantagens e benefícios para os
+							estudantes<br />
+							• Defina o custo em moedas para cada vantagem<br />
+							• Acompanhe os resgates realizados pelos alunos
+						</p>
+					</div>
+
+					<p>
+						Seu cadastro foi realizado com sucesso! Agora você pode
+						acessar a plataforma e começar a aproveitar todos os
+						recursos disponíveis.
+					</p>
+				</div>
+
+				<div class="button-container">
+					<a
+						th:href="${loginUrl}"
+						class="button"
+					>
+						Acessar Plataforma
+					</a>
+				</div>
+
+				<div class="divider"></div>
+
+				<div
+					class="content-body"
+					style="font-size: 14px; color: #6b7280"
+				>
+					<p>
+						💡 <strong>Dica:</strong> Complete seu perfil para ter
+						uma experiência ainda melhor na plataforma!
+					</p>
+					<p style="margin-top: 15px">
+						Se tiver alguma dúvida, nossa equipe de suporte está
+						sempre disponível para ajudá-lo(a).
+					</p>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
