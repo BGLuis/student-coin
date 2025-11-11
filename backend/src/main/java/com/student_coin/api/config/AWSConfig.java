@@ -8,7 +8,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -16,6 +15,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
+import software.amazon.awssdk.services.s3.S3Uri;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,8 +38,14 @@ public class AWSConfig {
     @NotEmpty
     private String secretKey;
 
-    private String region = Regions.US_EAST_1.getName();
-    private Optional<String> s3Url = Optional.empty();
+
+    private Region region = Region.US_EAST_1;
+
+    @NotEmpty
+    private String s3Url;
+
+    @NotEmpty
+    private String bucketName;
 
     public AWSCredentials credentials() {
         return new BasicAWSCredentials(
@@ -44,21 +55,18 @@ public class AWSConfig {
     }
 
     @Bean
-    public AmazonS3 s3Client() {
-        AmazonS3ClientBuilder builder = AmazonS3ClientBuilder
-                .standard();
-        if (s3Url.isPresent()) {builder.withEndpointConfiguration(
-                    new AwsClientBuilder.EndpointConfiguration(
-                            s3Url.get(),
-                            this.region
-                    )
-            );
-            builder.enablePathStyleAccess();
-        } else {
-            builder.withRegion(this.region);
-        }
-        return builder
-                .withCredentials(new AWSStaticCredentialsProvider(this.credentials()))
+    public S3Client s3Client() {
+        AwsBasicCredentials credentials = AwsBasicCredentials.create(
+            accessKey,
+            secretKey
+        );
+
+        return S3Client.builder()
+                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                .forcePathStyle(true)
+                .endpointOverride(URI.create(String.valueOf(s3Url)))
+                .region(region)
+                .serviceConfiguration(S3Configuration.builder().build())
                 .build();
     }
 }

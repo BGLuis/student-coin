@@ -27,7 +27,9 @@ public class AdvantageService {
 
     private final AdvantageMapper advantageMapper;
 
-    private final AmazonS3 s3Client;
+
+
+    private final StorageImageFileService storageImageFileService;
 
     public Page<Advantage> findAll(Pageable filters) {
         return this.advantageRepository.findAll(filters);
@@ -48,10 +50,12 @@ public class AdvantageService {
         return this.advantageRepository.save(advantage);
     }
 
-    private String saveImage(String uuid, MultipartFile image) throws IOException {
-        InitiateMultipartUploadRequest initRequest = new InitiateMultipartUploadRequest("bucket", uuid);
-        s3Client.initiateMultipartUpload(initRequest);
-        return s3Client.getUrl("student-coin-bucket", uuid).toString();
+    private String saveImage(String uuid, MultipartFile image) {
+        return this.storageImageFileService.uploadFile(
+                image,
+                "advantages/",
+                uuid + "-" + image.getOriginalFilename()
+        );
     }
 
     public Advantage update(

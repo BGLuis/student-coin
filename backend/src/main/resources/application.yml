@@ -25,6 +25,7 @@ aws:
   secret-key: ${AWS_SECRET_ACCESS_KEY}
   region: ${AWS_REGION}
   s3-url: ${S3_ENDPOINT_URL}
+  bucket-name: ${S3_BUCKET_NAME}
 
 jwt:
   key: ${JWT_KEY}
