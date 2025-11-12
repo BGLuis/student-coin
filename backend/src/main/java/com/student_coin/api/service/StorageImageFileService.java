@@ -24,15 +24,15 @@ public class StorageImageFileService {
 
     private final AWSConfig awsConfig;
 
-    public String uploadFile(MultipartFile multipartFile, String entityFile, String fileUri) {
-        String fileName = entityFile + fileUri;
+    public String uploadFile(MultipartFile multipartFile, String uuid) {
+        String fileName = uuid;
         File fileObject = convertMultipartFileToFile(multipartFile);
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(awsConfig.getBucketName())
                 .key(fileName)
                 .build();
         s3Client.putObject(putObjectRequest, fileObject.toPath());
-        return awsConfig.getBucketName() + "/" + awsConfig.getBucketName() + "/" + fileName;
+        return awsConfig.getImageEndpointUrl() + "/" + awsConfig.getBucketName() + "/" + fileName;
     }
 
     private File convertMultipartFileToFile(MultipartFile multipartFile) {
@@ -44,4 +44,6 @@ public class StorageImageFileService {
         }
         return convertedFile;
     }
+
+
 }

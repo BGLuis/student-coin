@@ -1,10 +1,5 @@
 package com.student_coin.api.service;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
-import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectResult;
 import com.student_coin.api.dto.request.AdvantageRequest;
 import com.student_coin.api.entity.Advantage;
 import com.student_coin.api.entity.Enterprise;
@@ -53,8 +48,7 @@ public class AdvantageService {
     private String saveImage(String uuid, MultipartFile image) {
         return this.storageImageFileService.uploadFile(
                 image,
-                "advantages/",
-                uuid + "-" + image.getOriginalFilename()
+                uuid
         );
     }
 
@@ -83,5 +77,10 @@ public class AdvantageService {
         }
 
         this.advantageRepository.delete(advantage);
+    }
+
+    public Advantage findAdvantageById(Long advantageId) {
+        return this.advantageRepository.findById(advantageId)
+                .orElseThrow(() -> new EntityNotFoundException("Advantage not found"));
     }
 }

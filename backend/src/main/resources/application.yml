@@ -25,13 +25,13 @@ spring:
         encoding: UTF-8
         cache: false
 
-  servlet:
-    multipart:
-      max-file-size: 1GB
-      max-request-size: 1GB
-  batch:
-    jdbc:
-      platform:
+    servlet:
+      multipart:
+        max-file-size: 1GB
+        max-request-size: 1GB
+    batch:
+      jdbc:
+        platform:
 
 aws:
   access-key: ${AWS_ACCESS_KEY_ID}
@@ -39,6 +39,7 @@ aws:
   region: ${AWS_REGION}
   s3-url: ${S3_ENDPOINT_URL}
   bucket-name: ${S3_BUCKET_NAME}
+  image-endpoint-url: ${S3_IMAGE_ENDPOINT_URL}
 
 jwt:
     key: ${JWT_KEY}
