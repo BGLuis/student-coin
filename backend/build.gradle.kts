@@ -39,7 +39,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("io.jsonwebtoken:jjwt-api:0.13.0")
-	implementation("com.amazonaws:aws-java-sdk-s3:1.11.163")
     implementation("software.amazon.awssdk:s3:2.25.40")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
 	compileOnly("org.projectlombok:lombok")
