@@ -47,7 +47,7 @@ export const Header: React.FC = () => {
                         { href: '/meu-extrato', label: 'Meu Extrato' }
                     ],
                     showCoins: true,
-                    coinBalance: 100
+                    coinBalance: 1000
                 };
             case 'professor':
                 return {
