@@ -12,8 +12,12 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @DiscriminatorValue(value = "REDEEM")
 public class TransactionRedeem extends Transaction {
+    @Column(unique = true)
     private String coupon;
 
     @Column(updatable = false)
-    private LocalDateTime expiredAt;
+    private LocalDateTime expiresAt = LocalDateTime.now().plusDays(30);
+
+    private LocalDateTime usedAt;
+
 }

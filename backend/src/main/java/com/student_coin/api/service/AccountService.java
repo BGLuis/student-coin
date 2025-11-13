@@ -4,10 +4,11 @@ import com.student_coin.api.dto.BalanceDTO;
 import com.student_coin.api.dto.request.BalanceRequest;
 import com.student_coin.api.dto.request.RedeemTransactionRequest;
 import com.student_coin.api.dto.request.RewardTransactionRequest;
-import com.student_coin.api.dto.request.TransactionRequest;
 import com.student_coin.api.entity.*;
 import com.student_coin.api.exception.NotEnoughBalanceException;
 import com.student_coin.api.repository.*;
+import com.student_coin.api.utils.Base62;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -31,8 +31,12 @@ public class AccountService {
     private final AdvantageRepository advantageRepository;
     private final EmailService emailService;
     private final EntityManager entityManager;
+    private final Base62 base62Util;
 
-    private void setGenericTransactionValues(Transaction transaction, Person origin, Person destination, Integer value) {
+    public static final Integer COUPON_SIZE = 8;
+
+    private void setGenericTransactionValues(Transaction transaction, Person origin, Person destination,
+            Integer value) {
         transaction.setOrigin(origin.getAccount());
         transaction.setDestination(destination.getAccount());
         transaction.setValue(value);
@@ -76,77 +80,56 @@ public class AccountService {
     }
 
     public RewardTransaction rewardStudent(Teacher teacher, String uuid, RewardTransactionRequest reward) {
-        return (RewardTransaction) this.transaction(teacher, uuid, reward);
+        teacher = entityManager.merge(teacher);
+        Student student = studentRepository.findById(reward.studentId()).orElseThrow(
+                () -> new EntityNotFoundException("Student with id: " + reward.studentId() + " not found"));
+        Optional<RewardTransaction> optionalTransaction = rewardTransactionRepository.findByUuid(uuid);
+        RewardTransaction rewardTransaction = optionalTransaction.map(this::rollbackTransaction)
+                .orElseGet(() -> generateDefaultTransaction(uuid, RewardTransaction.class));
+        setGenericTransactionValues(rewardTransaction, teacher, student, reward.value());
+        rewardTransaction.setMotive(reward.motive());
+        rewardTransaction = this.validateProcess(rewardTransaction);
+
+        emailService.sendCoinsReceivedEmail(student.getEmail(), student.getName(), reward.value(), teacher.getName(),
+                reward.motive(), "Reward");
+        return this.rewardTransactionRepository.save(rewardTransaction);
     }
 
-     public TransactionRedeem redeemAdvantage(Student student, String uuid, RedeemTransactionRequest redeem) {
-        return (TransactionRedeem) this.transaction(student, uuid, redeem);
-     }
+    public TransactionRedeem redeemAdvantage(Student student, String uuid, RedeemTransactionRequest redeem) {
+        student = entityManager.merge(student);
+        Advantage advantage = advantageRepository.findById(redeem.advantageId()).orElseThrow(
+                () -> new EntityNotFoundException("Advantage with id: " + redeem.advantageId() + " not found"));
+        Enterprise enterprise = enterpriseRepository.findEnterpriseByAdvantagesContains(advantage).orElseThrow(
+                () -> new EntityNotFoundException(
+                        "Enterprise with advantage id: " + redeem.advantageId() + " not found"));
+        Optional<TransactionRedeem> optionalTransaction = transactionRedeemRepository.findByUuid(uuid);
+        TransactionRedeem redeemTransaction = optionalTransaction.map(this::rollbackTransaction)
+                .orElseGet(() -> generateDefaultTransaction(uuid, TransactionRedeem.class));
+        setGenericTransactionValues(redeemTransaction, student, enterprise, advantage.getPrice());
+        redeemTransaction.setCoupon(this.base62Util.random(COUPON_SIZE));
+        redeemTransaction = this.validateProcess(redeemTransaction);
 
-
-    public Transaction transaction(Person person, String uuid, TransactionRequest transactionRequest) {
-
-        Transaction transaction;
-        if (transactionRequest instanceof RewardTransactionRequest reward) {
-            if (!(person instanceof Teacher)) {
-                throw new SecurityException("Only Teachers can reward students.");
-            }
-            Teacher teacher = (Teacher) entityManager.merge(person);
-            Student student = studentRepository.findById(reward.studentId()).orElseThrow(
-                    () -> new EntityNotFoundException("Student with id: " + reward.studentId() + " not found")
-            );
-            Optional<RewardTransaction> optionalTransaction = rewardTransactionRepository.findByUuid(uuid);
-            RewardTransaction rewardTransaction = optionalTransaction.map(this::rollbackTransaction).orElseGet(() -> generateDefaultTransaction(uuid, RewardTransaction.class));
-            setGenericTransactionValues(rewardTransaction, teacher, student, reward.value());
-            rewardTransaction.setMotive(reward.motive());
-            transaction = rewardTransaction;
-            emailService.sendCoinsReceivedEmail(student.getEmail(), student.getName(), reward.value(), teacher.getName(), reward.motive(), "Reward");
-        }
-        else if (transactionRequest instanceof RedeemTransactionRequest redeem) {
-            if (!(person instanceof Student)) {
-                throw new SecurityException("Only Students can redeem advantages.");
-            }
-            Student student = (Student) entityManager.merge(person);
-            Advantage advantage = advantageRepository.findById(redeem.advantageId()).orElseThrow(
-                    () -> new EntityNotFoundException("Advantage with id: " + redeem.advantageId() + " not found")
-            );
-            Enterprise enterprise = enterpriseRepository.findEnterpriseByAdvantagesContains(advantage).orElseThrow(
-                    () -> new EntityNotFoundException("Enterprise with advantage id: " + redeem.advantageId() + " not found")
-            );
-            Optional<TransactionRedeem> optionalTransaction = transactionRedeemRepository.findByUuid(uuid);
-            TransactionRedeem redeemTransaction = optionalTransaction.map(this::rollbackTransaction).orElseGet(() -> generateDefaultTransaction(uuid, TransactionRedeem.class));
-            setGenericTransactionValues(redeemTransaction, student, enterprise, advantage.getPrice());
-            redeemTransaction.setCoupon("Exemplo de cupom");
-            redeemTransaction.setExpiredAt(LocalDateTime.now().plusDays(30));
-            transaction = redeemTransaction;
-            emailService.sendAdvantageRedeemedEmail(student.getEmail(), student.getName(), advantage.getDescription(), advantage.getPrice(), student.getAccount().getBalance(), redeemTransaction.getCoupon());
-        }
-        else {
-            throw new IllegalArgumentException("Unsupported transaction type: " + transactionRequest.getClass().getName());
-        }
-        return this.transactionRepository.save(this.validateProcess(transaction));
+        emailService.sendAdvantageRedeemedEmail(student.getEmail(), student.getName(), advantage.getDescription(),
+                advantage.getPrice(), student.getAccount().getBalance(), redeemTransaction.getCoupon());
+        return this.transactionRedeemRepository.save(redeemTransaction);
     }
-
 
     @Transactional(readOnly = true)
     public BalanceDTO getBalance(
             Person target,
-            BalanceRequest filters
-    ) {
+            BalanceRequest filters) {
         Page<Transaction> transactions = this.transactionRepository.findAllByDestination_IdOrOrigin_Id(
                 target.getId(),
                 target.getId(),
-                filters.pageable()
-        ).map(transaction -> {
-            if (transaction.getOrigin().equals(target.getAccount())) {
-                transaction.setValue(-transaction.getValue());
-            }
-            return transaction;
-        });
+                filters.pageable()).map(transaction -> {
+                    if (transaction.getOrigin().equals(target.getAccount())) {
+                        transaction.setValue(-transaction.getValue());
+                    }
+                    return transaction;
+                });
 
         return new BalanceDTO(
                 target.getAccount().getBalance(),
-                transactions
-        );
+                transactions);
     }
 }
