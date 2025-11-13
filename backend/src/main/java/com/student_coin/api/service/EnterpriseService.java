@@ -45,19 +45,6 @@ public class EnterpriseService {
     private TeacherRepository teacherRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private void mockTeacher() {
-        Account account = new Account();
-        account.setBalance(1000);
-
-        Teacher teacher = new Teacher();
-        teacher.setName("Mock Professor");
-        teacher.setEmail("teacher@mock.com");
-        teacher.setPassword(passwordEncoder.encode("12345678"));
-        teacher.setRole(Roles.ROLE_TEACHER);
-        teacher.setAccount(account);
-        teacherRepository.save(teacher);
-    }
-
     @Transactional
     public EnterpriseResponse register(@Valid EnterpriseRequest register) {
         Enterprise enterprise = new Enterprise();
@@ -73,7 +60,6 @@ public class EnterpriseService {
         Enterprise data = enterpriseRepository.save(enterprise);
 
         emailService.sendWelcomeEmail(data.getEmail(), data.getName(), "Empresa");
-        mockTeacher();
         return enterpriseMapper.toEnterpriseResponse(data);
     }
 
