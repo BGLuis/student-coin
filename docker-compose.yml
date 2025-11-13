@@ -79,8 +79,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
-      SPRING_BOOT_DEVTOOLS_RESTART_ENABLED: "true"
-      SPRING_BOOT_DEVTOOLS_RESTART_TRIGGER_FILE: "pom.xml"
+      SPRING_PROFILES_ACTIVE: development
     depends_on:
       - db
       - localstack

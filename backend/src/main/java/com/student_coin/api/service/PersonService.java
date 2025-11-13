@@ -34,15 +34,15 @@ public class PersonService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        Optional<Student> student = studentRepository.findStudentByEmail(name);
+        Optional<Student> student = studentRepository.findByEmail(name);
         if (student.isPresent()) {
             return student.get();
         }
-        Optional<Teacher> teacher = teacherRepository.findTeacherByEmail(name);
+        Optional<Teacher> teacher = teacherRepository.findByEmail(name);
         if (teacher.isPresent()) {
             return teacher.get();
         }
-        Optional<? extends UserDetails> enterprise = enterpriseRepository.findEnterpriseByEmail(name);
+        Optional<? extends UserDetails> enterprise = enterpriseRepository.findByEmail(name);
         if (enterprise.isPresent()) {
             return enterprise.get();
         }
