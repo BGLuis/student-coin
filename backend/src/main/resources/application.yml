@@ -1,48 +1,47 @@
 spring:
-    application:
-        name: 'Student Coin API'
-    jpa:
-        hibernate:
-            ddl-auto: update
-        database:
-            driverClassName: org.postgresql.Driver
+  application:
+    name: "Student Coin API"
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database:
+      driverClassName: org.postgresql.Driver
 
-    mail:
-        host: ${SMTP_HOST}
-        port: ${SMTP_PORT}
-        test-connection: true
-        properties:
-            mail:
-                smtp:
-                    auth: false
-                    starttls:
-                        enable: false
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
 
-    thymeleaf:
-        prefix: classpath:/templates/
-        suffix: .html
-        mode: HTML
-        encoding: UTF-8
-        cache: false
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
 
-    servlet:
-      multipart:
-        max-file-size: 1GB
-        max-request-size: 1GB
-    batch:
-      jdbc:
-        platform:
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
+  batch:
+    jdbc:
+      platform:
 
 aws:
   access-key: ${AWS_ACCESS_KEY_ID}
   secret-key: ${AWS_SECRET_ACCESS_KEY}
   region: ${AWS_REGION}
   s3-url: ${S3_ENDPOINT_URL}
-  bucket-name: ${S3_BUCKET_NAME}
-  image-endpoint-url: ${S3_IMAGE_ENDPOINT_URL}
+  cdn-url: ${CDN_ENDPOINT_URL}
 
 jwt:
-    key: ${JWT_KEY}
-    algorithm: HmacSHA384
-    issuer: student-coin
-    expires-in: 24h
+  key: ${JWT_KEY}
+  algorithm: HmacSHA384
+  issuer: student-coin
+  expires-in: 24h

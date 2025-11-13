@@ -5,11 +5,11 @@ set -e
 cleanup() {
     echo "Caught signal, shutting down gracefully..."
 
-    if [ -z $COMPILE_PID ]; then
+    if [ ! -z $COMPILE_PID ]; then
         echo "Stopping continuous build (PID: $COMPILE_PID)..."
         kill -SIGTERM "$COMPILE_PID"
     fi
-    if [ -z $RUN_PID ]; then
+    if [ ! -z $RUN_PID ]; then
         echo "Stopping Spring Boot application (PID: $RUN_PID)..."
         kill -SIGTERM "$RUN_PID"
     fi

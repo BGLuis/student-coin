@@ -3,6 +3,7 @@ package com.student_coin.api.service;
 import com.student_coin.api.dto.request.AdvantageRequest;
 import com.student_coin.api.entity.Advantage;
 import com.student_coin.api.entity.Enterprise;
+import com.student_coin.api.enums.Bucket;
 import com.student_coin.api.mapper.AdvantageMapper;
 import com.student_coin.api.repository.AdvantageRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,9 +23,7 @@ public class AdvantageService {
 
     private final AdvantageMapper advantageMapper;
 
-
-
-    private final StorageImageFileService storageImageFileService;
+    private final FileService fileService;
 
     public Page<Advantage> findAll(Pageable filters) {
         return this.advantageRepository.findAll(filters);
@@ -46,17 +45,16 @@ public class AdvantageService {
     }
 
     private String saveImage(String uuid, MultipartFile image) {
-        return this.storageImageFileService.uploadFile(
+        return this.fileService.uploadFile(
                 image,
-                uuid
-        );
+                uuid,
+                Bucket.ADVANTAGE_IMAGE);
     }
 
     public Advantage update(
             Long advantageId,
             AdvantageRequest advantageRequest,
-            Enterprise enterprise
-    ) {
+            Enterprise enterprise) {
         Advantage advantage = this.advantageRepository.findById(advantageId)
                 .orElseThrow(() -> new EntityNotFoundException("Advantage not found"));
 

@@ -10,10 +10,6 @@ import org.springframework.validation.annotation.Validated;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.S3Configuration;
-
-import java.net.URI;
 
 @Validated
 @ConfigurationProperties(prefix = "aws")
@@ -33,28 +29,11 @@ public class AWSConfig {
     private String s3Url;
 
     @NotEmpty
-    private String bucketName;
-
-    @NotEmpty
-    private String imageEndpointUrl;
-
-
+    private String cdnUrl;
 
     @Bean
     public StaticCredentialsProvider credentialsProvider() {
         AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
         return StaticCredentialsProvider.create(credentials);
     }
-
-    @Bean
-    public S3Client s3Client() {
-        return S3Client.builder()
-                .credentialsProvider(credentialsProvider())
-                .forcePathStyle(true)
-                .endpointOverride(URI.create(String.valueOf(s3Url)))
-                .region(region)
-                .serviceConfiguration(S3Configuration.builder().build())
-                .build();
-    }
-
 }
