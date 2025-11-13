@@ -27,11 +27,15 @@ public class DataSeeder implements CommandLineRunner {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final String mockStudentEmail = "student@mock.com";
+    private final String mockTeacherEmail = "teacher@mock.com";
+    private final String mockEnterpriseEmail = "enterprise@mock.com";
+
     private void mockStudent() {
         Account account = new Account();
         Student student = new Student();
         student.setName("Mock Aluno");
-        student.setEmail("student@mock.com");
+        student.setEmail(mockStudentEmail);
         student.setPassword(passwordEncoder.encode("12345678"));
         student.setCpf("12345678901");
         student.setRg("1234567");
@@ -49,7 +53,7 @@ public class DataSeeder implements CommandLineRunner {
 
         Teacher teacher = new Teacher();
         teacher.setName("Mock Professor");
-        teacher.setEmail("teacher@mock.com");
+        teacher.setEmail(mockTeacherEmail);
         teacher.setPassword(passwordEncoder.encode("12345678"));
         teacher.setRole(Roles.ROLE_TEACHER);
         teacher.setAccount(account);
@@ -60,7 +64,7 @@ public class DataSeeder implements CommandLineRunner {
         Account account = new Account();
         Enterprise enterprise = new Enterprise();
         enterprise.setName("Mock Empresa");
-        enterprise.setEmail("enterprise@mock.com");
+        enterprise.setEmail(mockEnterpriseEmail);
         enterprise.setPassword(passwordEncoder.encode("12345678"));
         enterprise.setCnpj("12345678000199");
         enterprise.setRole(Roles.ROLE_ENTERPRISE);
@@ -70,11 +74,11 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (this.enterpriseRepository.count() == 0)
+        if (this.enterpriseRepository.findByEmail(mockEnterpriseEmail).isEmpty())
             this.mockEnterprise();
-        if (this.teacherRepository.count() == 0)
+        if (this.teacherRepository.findByEmail(mockTeacherEmail).isEmpty())
             this.mockTeacher();
-        if (this.studentRepository.count() == 0)
+        if (this.studentRepository.findByEmail(mockStudentEmail).isEmpty())
             this.mockStudent();
     }
 }
