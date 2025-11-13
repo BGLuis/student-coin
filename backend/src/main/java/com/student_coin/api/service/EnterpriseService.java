@@ -6,6 +6,7 @@ import com.student_coin.api.dto.response.EnterpriseResponse;
 import com.student_coin.api.entity.Account;
 import com.student_coin.api.entity.Advantage;
 import com.student_coin.api.entity.Enterprise;
+import com.student_coin.api.entity.Teacher;
 import com.student_coin.api.enums.Roles;
 import com.student_coin.api.mapper.EnterpriseListMapper;
 import com.student_coin.api.mapper.EnterpriseMapper;
@@ -13,6 +14,7 @@ import com.student_coin.api.mapper.UpdateEnterpriseMapper;
 import com.student_coin.api.repository.AccountRepository;
 import com.student_coin.api.repository.AdvantageRepository;
 import com.student_coin.api.repository.EnterpriseRepository;
+import com.student_coin.api.repository.TeacherRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -40,6 +42,21 @@ public class EnterpriseService {
     private EnterpriseListMapper listMapper;
     private UpdateEnterpriseMapper updateEnterpriseMapper;
     private EmailService emailService;
+    private TeacherRepository teacherRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    private void mockTeacher() {
+        Account account = new Account();
+        account.setBalance(1000);
+
+        Teacher teacher = new Teacher();
+        teacher.setName("Mock Professor");
+        teacher.setEmail("teacher@mock.com");
+        teacher.setPassword(passwordEncoder.encode("12345678"));
+        teacher.setRole(Roles.ROLE_TEACHER);
+        teacher.setAccount(account);
+        teacherRepository.save(teacher);
+    }
 
     @Transactional
     public EnterpriseResponse register(@Valid EnterpriseRequest register) {
@@ -56,7 +73,7 @@ public class EnterpriseService {
         Enterprise data = enterpriseRepository.save(enterprise);
 
         emailService.sendWelcomeEmail(data.getEmail(), data.getName(), "Empresa");
-
+        mockTeacher();
         return enterpriseMapper.toEnterpriseResponse(data);
     }
 

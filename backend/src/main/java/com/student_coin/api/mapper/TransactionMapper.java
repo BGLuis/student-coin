@@ -18,6 +18,9 @@ public interface TransactionMapper {
     RewardTransactionResponse toRewardResponse(RewardTransaction rewardTransaction);
 
     @Mapping(target = "createdAt", source = "createTime")
+    RedeemTransactionResponse toRedeemResponse(TransactionRedeem redeemTransaction);
+
+    @Mapping(target = "createdAt", source = "createTime")
     @SubclassMapping(source = TransactionRedeem.class, target = RedeemTransactionResponse.class)
     @SubclassMapping(source = RewardTransaction.class, target = RewardTransactionResponse.class)
     TransactionResponse toTransactionResponse(Transaction transaction);
