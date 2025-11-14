@@ -2,11 +2,13 @@ package com.student_coin.api.controller;
 
 import com.student_coin.api.dto.BalanceDTO;
 import com.student_coin.api.dto.request.BalanceRequest;
+import com.student_coin.api.dto.request.RedeemTransactionRequest;
 import com.student_coin.api.dto.request.RewardTransactionRequest;
 import com.student_coin.api.dto.response.BalanceResponse;
 import com.student_coin.api.dto.response.RewardTransactionResponse;
 import com.student_coin.api.dto.response.RedeemTransactionResponse;
 import com.student_coin.api.entity.Person;
+import com.student_coin.api.entity.Student;
 import com.student_coin.api.entity.Teacher;
 import com.student_coin.api.mapper.BalanceMapper;
 import com.student_coin.api.mapper.TransactionMapper;
@@ -37,8 +39,11 @@ public class AccountController {
     }
 
     @PutMapping("/redeem/{uuid}")
-    public ResponseEntity<RedeemTransactionResponse> redeemAdvantage(@PathVariable @Valid @UUID String uuid) {
-        return null;
+    public ResponseEntity<RedeemTransactionResponse> redeemAdvantage(
+            Authentication authentication,
+            @PathVariable @Valid @UUID String uuid,
+            @Valid @RequestBody RedeemTransactionRequest redeem) {
+        return ResponseEntity.ok(transactionMapper.toRedeemResponse(accountService.redeemAdvantage((Student) authentication.getPrincipal(), uuid, redeem)));
     }
 
     @GetMapping("/balance")
