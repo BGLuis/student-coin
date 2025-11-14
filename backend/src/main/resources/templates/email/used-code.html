@@ -1,0 +1,66 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+  <body>
+    <div th:replace="~{email/base :: layout}">
+      <div th:fragment="content">
+        <div class="greeting">
+          Olá, Estudante <span th:text="${studentName}">Estudante</span>! ✅
+        </div>
+
+        <div class="content-body">
+          <p>Seu código foi usado com sucesso!</p>
+
+          <p>
+            Você resgatou a vantagem
+            <strong th:text="${advantageName}">Nome da Vantagem</strong> no
+            estabelecimento
+            <strong th:text="${enterpsriseName}">Nome da Empresa</strong> com o
+            código
+            <strong th:text="${coupon}" style="color: red"
+              >Código do Cupom</strong
+            >
+          </p>
+        </div>
+
+        <div class="info-box">
+          <h3 style="color: #0f766e">📝 Detalhes do Resgate</h3>
+          <p>
+            <strong>Aluno:</strong> <span th:text="${studentName}">Nome</span>
+          </p>
+          <p>
+            <strong>Vantagem:</strong>
+            <span th:text="${advantageName}">Nome da Vantagem</span>
+          </p>
+          <p>
+            <strong>Resgatado em:</strong>
+            <span th:text="${usedAt}">01/01/2024</span>
+          </p>
+        </div>
+
+        <div class="content-body">
+          <p>
+            Obrigado por adquirir a vantagem
+            <span th:text="${advantageName}">Nome da Vantagem</span>. Seu
+            engajamento nos ajuda a melhorar cada vez mais, com novas vantagens
+            e empresas cadastradas no nosso sistema.
+          </p>
+        </div>
+
+        <div class="button-container">
+          <a href="http://localhost:3000/student/meu-extrato" class="button">
+            Ver suas Vantagens Resgatadas
+          </a>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="content-body" style="font-size: 14px; color: #6b7280">
+          <p>
+            📊 Acompanhe todas os seus resgates e veja o impacto positivo que
+            você está gerando!
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

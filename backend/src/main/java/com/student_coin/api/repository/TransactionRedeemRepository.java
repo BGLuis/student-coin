@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface TransactionRedeemRepository extends JpaRepository<TransactionRedeem, Long> {
     Optional<TransactionRedeem> findByUuid(String uuid);
+
+    Optional<TransactionRedeem> findByCoupon(String coupon);
 }

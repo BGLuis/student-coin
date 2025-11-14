@@ -107,6 +107,7 @@ public class AccountService {
                 .orElseGet(() -> generateDefaultTransaction(uuid, TransactionRedeem.class));
         setGenericTransactionValues(redeemTransaction, student, enterprise, advantage.getPrice());
         redeemTransaction.setCoupon(this.base62Util.random(COUPON_SIZE));
+        redeemTransaction.setAdvantage(advantage);
         redeemTransaction = this.validateProcess(redeemTransaction);
 
         emailService.sendAdvantageRedeemedEmail(student.getEmail(), student.getName(), advantage.getDescription(),

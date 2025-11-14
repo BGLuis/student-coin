@@ -6,15 +6,21 @@ import com.student_coin.api.dto.response.EnterpriseResponse;
 import com.student_coin.api.entity.Account;
 import com.student_coin.api.entity.Advantage;
 import com.student_coin.api.entity.Enterprise;
+import com.student_coin.api.entity.Student;
 import com.student_coin.api.entity.Teacher;
+import com.student_coin.api.entity.TransactionRedeem;
 import com.student_coin.api.enums.Roles;
+import com.student_coin.api.exception.UsedCouponException;
 import com.student_coin.api.mapper.EnterpriseListMapper;
 import com.student_coin.api.mapper.EnterpriseMapper;
 import com.student_coin.api.mapper.UpdateEnterpriseMapper;
 import com.student_coin.api.repository.AccountRepository;
 import com.student_coin.api.repository.AdvantageRepository;
 import com.student_coin.api.repository.EnterpriseRepository;
+import com.student_coin.api.repository.StudentRepository;
 import com.student_coin.api.repository.TeacherRepository;
+import com.student_coin.api.repository.TransactionRedeemRepository;
+
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -27,7 +33,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -38,12 +46,12 @@ public class EnterpriseService {
     private EnterpriseRepository enterpriseRepository;
     private AccountRepository accountRepository;
     private AdvantageRepository advantageRepository;
+    private TransactionRedeemRepository transactionRedeemRepository;
+    private StudentRepository studentRepository;
     private EnterpriseMapper enterpriseMapper;
     private EnterpriseListMapper listMapper;
     private UpdateEnterpriseMapper updateEnterpriseMapper;
     private EmailService emailService;
-    private TeacherRepository teacherRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public EnterpriseResponse register(@Valid EnterpriseRequest register) {
@@ -91,5 +99,28 @@ public class EnterpriseService {
         return new AdvantagesDTO(
                 enterprise,
                 advantages);
+    }
+
+    public TransactionRedeem validateRedeem(Enterprise enterprise, String coupon) {
+        TransactionRedeem transaction = this.transactionRedeemRepository.findByCoupon(coupon)
+                .orElseThrow(() -> new EntityNotFoundException("The coupon " + coupon + " is not valid"));
+        if (!transaction.getAdvantage().getEnterprise().getId().equals(enterprise.getId())) {
+            throw new SecurityException("You are not allowed to validate that code");
+        }
+        if (transaction.getUsedAt() != null) {
+            throw new UsedCouponException("Coupon " + coupon + " already redeemed");
+        }
+        Student student = this.studentRepository.findByAccount_Id(transaction.getOrigin().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Student with account not found"));
+        transaction.setUsedAt(LocalDateTime.now());
+        transaction = this.transactionRedeemRepository.save(transaction);
+        this.emailService.sendCodeValidatedEmail(
+                student.getEmail(),
+                student.getName(),
+                transaction.getAdvantage().getDescription(),
+                enterprise.getName(),
+                coupon,
+                transaction.getUsedAt());
+        return transaction;
     }
 }

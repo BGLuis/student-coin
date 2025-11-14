@@ -3,7 +3,6 @@ package com.student_coin.api.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -20,4 +19,6 @@ public class TransactionRedeem extends Transaction {
 
     private LocalDateTime usedAt;
 
+    @ManyToOne(optional = false)
+    private Advantage advantage;
 }
