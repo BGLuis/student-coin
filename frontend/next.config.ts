@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
         hostname: '**',
       },
     ],
+  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.watchOptions = {
@@ -22,7 +23,7 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
-};
+}
 
 
 export default nextConfig;

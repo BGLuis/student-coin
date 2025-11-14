@@ -13,15 +13,14 @@ services:
       - db-data:/var/lib/postgresql/18/docker
 
   localstack:
-    image: coin-localstack
+    image: localstack/localstack:latest
     restart: unless-stopped
-    build:
-      context: ./localstack
-      dockerfile: Dockerfile
     container_name: coin-localstack
     volumes:
-      - s3-data:/var/lib/localstack
+      - localstack-data:/var/lib/localstack
       - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "4566:4566"
 
   mailhog:
     image: mailhog/mailhog
@@ -40,13 +39,15 @@ services:
     ports:
       - "${APP_PORT}:3000"
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app:cached
       - /app/node_modules
       - /app/.next
     environment:
       - NODE_ENV=development
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
+      - NEXT_TELEMETRY_DISABLED=1
+      - TURBOPACK_WATCH_POLL=1000
     develop:
       watch:
         - action: sync
@@ -70,15 +71,15 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     environment:
-      AWS_ACCESS_KEY_ID: test
+      AWS_ACCESS_KEY_ID: 112233445566
       AWS_SECRET_ACCESS_KEY: test
       AWS_REGION: us-east-1
       S3_ENDPOINT_URL: http://localstack:4566
+      CDN_ENDPOINT_URL: http://localhost:4566
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
-      SPRING_BOOT_DEVTOOLS_RESTART_ENABLED: "true"
-      SPRING_BOOT_DEVTOOLS_RESTART_TRIGGER_FILE: "pom.xml"
+      SPRING_PROFILES_ACTIVE: development
     depends_on:
       - db
       - localstack
@@ -99,5 +100,5 @@ services:
 volumes:
   db-data:
     driver: local
-  s3-data:
+  localstack-data:
     driver: local
