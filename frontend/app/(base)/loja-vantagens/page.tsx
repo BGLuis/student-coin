@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useUser } from "@/contexts/UserContext";
 
 interface Vantagem {
     id: string;
@@ -19,9 +20,7 @@ export default function LojaVantagens() {
     const [searchTerm, setSearchTerm] = useState("");
     const [vantagemSelecionada, setVantagemSelecionada] = useState<Vantagem | null>(null);
     const [modalAberto, setModalAberto] = useState(false);
-
-    // Saldo mockado do estudante
-    const saldoEstudante = 100;
+    const { coinBalance: saldoEstudante } = useUser();
 
     // Categorias disponíveis
     const categorias = [
@@ -224,8 +223,8 @@ export default function LojaVantagens() {
                                     key={cat}
                                     onClick={() => setCategoriaFiltro(cat)}
                                     className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${categoriaFiltro === cat
-                                            ? "bg-teal-500 text-white shadow-md"
-                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                        ? "bg-teal-500 text-white shadow-md"
+                                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                         }`}
                                 >
                                     {cat}
