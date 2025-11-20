@@ -12,7 +12,7 @@ export const Header: React.FC = () => {
     const [isConfigOpen, setIsConfigOpen] = useState(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const router = useRouter();
-    const { userType } = useUser();
+    const { userType, coinBalance } = useUser();
 
     const handleMouseEnter = () => {
         if (timeoutRef.current) {
@@ -24,7 +24,7 @@ export const Header: React.FC = () => {
     const handleMouseLeave = () => {
         timeoutRef.current = setTimeout(() => {
             setIsDropdownOpen(false);
-        }, 200); 
+        }, 200);
     };
 
     const handleConfigClick = () => {
@@ -38,7 +38,7 @@ export const Header: React.FC = () => {
 
     // Configuração específica por tipo de usuário
     const getUserConfig = () => {
-        switch(userType) {
+        switch (userType) {
             case 'aluno':
                 return {
                     links: [
@@ -47,7 +47,7 @@ export const Header: React.FC = () => {
                         { href: '/meu-extrato', label: 'Meu Extrato' }
                     ],
                     showCoins: true,
-                    coinBalance: 100
+                    coinBalance: coinBalance
                 };
             case 'professor':
                 return {
@@ -57,7 +57,7 @@ export const Header: React.FC = () => {
                         { href: '/professor/meu-extrato', label: 'Meu Extrato' }
                     ],
                     showCoins: true,
-                    coinBalance: 100
+                    coinBalance: coinBalance
                 };
             case 'empresa':
                 return {
@@ -95,9 +95,9 @@ export const Header: React.FC = () => {
                         {/* Navigation Links */}
                         <nav className="flex gap-6">
                             {config.links.map((link) => (
-                                <Link 
+                                <Link
                                     key={link.href}
-                                    href={link.href} 
+                                    href={link.href}
                                     className="text-gray-600 hover:text-gray-800 transition-colors duration-300"
                                 >
                                     {link.label}
@@ -119,8 +119,8 @@ export const Header: React.FC = () => {
                         )}
 
                         {/* Notifications */}
-                        <button 
-                            className="flex items-center justify-center rounded-lg transition-colors" 
+                        <button
+                            className="flex items-center justify-center rounded-lg transition-colors"
                             style={{ backgroundColor: '#FFEED1', width: '40px', height: '40px' }}
                         >
                             <svg
