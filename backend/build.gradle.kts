@@ -43,6 +43,7 @@ dependencies {
     implementation("io.awspring.cloud:spring-cloud-aws-dependencies:3.4.1")
     implementation("io.awspring.cloud:spring-cloud-aws-sqs:3.4.1")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+    implementation("org.postgresql:postgresql:42.7.3")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
