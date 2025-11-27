@@ -3,6 +3,8 @@
 import { MultiStepForm } from "@/components/MultiStepForm";
 import { Input, Select } from "@/components";
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { authService } from "@/services/authService";
 
 function isValidCPF(cpf: string) {
     if (!cpf || cpf.length !== 11) return false;
@@ -41,6 +43,8 @@ function isValidCNPJ(cnpj: string) {
 }
 
 export default function EnterpriseRegister() {
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
     const [validatedSteps, setValidatedSteps] = useState<number[]>([]);
     const [formData, setFormData] = useState({
@@ -376,6 +380,42 @@ export default function EnterpriseRegister() {
         return [];
     };
 
+    const handleSubmit = async () => {
+        setIsLoading(true);
+        try {
+            if (formData.tipoCadastro === "aluno") {
+                const combinedAddress = `${formData.endereco_logradouro || ""}, ${formData.endereco_numero || ""} - ${formData.endereco_bairro || ""}, ${formData.endereco_cidade || ""} - ${formData.endereco_estado || ""}${formData.endereco_complemento ? `, ${formData.endereco_complemento}` : ""}`;
+                
+                await authService.registerStudent({
+                    name: formData.nome,
+                    email: formData.email,
+                    password: formData.senha,
+                    cpf: formData.cpf.replace(/\D/g, ""),
+                    rg: formData.rg.replace(/\D/g, ""),
+                    course: formData.curso,
+                    address: combinedAddress,
+                    educationalInstitute: formData.instituicao
+                });
+                alert("Cadastro realizado com sucesso!");
+                router.push("/loja-vantagens");
+            } else if (formData.tipoCadastro === "empresa") {
+                await authService.registerEnterprise({
+                    name: formData.nome,
+                    email: formData.email,
+                    password: formData.senha,
+                    cnpj: formData.cnpj.replace(/\D/g, "")
+                });
+                alert("Cadastro realizado com sucesso!");
+                router.push("/empresa/gerenciar-vantagens");
+            }
+        } catch (error: any) {
+            console.error(error);
+            alert("Erro ao realizar cadastro: " + (error.response?.data?.message || "Ocorreu um erro inesperado."));
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const handleNextWithValidation = () => {
         if (isStepValid()) {
             if (currentStep < steps.length - 1) {
@@ -384,10 +424,7 @@ export default function EnterpriseRegister() {
                 }
                 setCurrentStep(currentStep + 1);
             } else {
-                const combined = `${formData.endereco_logradouro || ""}${formData.endereco_numero ? `, ${formData.endereco_numero}` : ""}${formData.endereco_complemento ? ` - ${formData.endereco_complemento}` : ""}${formData.endereco_bairro ? `, ${formData.endereco_bairro}` : ""}${formData.endereco_cidade ? ` - ${formData.endereco_cidade}` : ""}${formData.endereco_estado ? `/${formData.endereco_estado}` : ""}`.trim();
-                setFormData(prev => ({ ...prev, endereco: combined }));
-                console.log("Dados do formulário:", { ...formData, endereco: combined });
-                alert("Formulário enviado com sucesso!");
+                handleSubmit();
             }
         } else {
 
@@ -407,7 +444,7 @@ export default function EnterpriseRegister() {
                 validatedSteps={validatedSteps}
                 isFirstStep={currentStep === 0}
                 isLastStep={currentStep === steps.length - 1}
-                disableNext={false}
+                disableNext={isLoading}
             >
                 {renderStepContent()}
             </MultiStepForm>
