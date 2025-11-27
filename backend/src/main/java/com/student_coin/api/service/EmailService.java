@@ -1,5 +1,7 @@
 package com.student_coin.api.service;
 
+import com.student_coin.api.config.MailConfig;
+
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
@@ -21,6 +23,7 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+    private final MailConfig mailConfig;
 
     public void sendEmail(String to, String subject, String templateName, Map<String, Object> variables)
             throws MessagingException {
@@ -35,7 +38,7 @@ public class EmailService {
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(htmlContent, true);
-        helper.setFrom("noreply@studentcoin.com");
+        helper.setFrom("noreply@" + mailConfig.getDomain());
 
         mailSender.send(message);
         log.info("Email enviado com sucesso para: {}", to);

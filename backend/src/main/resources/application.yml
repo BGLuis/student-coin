@@ -8,7 +8,6 @@ spring:
     database:
       driverClassName: org.postgresql.Driver
 
-
   mail:
     host: ${SMTP_HOST}
     port: ${SMTP_PORT}
@@ -49,3 +48,6 @@ jwt:
   algorithm: HmacSHA384
   issuer: student-coin
   expires-in: 24h
+
+mail:
+  domain: ${MAIL_DOMAIN}
