@@ -70,8 +70,8 @@ export const MultiStepForm: React.FC<MultiStepFormProps> = ({
                     />
                 </div>
                 <h1 className="text-4xl font-medium text-gray-800 mb-2">{title}</h1>
-                <p className="text-[#333333] font-regular text-center text-md">Já possui uma conta? <Link href="/login" className="underline text-black">Entrar</Link>.</p>
-        
+                <p className="text-[#333333] font-regular text-center text-md">Já possui uma conta? <Link href="/auth/login" className="underline text-black">Entrar</Link>.</p>
+
             </div>
 
             {/* Visualização dos Passos */}
