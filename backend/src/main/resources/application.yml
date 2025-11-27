@@ -10,13 +10,14 @@ spring:
   mail:
     host: ${SMTP_HOST}
     port: ${SMTP_PORT}
-    test-connection: true
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
     properties:
       mail:
         smtp:
-          auth: false
+          auth: true
           starttls:
-            enable: false
+            enable: true
 
   thymeleaf:
     prefix: classpath:/templates/
