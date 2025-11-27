@@ -13,6 +13,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MailConfig {
-  @NotNull
-  private String domain;
+    @NotNull
+    private String domain;
+
+    @NotNull
+    private String frontURL;
 }

@@ -57,7 +57,7 @@ public class EmailService {
         Map<String, Object> variables = Map.of(
                 "name", name,
                 "role", role,
-                "loginUrl", "http://localhost:4200/auth/login");
+                "loginUrl", mailConfig.getFrontURL() + "/auth/login");
 
         sendEmailAsync(to, "Bem-vindo ao Student Coin!", "email/welcome", variables);
     }
@@ -70,7 +70,7 @@ public class EmailService {
                 "teacherName", teacherName,
                 "reason", reason,
                 "category", category,
-                "extractUrl", "http://localhost:4200/meu-extrato");
+                "extractUrl", mailConfig.getFrontURL() + "/meu-extrato");
 
         sendEmailAsync(to, "Você recebeu moedas! 🎉", "email/coins-received", variables);
     }
@@ -81,7 +81,7 @@ public class EmailService {
                 "studentName", studentName,
                 "amount", amount,
                 "newBalance", newBalance,
-                "extractUrl", "http://localhost:4200/professor/meu-extrato");
+                "extractUrl", mailConfig.getFrontURL() + "/professor/meu-extrato");
 
         sendEmailAsync(to, "Confirmação de envio de moedas", "email/coins-sent", variables);
     }
@@ -102,7 +102,7 @@ public class EmailService {
     public void sendPasswordResetEmail(String to, String name, String token) {
         Map<String, Object> variables = Map.of(
                 "name", name,
-                "resetUrl", "http://localhost:4200/auth/reset-password?token=" + token,
+                "resetUrl", mailConfig.getFrontURL() + "/auth/reset-password?token=" + token,
                 "expirationTime", "24 horas");
 
         sendEmailAsync(to, "Recuperação de Senha - Student Coin", "email/password-reset", variables);
