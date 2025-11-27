@@ -75,8 +75,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NotEnoughBalanceException.class)
     public ResponseEntity<RestErrorMessage> handleNotEnoughBalance(
-            NotEnoughBalanceException exception
-    ) {
+            NotEnoughBalanceException exception) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         RestErrorMessage message = new RestErrorMessage(status, exception.getMessage());
         return ResponseEntity.status(status).body(message);
@@ -84,8 +83,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<RestErrorMessage> handleInvalidCredentials(
-            InvalidCredentialsException exception
-    ) {
+            InvalidCredentialsException exception) {
         HttpStatus status = HttpStatus.UNAUTHORIZED;
         RestErrorMessage message = new RestErrorMessage(status, exception.getMessage());
         return ResponseEntity.status(status).body(message);
@@ -93,8 +91,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<RestErrorMessage> handleDuplicateResource(
-            DuplicateResourceException exception
-    ) {
+            DuplicateResourceException exception) {
         HttpStatus status = HttpStatus.CONFLICT;
         RestErrorMessage message = new RestErrorMessage(status, exception.getMessage());
         return ResponseEntity.status(status).body(message);
@@ -102,8 +99,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InvalidRequestException.class)
     public ResponseEntity<RestErrorMessage> handleInvalidRequest(
-            InvalidRequestException exception
-    ) {
+            InvalidRequestException exception) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         RestErrorMessage message = new RestErrorMessage(status, exception.getMessage());
         return ResponseEntity.status(status).body(message);
@@ -111,8 +107,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<RestErrorMessage> handleIllegalArgument(
-            IllegalArgumentException exception
-    ) {
+            IllegalArgumentException exception) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        RestErrorMessage message = new RestErrorMessage(status, exception.getMessage());
+        return ResponseEntity.status(status).body(message);
+    }
+
+    @ExceptionHandler(UsedCouponException.class)
+    public ResponseEntity<RestErrorMessage> handleUsedCoupon(
+            UsedCouponException exception) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         RestErrorMessage message = new RestErrorMessage(status, exception.getMessage());
         return ResponseEntity.status(status).body(message);

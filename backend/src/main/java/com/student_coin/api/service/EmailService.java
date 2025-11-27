@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Slf4j
@@ -21,7 +22,8 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
 
-    public void sendEmail(String to, String subject, String templateName, Map<String, Object> variables) throws MessagingException {
+    public void sendEmail(String to, String subject, String templateName, Map<String, Object> variables)
+            throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
@@ -52,21 +54,20 @@ public class EmailService {
         Map<String, Object> variables = Map.of(
                 "name", name,
                 "role", role,
-                "loginUrl", "http://localhost:4200/auth/login"
-        );
+                "loginUrl", "http://localhost:4200/auth/login");
 
         sendEmailAsync(to, "Bem-vindo ao Student Coin!", "email/welcome", variables);
     }
 
-    public void sendCoinsReceivedEmail(String to, String studentName, int amount, String teacherName, String reason, String category) {
+    public void sendCoinsReceivedEmail(String to, String studentName, int amount, String teacherName, String reason,
+            String category) {
         Map<String, Object> variables = Map.of(
                 "studentName", studentName,
                 "amount", amount,
                 "teacherName", teacherName,
                 "reason", reason,
                 "category", category,
-                "extractUrl", "http://localhost:4200/meu-extrato"
-        );
+                "extractUrl", "http://localhost:4200/meu-extrato");
 
         sendEmailAsync(to, "Você recebeu moedas! 🎉", "email/coins-received", variables);
     }
@@ -77,21 +78,20 @@ public class EmailService {
                 "studentName", studentName,
                 "amount", amount,
                 "newBalance", newBalance,
-                "extractUrl", "http://localhost:4200/professor/meu-extrato"
-        );
+                "extractUrl", "http://localhost:4200/professor/meu-extrato");
 
         sendEmailAsync(to, "Confirmação de envio de moedas", "email/coins-sent", variables);
     }
 
-    public void sendAdvantageRedeemedEmail(String to, String studentName, String advantageName, int cost, int newBalance, String code) {
+    public void sendAdvantageRedeemedEmail(String to, String studentName, String advantageName, int cost,
+            int newBalance, String code) {
         Map<String, Object> variables = Map.of(
                 "studentName", studentName,
                 "advantageName", advantageName,
                 "cost", cost,
                 "newBalance", newBalance,
                 "code", code != null ? code : "N/A",
-                "hasCode", code != null
-        );
+                "hasCode", code != null);
 
         sendEmailAsync(to, "Vantagem resgatada com sucesso! 🎁", "email/advantage-redeemed", variables);
     }
@@ -100,27 +100,25 @@ public class EmailService {
         Map<String, Object> variables = Map.of(
                 "name", name,
                 "resetUrl", "http://localhost:4200/auth/reset-password?token=" + token,
-                "expirationTime", "24 horas"
-        );
+                "expirationTime", "24 horas");
 
         sendEmailAsync(to, "Recuperação de Senha - Student Coin", "email/password-reset", variables);
     }
 
     public void sendNewAdvantageEmail(String to, String enterpriseName, String advantageName,
-                                      String description, int cost) {
+            String description, int cost) {
         Map<String, Object> variables = Map.of(
                 "enterpriseName", enterpriseName,
                 "advantageName", advantageName,
                 "description", description,
-                "cost", cost
-        );
+                "cost", cost);
 
         sendEmailAsync(to, "Nova Vantagem Disponível! 🎁", "email/new-advantage", variables);
     }
 
     public void sendNewAdvantageEmail(String to, String enterpriseName, String advantageName,
-                                      String description, int cost, Integer quantity,
-                                      String expirationDate, Integer userBalance) {
+            String description, int cost, Integer quantity,
+            String expirationDate, Integer userBalance) {
         Map<String, Object> variables = Map.of(
                 "enterpriseName", enterpriseName,
                 "advantageName", advantageName,
@@ -128,9 +126,19 @@ public class EmailService {
                 "cost", cost,
                 "quantity", quantity != null ? quantity : "",
                 "expirationDate", expirationDate != null ? expirationDate : "",
-                "userBalance", userBalance != null ? userBalance : ""
-        );
+                "userBalance", userBalance != null ? userBalance : "");
 
         sendEmailAsync(to, "Nova Vantagem Disponível! 🎁", "email/new-advantage", variables);
+    }
+
+    public void sendCodeValidatedEmail(String to, String studentName, String advantageName, String enterpriseName,
+            String coupon, LocalDateTime usedAt) {
+        Map<String, Object> variables = Map.of(
+                "advantageName", advantageName,
+                "studentName", studentName,
+                "enterpriseName", enterpriseName,
+                "coupon", coupon,
+                "usedAt", usedAt);
+        sendEmailAsync(to, "Seu Código Foi Usado!", "email/used-code", variables);
     }
 }

@@ -16,5 +16,5 @@ public record RewardTransactionRequest(
 
         @NotNull(message = "ID do estudante é obrigatório")
         Long studentId
-) {
+) implements TransactionRequest{
 }
