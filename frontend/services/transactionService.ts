@@ -105,4 +105,21 @@ export const transactionService = {
             throw error;
         }
     },
+
+    // Resgatar vantagem (aluno)
+    redeemAdvantage: async (transactionUuid: string, advantageId: number): Promise<any> => {
+        try {
+            console.log('[TransactionService] Resgatando vantagem:', { transactionUuid, advantageId });
+            const response = await api.put(`/account/redeem/${transactionUuid}`, { advantageId });
+            console.log('[TransactionService] Resgate realizado com sucesso:', response.data);
+            return response.data;
+        } catch (error: any) {
+             console.error('[TransactionService] Erro ao resgatar vantagem:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
+            throw error;
+        }
+    }
 };

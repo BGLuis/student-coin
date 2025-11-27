@@ -2,6 +2,7 @@ export { authService } from "./authService";
 export { userService } from "./userService";
 export { studentService } from "./studentService";
 export { enterpriseService } from "./enterpriseService";
+export { advantageService } from "./advantageService";
 export { transactionService } from "./transactionService";
 
 export type {
@@ -25,6 +26,11 @@ export type {
     Enterprise,
     EnterpriseUpdateRequest,
 } from "./enterpriseService";
+
+export type {
+    Advantage,
+    Page,
+} from "./advantageService";
 
 export type {
     Transaction,

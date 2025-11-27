@@ -1,18 +1,48 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Modal } from "./index";
 import { useUser } from "@/contexts/UserContext";
+import { authService, transactionService } from "@/services";
 
 export const Header: React.FC = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isConfigOpen, setIsConfigOpen] = useState(false);
+    const [balance, setBalance] = useState(0);
+    const [userRole, setUserRole] = useState<string | null>(null);
+    
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const router = useRouter();
-    const { userType } = useUser();
+    const { userType, setUserType } = useUser();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const role = authService.getUserRole();
+            setUserRole(role);
+
+            // Sync context if needed (optional, but good for consistency)
+            if (role === 'ROLE_STUDENT') setUserType('aluno');
+            else if (role === 'ROLE_TEACHER') setUserType('professor');
+            else if (role === 'ROLE_ENTERPRISE') setUserType('empresa');
+
+            if (role === 'ROLE_STUDENT' || role === 'ROLE_TEACHER') {
+                try {
+                    const data = await transactionService.getBalance(0, 1);
+                    setBalance(data.balance);
+                } catch (error) {
+                    console.error("Erro ao buscar saldo:", error);
+                }
+            }
+        };
+
+        fetchData();
+        
+        // Add event listener for balance updates if we had a global event bus
+        // For now, just fetch on mount
+    }, [setUserType]);
 
     const handleMouseEnter = () => {
         if (timeoutRef.current) {
@@ -33,13 +63,17 @@ export const Header: React.FC = () => {
     };
 
     const handleLogout = () => {
+        authService.logout();
         router.push("/auth/login");
     };
 
     // Configuração específica por tipo de usuário
     const getUserConfig = () => {
-        switch(userType) {
-            case 'aluno':
+        // Use userRole state if available, otherwise fallback to context
+        const currentRole = userRole || (userType === 'aluno' ? 'ROLE_STUDENT' : userType === 'professor' ? 'ROLE_TEACHER' : 'ROLE_ENTERPRISE');
+
+        switch(currentRole) {
+            case 'ROLE_STUDENT':
                 return {
                     links: [
                         { href: '/', label: 'Home' },
@@ -47,9 +81,9 @@ export const Header: React.FC = () => {
                         { href: '/meu-extrato', label: 'Meu Extrato' }
                     ],
                     showCoins: true,
-                    coinBalance: 100
+                    coinBalance: balance
                 };
-            case 'professor':
+            case 'ROLE_TEACHER':
                 return {
                     links: [
                         { href: '/', label: 'Home' },
@@ -57,15 +91,21 @@ export const Header: React.FC = () => {
                         { href: '/professor/meu-extrato', label: 'Meu Extrato' }
                     ],
                     showCoins: true,
-                    coinBalance: 100
+                    coinBalance: balance
                 };
-            case 'empresa':
+            case 'ROLE_ENTERPRISE':
                 return {
                     links: [
                         { href: '/', label: 'Home' },
                         { href: '/empresa/gerenciar-vantagens', label: 'Gerenciar Vantagens' },
                         { href: '/conferencia', label: 'Conferência' }
                     ],
+                    showCoins: false,
+                    coinBalance: 0
+                };
+            default:
+                return {
+                    links: [],
                     showCoins: false,
                     coinBalance: 0
                 };

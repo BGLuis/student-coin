@@ -85,10 +85,11 @@ export default function EnviarMoedas() {
             setError(null);
 
             // Enviar moedas para o estudante
-            // Nota: O backend espera o UUID do estudante, mas precisamos usar o ID
-            // Assumindo que temos uma forma de obter o UUID ou converter
+            // O backend espera um UUID para a transação (idempotência) na URL
+            const transactionUuid = crypto.randomUUID();
+            
             await transactionService.rewardStudent(
-                selectedStudent.id.toString(), // Usando ID como UUID temporariamente
+                transactionUuid,
                 {
                     value: valor,
                     motive: `${categoriaMerito}: ${motivo}`,
@@ -279,7 +280,7 @@ export default function EnviarMoedas() {
                                     {/* Motivo da doação */}
                                     <div className="mb-6">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Escreva o motivo da sua doação: <span className="text-gray-500 text-xs">({motivo.length}/500 caracteres)</span>
+                                            Escreva o motivo da sua doação: <span className="text-gray-500 text-xs">({motivo.length}/100 caracteres)</span>
                                         </label>
                                         <div className="border border-gray-300 rounded-lg overflow-hidden bg-gray-50">
                                             {/* Barra de ferramentas do editor */}
@@ -296,7 +297,7 @@ export default function EnviarMoedas() {
                                                         const before = motivo.substring(0, start);
                                                         const after = motivo.substring(end);
                                                         const newText = before + '**' + selectedText + '**' + after;
-                                                        if (newText.length <= 500) {
+                                                        if (newText.length <= 100) {
                                                             setMotivo(newText);
                                                             setTimeout(() => {
                                                                 textarea.focus();
@@ -319,7 +320,7 @@ export default function EnviarMoedas() {
                                                         const before = motivo.substring(0, start);
                                                         const after = motivo.substring(end);
                                                         const newText = before + '*' + selectedText + '*' + after;
-                                                        if (newText.length <= 500) {
+                                                        if (newText.length <= 100) {
                                                             setMotivo(newText);
                                                             setTimeout(() => {
                                                                 textarea.focus();
@@ -342,7 +343,7 @@ export default function EnviarMoedas() {
                                                         const before = motivo.substring(0, start);
                                                         const after = motivo.substring(end);
                                                         const newText = before + '\n• ' + after;
-                                                        if (newText.length <= 500) {
+                                                        if (newText.length <= 100) {
                                                             setMotivo(newText);
                                                             setTimeout(() => {
                                                                 textarea.focus();
@@ -371,7 +372,7 @@ export default function EnviarMoedas() {
                                                         const before = motivo.substring(0, start);
                                                         const after = motivo.substring(end);
                                                         const newText = before + '\n1. ' + after;
-                                                        if (newText.length <= 500) {
+                                                        if (newText.length <= 100) {
                                                             setMotivo(newText);
                                                             setTimeout(() => {
                                                                 textarea.focus();
@@ -397,12 +398,12 @@ export default function EnviarMoedas() {
                                                 placeholder="Descreva o motivo de sua doação de forma detalhada."
                                                 value={motivo}
                                                 onChange={(e) => {
-                                                    if (e.target.value.length <= 500) {
+                                                    if (e.target.value.length <= 100) {
                                                         setMotivo(e.target.value);
                                                     }
                                                 }}
                                                 rows={8}
-                                                maxLength={500}
+                                                maxLength={100}
                                                 className="w-full px-4 py-3 focus:outline-none resize-none text-gray-700"
                                                 required
                                             />
