@@ -48,6 +48,7 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - NEXT_TELEMETRY_DISABLED=1
       - TURBOPACK_WATCH_POLL=1000
+      - NEXT_PUBLIC_API_URL=http://localhost:${API_PORT}/
     develop:
       watch:
         - action: sync
