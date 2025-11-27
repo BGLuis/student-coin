@@ -4,8 +4,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+      dialect: org.hibernate.dialect.PostgreSQLDialect
     database:
       driverClassName: org.postgresql.Driver
+
 
   mail:
     host: ${SMTP_HOST}
@@ -14,8 +16,6 @@ spring:
     username: ${SMTP_USERNAME}
     password: ${SMTP_PASSWORD}
     properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
       mail:
         smtp:
           auth: true
