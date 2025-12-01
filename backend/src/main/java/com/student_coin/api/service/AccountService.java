@@ -5,6 +5,7 @@ import com.student_coin.api.dto.request.BalanceRequest;
 import com.student_coin.api.dto.request.RedeemTransactionRequest;
 import com.student_coin.api.dto.request.RewardTransactionRequest;
 import com.student_coin.api.entity.*;
+import com.student_coin.api.exception.AlreadyUsedRedeemedException;
 import com.student_coin.api.exception.NotEnoughBalanceException;
 import com.student_coin.api.repository.*;
 import com.student_coin.api.utils.Base62;
@@ -61,6 +62,10 @@ public class AccountService {
     }
 
     private <T extends Transaction> T rollbackTransaction(T transaction) {
+        if (transaction instanceof TransactionRedeem) {
+            TransactionRedeem redeem = (TransactionRedeem) transaction;
+            if (redeem.getUsedAt() != null) throw new AlreadyUsedRedeemedException("This UUID was alreadt used");
+        }
         processTransaction(transaction.getOrigin(), transaction.getDestination(), -transaction.getValue());
         return transaction;
     }

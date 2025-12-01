@@ -120,4 +120,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         RestErrorMessage message = new RestErrorMessage(status, exception.getMessage());
         return ResponseEntity.status(status).body(message);
     }
+
+    @ExceptionHandler(AlreadyUsedRedeemedException.class)
+    public ResponseEntity<RestErrorMessage> handleAlreadyUsedRedeemed(
+            AlreadyUsedRedeemedException exception) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        RestErrorMessage message = new RestErrorMessage(status, exception.getMessage());
+        return ResponseEntity.status(status).body(message);
+    }
 }
