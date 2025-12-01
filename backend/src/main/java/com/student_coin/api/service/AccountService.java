@@ -9,7 +9,6 @@ import com.student_coin.api.exception.AlreadyUsedRedeemedException;
 import com.student_coin.api.exception.NotEnoughBalanceException;
 import com.student_coin.api.repository.*;
 import com.student_coin.api.utils.Base62;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -23,6 +22,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Transactional
 public class AccountService {
+    public static final Integer COUPON_SIZE = 8;
     private final StudentRepository studentRepository;
     private final EnterpriseRepository enterpriseRepository;
     private final RewardTransactionRepository rewardTransactionRepository;
@@ -34,10 +34,8 @@ public class AccountService {
     private final EntityManager entityManager;
     private final Base62 base62Util;
 
-    public static final Integer COUPON_SIZE = 8;
-
     private void setGenericTransactionValues(Transaction transaction, Person origin, Person destination,
-            Integer value) {
+                                             Integer value) {
         transaction.setOrigin(origin.getAccount());
         transaction.setDestination(destination.getAccount());
         transaction.setValue(value);
@@ -62,8 +60,7 @@ public class AccountService {
     }
 
     private <T extends Transaction> T rollbackTransaction(T transaction) {
-        if (transaction instanceof TransactionRedeem) {
-            TransactionRedeem redeem = (TransactionRedeem) transaction;
+        if (transaction instanceof TransactionRedeem redeem) {
             if (redeem.getUsedAt() != null) throw new AlreadyUsedRedeemedException("This UUID was alreadt used");
         }
         processTransaction(transaction.getOrigin(), transaction.getDestination(), -transaction.getValue());
@@ -125,14 +122,14 @@ public class AccountService {
             Person target,
             BalanceRequest filters) {
         Page<Transaction> transactions = this.transactionRepository.findAllByDestination_IdOrOrigin_Id(
-                target.getId(),
-                target.getId(),
+                target.getAccount().getId(),
+                target.getAccount().getId(),
                 filters.pageable()).map(transaction -> {
-                    if (transaction.getOrigin().equals(target.getAccount())) {
-                        transaction.setValue(-transaction.getValue());
-                    }
-                    return transaction;
-                });
+            if (transaction.getOrigin().equals(target.getAccount())) {
+                transaction.setValue(-transaction.getValue());
+            }
+            return transaction;
+        });
 
         return new BalanceDTO(
                 target.getAccount().getBalance(),
