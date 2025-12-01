@@ -15,6 +15,9 @@ public class Advantage {
     @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Enterprise enterprise;
 
+    @Size(min = 3, max = 80)
+    private String title;
+
     @Size(min = 3, max = 255)
     private String description;
     private String imageUrl;
