@@ -51,6 +51,7 @@ api.interceptors.response.use(
     (error: AxiosError<ApiErrorResponse>) => {
         console.error('[API] Erro na resposta:', {
             status: error.response?.status,
+            statusText: error.response?.statusText,
             url: error.config?.url,
             message: error.response?.data?.message || error.message,
             data: error.response?.data

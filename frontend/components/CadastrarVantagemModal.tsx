@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Input, Textarea } from "./index";
 
 interface CadastrarVantagemModalProps {
@@ -10,7 +10,7 @@ interface CadastrarVantagemModalProps {
         nome: string;
         descricao: string;
         custo: number;
-        imagem?: string;
+        imagem?: File;
     }) => void;
 }
 
@@ -22,9 +22,10 @@ export default function CadastrarVantagemModal({
     const [nome, setNome] = useState("");
     const [descricao, setDescricao] = useState("");
     const [custo, setCusto] = useState("");
-    const [imagem, setImagem] = useState("");
+    const [imagem, setImagem] = useState<File | null>(null);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Limpar formulário ao fechar
     useEffect(() => {
@@ -32,8 +33,11 @@ export default function CadastrarVantagemModal({
             setNome("");
             setDescricao("");
             setCusto("");
-            setImagem("");
+            setImagem(null);
             setErrors({});
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
         }
     }, [isOpen]);
 
@@ -54,6 +58,12 @@ export default function CadastrarVantagemModal({
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setImagem(e.target.files[0]);
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -243,25 +253,51 @@ export default function CadastrarVantagemModal({
                             )}
                         </div>
 
-                        {/* URL da imagem */}
+                        {/* Upload da imagem */}
                         <div>
                             <label
                                 htmlFor="imagem"
                                 className="block text-sm font-medium text-gray-700 mb-2"
                             >
-                                URL da Imagem (opcional)
+                                Imagem da Vantagem (opcional)
                             </label>
-                            <Input
-                                id="imagem"
-                                type="url"
-                                value={imagem}
-                                onChange={(e) => setImagem(e.target.value)}
-                                placeholder="https://exemplo.com/imagem.jpg"
-                                className="w-full"
-                            />
-                            <p className="mt-1 text-xs text-gray-500">
-                                Cole o link de uma imagem para representar a vantagem
-                            </p>
+                            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-blue-400 transition-colors cursor-pointer"
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                <div className="space-y-1 text-center">
+                                    <svg
+                                        className="mx-auto h-12 w-12 text-gray-400"
+                                        stroke="currentColor"
+                                        fill="none"
+                                        viewBox="0 0 48 48"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                            strokeWidth={2}
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                    </svg>
+                                    <div className="flex text-sm text-gray-600 justify-center">
+                                        <span className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                            {imagem ? imagem.name : "Selecione uma imagem"}
+                                        </span>
+                                        <input
+                                            id="imagem"
+                                            name="imagem"
+                                            type="file"
+                                            className="sr-only"
+                                            accept="image/*"
+                                            ref={fileInputRef}
+                                            onChange={handleFileChange}
+                                        />
+                                    </div>
+                                    <p className="text-xs text-gray-500">
+                                        PNG, JPG, GIF até 5MB
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

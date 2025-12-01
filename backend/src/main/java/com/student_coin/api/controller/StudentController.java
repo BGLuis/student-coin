@@ -8,6 +8,7 @@ import com.student_coin.api.service.StudentService;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +40,15 @@ public class StudentController {
     ) {
         Student student = studentService.findById(id);
         return ResponseEntity.ok().body(studentService.update(student, data));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<StudentResponse> getMe(Authentication authentication) {
+        if (!(authentication.getPrincipal() instanceof Student)) {
+            return ResponseEntity.status(403).build();
+        }
+        Student student = (Student) authentication.getPrincipal();
+        return ResponseEntity.ok(studentMapper.toStudentResponse(student));
     }
 
     @DeleteMapping("/me")

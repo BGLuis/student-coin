@@ -66,7 +66,7 @@ export const transactionService = {
                 params: {
                     page,
                     size,
-                    sort: "date,desc" // Ordenar por data, mais recente primeiro
+                    sort: "createTime,desc" // Ordenar por data, mais recente primeiro
                 }
             });
             console.log('[TransactionService] Dados recebidos:', {

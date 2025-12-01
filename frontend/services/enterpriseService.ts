@@ -31,6 +31,23 @@ export const enterpriseService = {
         }
     },
 
+    // Buscar empresa logada
+    getMe: async (): Promise<Enterprise> => {
+        try {
+            console.log('[EnterpriseService] Buscando dados da empresa logada');
+            const response = await api.get<Enterprise>("/enterprises/me");
+            console.log('[EnterpriseService] Dados da empresa recuperados:', response.data.name);
+            return response.data;
+        } catch (error: any) {
+            console.error('[EnterpriseService] Erro ao buscar dados da empresa:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
+            throw error;
+        }
+    },
+
     // Buscar empresa por ID
     getById: async (id: number): Promise<Enterprise> => {
         try {

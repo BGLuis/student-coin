@@ -30,6 +30,17 @@ public class EnterpriseController {
     private AdvantageMapper advantageMapper;
     private RedeemValidationMapper redeemValidationMapper;
 
+
+
+    @GetMapping("/me")
+    public ResponseEntity<EnterpriseResponse> getMe(Authentication authentication) {
+        if (!(authentication.getPrincipal() instanceof Enterprise)) {
+            return ResponseEntity.status(403).build();
+        }
+        Enterprise enterprise = (Enterprise) authentication.getPrincipal();
+        return ResponseEntity.ok(enterpriseMapper.toEnterpriseResponse(enterprise));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<EnterpriseResponse> findEnterpriseByID(@PathVariable("id") Long id) {
         return ResponseEntity.ok(enterpriseMapper.toEnterpriseResponse(enterpriseService.findById(id)));

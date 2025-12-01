@@ -1,47 +1,75 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button, CadastrarVantagemModal } from "@/components";
-
-interface Vantagem {
-    id: number;
-    nome: string;
-    descricao: string;
-    custo: number;
-    imagem?: string;
-}
+import { advantageService, type Advantage } from "@/services/advantageService";
+import { enterpriseService } from "@/services/enterpriseService";
 
 export default function GerenciarVantagensPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [vantagens, setVantagens] = useState<Vantagem[]>([
-        {
-            id: 1,
-            nome: "Desconto em Livros",
-            descricao: "20% de desconto em livros técnicos",
-            custo: 50
-        },
-        {
-            id: 2,
-            nome: "Vale Café",
-            descricao: "Vale de R$ 10 para café na cantina",
-            custo: 30
-        }
-    ]);
+    const [vantagens, setVantagens] = useState<Advantage[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [enterpriseId, setEnterpriseId] = useState<number | null>(null);
 
-    const handleNovaVantagem = (vantagem: Omit<Vantagem, "id">) => {
-        const novaVantagem: Vantagem = {
-            id: vantagens.length + 1,
-            ...vantagem
-        };
-        setVantagens([...vantagens, novaVantagem]);
+    useEffect(() => {
+        loadData();
+    }, []);
+
+    const loadData = async () => {
+        try {
+            setLoading(true);
+            const enterprise = await enterpriseService.getMe();
+            setEnterpriseId(enterprise.id);
+            
+            const response = await advantageService.getByEnterprise(enterprise.id);
+            setVantagens(response.content);
+        } catch (error) {
+            console.error("Erro ao carregar dados:", error);
+            // Fallback: tenta carregar todas se falhar o endpoint específico (opcional)
+            // const response = await advantageService.getAll();
+            // setVantagens(response.content);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleExcluirVantagem = (id: number) => {
+    const handleNovaVantagem = async (vantagemData: { nome: string; descricao: string; custo: number; imagem?: File }) => {
+        try {
+            const newAdvantage = await advantageService.create({
+                name: vantagemData.nome,
+                description: vantagemData.descricao,
+                price: vantagemData.custo,
+                image: vantagemData.imagem
+            });
+            
+            setVantagens([...vantagens, newAdvantage]);
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error("Erro ao criar vantagem:", error);
+            alert("Erro ao criar vantagem. Tente novamente.");
+        }
+    };
+
+    const handleExcluirVantagem = async (id: number) => {
         if (confirm("Tem certeza que deseja excluir esta vantagem?")) {
-            setVantagens(vantagens.filter(v => v.id !== id));
+            try {
+                await advantageService.delete(id);
+                setVantagens(vantagens.filter(v => v.id !== id));
+            } catch (error) {
+                console.error("Erro ao excluir vantagem:", error);
+                alert("Erro ao excluir vantagem. Tente novamente.");
+            }
         }
     };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -117,10 +145,10 @@ export default function GerenciarVantagensPage() {
                             >
                                 {/* Imagem da vantagem */}
                                 <div className="h-48 bg-gray-200 flex items-center justify-center relative">
-                                    {vantagem.imagem ? (
+                                    {vantagem.imageUrl ? (
                                         <Image
-                                            src={vantagem.imagem}
-                                            alt={vantagem.nome}
+                                            src={vantagem.imageUrl}
+                                            alt={vantagem.name || "Imagem da vantagem"}
                                             fill
                                             className="object-cover"
                                         />
@@ -144,10 +172,10 @@ export default function GerenciarVantagensPage() {
                                 {/* Conteúdo */}
                                 <div className="p-6">
                                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                                        {vantagem.nome}
+                                        {vantagem.name}
                                     </h3>
                                     <p className="text-gray-600 mb-4 line-clamp-2">
-                                        {vantagem.descricao}
+                                        {vantagem.description}
                                     </p>
                                     
                                     {/* Custo em moedas */}
@@ -166,7 +194,7 @@ export default function GerenciarVantagensPage() {
                                                 />
                                             </svg>
                                             <span className="text-2xl font-bold text-gray-900">
-                                                {vantagem.custo}
+                                                {vantagem.price}
                                             </span>
                                         </div>
                                     </div>
