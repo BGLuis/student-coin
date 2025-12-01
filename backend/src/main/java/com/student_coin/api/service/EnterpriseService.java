@@ -117,7 +117,7 @@ public class EnterpriseService {
         this.emailService.sendCodeValidatedEmail(
                 student.getEmail(),
                 student.getName(),
-                transaction.getAdvantage().getDescription(),
+                transaction.getAdvantage(),
                 enterprise.getName(),
                 coupon,
                 transaction.getUsedAt());

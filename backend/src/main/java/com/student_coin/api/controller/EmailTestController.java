@@ -49,19 +49,6 @@ public class EmailTestController {
         return ResponseEntity.ok("Email de confirmação enviado para: " + email);
     }
 
-    @GetMapping("/advantage-redeemed")
-    public ResponseEntity<String> testAdvantageRedeemedEmail(
-            @RequestParam String email,
-            @RequestParam String studentName,
-            @RequestParam String advantageName,
-            @RequestParam int cost,
-            @RequestParam int newBalance,
-            @RequestParam(required = false) String code) {
-
-        emailService.sendAdvantageRedeemedEmail(email, studentName, advantageName, cost, newBalance, code);
-        return ResponseEntity.ok("Email de resgate enviado para: " + email);
-    }
-
     @GetMapping("/password-reset")
     public ResponseEntity<String> testPasswordResetEmail(
             @RequestParam String email,

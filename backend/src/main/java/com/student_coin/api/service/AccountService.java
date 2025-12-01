@@ -110,7 +110,7 @@ public class AccountService {
         redeemTransaction.setAdvantage(advantage);
         redeemTransaction = this.validateProcess(redeemTransaction);
 
-        emailService.sendAdvantageRedeemedEmail(student.getEmail(), student.getName(), advantage.getDescription(),
+        emailService.sendAdvantageRedeemedEmail(student.getEmail(), student.getName(), advantage,
                 advantage.getPrice(), student.getAccount().getBalance(), redeemTransaction.getCoupon());
         return this.transactionRedeemRepository.save(redeemTransaction);
     }

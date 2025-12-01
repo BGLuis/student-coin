@@ -13,6 +13,7 @@
 
         <div class="info-box" style="background-color: #f0fdf4; border-left-color: #22c55e;">
             <h3 style="color: #14532d;">🎯 Nova Vantagem Disponível</h3>
+            <img th:src="${advantageImageURL}" th:alt="|Imagem da vantagem ${advantageName}|" style="width: 100%;" />
             <p style="color: #15803d;"><strong>Vantagem:</strong> <span th:text="${advantageName}">Nome da Vantagem</span></p>
             <p style="color: #15803d;"><strong>Custo:</strong> <span th:text="${cost}">0</span> moedas</p>
             <p style="color: #15803d;"><strong>Empresa:</strong> <span th:text="${enterpriseName}">Empresa</span></p>

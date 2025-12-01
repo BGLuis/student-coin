@@ -62,7 +62,7 @@ public class AdvantageController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdvantageResponse> registerAdvantage(
             Authentication authentication,
-            @ModelAttribute @Valid AdvantageRequest advantage
+            @Valid AdvantageRequest advantage
     ) throws IOException {
         AdvantageResponse response = this.advantageMapper.toResponse(
                 advantageService.register(

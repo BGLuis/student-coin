@@ -1,20 +1,32 @@
 package com.student_coin.api.service;
 
 import com.student_coin.api.config.MailConfig;
+import com.student_coin.api.entity.Advantage;
+import com.student_coin.api.utils.QRCode;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 @Slf4j
 @Service
@@ -26,6 +38,12 @@ public class EmailService {
     private final MailConfig mailConfig;
 
     public void sendEmail(String to, String subject, String templateName, Map<String, Object> variables)
+            throws MessagingException {
+        sendEmail(to, subject, templateName, variables, null);
+    }
+
+    public void sendEmail(String to, String subject, String templateName, Map<String, Object> variables,
+            Map<String, byte[]> images)
             throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -40,6 +58,13 @@ public class EmailService {
         helper.setText(htmlContent, true);
         helper.setFrom("noreply@" + mailConfig.getDomain());
 
+        if (images != null) {
+            for (Entry<String, byte[]> each : images.entrySet()) {
+                InputStreamSource resouce = new ByteArrayResource(each.getValue());
+                helper.addInline(each.getKey(), resouce, "image/png");
+            }
+        }
+
         mailSender.send(message);
         log.info("Email enviado com sucesso para: {}", to);
     }
@@ -48,6 +73,16 @@ public class EmailService {
     public void sendEmailAsync(String to, String subject, String templateName, Map<String, Object> variables) {
         try {
             sendEmail(to, subject, templateName, variables);
+        } catch (MessagingException e) {
+            log.error("Erro ao enviar email para: {}", to, e);
+        }
+    }
+
+    @Async
+    public void sendEmailAsync(String to, String subject, String templateName, Map<String, Object> variables,
+            Map<String, byte[]> images) {
+        try {
+            sendEmail(to, subject, templateName, variables, images);
         } catch (MessagingException e) {
             log.error("Erro ao enviar email para: {}", to, e);
         }
@@ -86,17 +121,25 @@ public class EmailService {
         sendEmailAsync(to, "Confirmação de envio de moedas", "email/coins-sent", variables);
     }
 
-    public void sendAdvantageRedeemedEmail(String to, String studentName, String advantageName, int cost,
+    public void sendAdvantageRedeemedEmail(String to, String studentName, Advantage advantage, int cost,
             int newBalance, String code) {
         Map<String, Object> variables = Map.of(
                 "studentName", studentName,
-                "advantageName", advantageName,
+                "advantageName", advantage.getTitle(),
+                "advantageImageURL", advantage.getImageUrl(),
+                "frontEndURL", this.mailConfig.getFrontURL(),
                 "cost", cost,
                 "newBalance", newBalance,
                 "code", code != null ? code : "N/A",
                 "hasCode", code != null);
 
-        sendEmailAsync(to, "Vantagem resgatada com sucesso! 🎁", "email/advantage-redeemed", variables);
+        Map<String, byte[]> attachments = new HashMap<>();
+        if (code != null) {
+            String url = this.mailConfig.getFrontURL() + "/redeem/confirm?code=" + code;
+            attachments.put("qr-code", QRCode.generateQrCodeImage(url));
+        }
+
+        sendEmailAsync(to, "Vantagem resgatada com sucesso! 🎁", "email/advantage-redeemed", variables, attachments);
     }
 
     public void sendPasswordResetEmail(String to, String name, String token) {
@@ -108,11 +151,12 @@ public class EmailService {
         sendEmailAsync(to, "Recuperação de Senha - Student Coin", "email/password-reset", variables);
     }
 
-    public void sendNewAdvantageEmail(String to, String enterpriseName, String advantageName,
+    public void sendNewAdvantageEmail(String to, String enterpriseName, Advantage advantage,
             String description, int cost) {
         Map<String, Object> variables = Map.of(
                 "enterpriseName", enterpriseName,
-                "advantageName", advantageName,
+                "advantageName", advantage.getTitle(),
+                "advantageImageURL", advantage.getImageUrl(),
                 "description", description,
                 "cost", cost);
 
@@ -134,10 +178,11 @@ public class EmailService {
         sendEmailAsync(to, "Nova Vantagem Disponível! 🎁", "email/new-advantage", variables);
     }
 
-    public void sendCodeValidatedEmail(String to, String studentName, String advantageName, String enterpriseName,
+    public void sendCodeValidatedEmail(String to, String studentName, Advantage advantage, String enterpriseName,
             String coupon, LocalDateTime usedAt) {
         Map<String, Object> variables = Map.of(
-                "advantageName", advantageName,
+                "advantageName", advantage.getTitle(),
+                "advantageImageURL", advantage.getImageUrl(),
                 "studentName", studentName,
                 "enterpriseName", enterpriseName,
                 "coupon", coupon,
