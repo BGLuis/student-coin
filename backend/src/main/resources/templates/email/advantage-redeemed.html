@@ -20,14 +20,16 @@
             <p style="color: #78350f;"><strong>Vantagem:</strong> <span th:text="${advantageName}">Nome</span></p>
             <p style="color: #78350f;"><strong>Custo:</strong> <span th:text="${cost}">0</span> moedas</p>
             <p style="color: #78350f;"><strong>Seu novo saldo:</strong> <span th:text="${newBalance}">0</span> moedas</p>
-            <p th:if="${hasCode}" style="color: #78350f; margin-top: 15px;">
-                <strong>Código de Resgate:</strong><br>
-                <span style="font-size: 24px; font-weight: 700; color: #92400e; display: block; margin-top: 5px; background-color: white; padding: 10px; border-radius: 4px; text-align: center; letter-spacing: 2px;" 
-                      th:text="${code}">CODIGO123</span>
-            </p>
-            <p style="text-align: center;">OR</p>
-            <p>Read the QR Code</p>
-            <img src="cid:qr-code" alt="QRCode to redeem the advantage" />
+            <div th:if="${hasCode}" style="text-align: center;">
+                <p style="color: #78350f; margin-top: 15px;">
+                    <strong>Código de Resgate:</strong><br>
+                    <span style="font-size: 24px; font-weight: 700; color: #92400e; display: block; margin-top: 5px; background-color: white; padding: 10px; border-radius: 4px; text-align: center; letter-spacing: 2px;" 
+                          th:text="${code}">CODIGO123</span>
+                </p>
+                <p>OU</p>
+                <p>Mostre o QRCode Para o(a) Atendente</p>
+                <img src="cid:qr-code.png" alt="QRCode to redeem the advantage" />
+            </div>
         </div>
 
         <div class="content-body">

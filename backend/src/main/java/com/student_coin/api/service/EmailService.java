@@ -126,7 +126,7 @@ public class EmailService {
         Map<String, Object> variables = Map.of(
                 "studentName", studentName,
                 "advantageName", advantage.getTitle(),
-                "advantageImageURL", advantage.getImageUrl(),
+                "advantageImageUrl", advantage.getImageUrl(),
                 "frontEndURL", this.mailConfig.getFrontURL(),
                 "cost", cost,
                 "newBalance", newBalance,
@@ -136,7 +136,7 @@ public class EmailService {
         Map<String, byte[]> attachments = new HashMap<>();
         if (code != null) {
             String url = this.mailConfig.getFrontURL() + "/redeem/confirm?code=" + code;
-            attachments.put("qr-code", QRCode.generateQrCodeImage(url));
+            attachments.put("qr-code.png", QRCode.generateQrCodeImage(url));
         }
 
         sendEmailAsync(to, "Vantagem resgatada com sucesso! 🎁", "email/advantage-redeemed", variables, attachments);
