@@ -98,6 +98,7 @@ export const Header: React.FC = () => {
                     links: [
                         { href: '/', label: 'Home' },
                         { href: '/empresa/gerenciar-vantagens', label: 'Gerenciar Vantagens' },
+                        { href: '/empresa/resgatar-vantagem', label: 'Resgatar Vantagem' },
                         { href: '/conferencia', label: 'Conferência' }
                     ],
                     showCoins: false,

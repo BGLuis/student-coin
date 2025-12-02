@@ -99,4 +99,21 @@ export const enterpriseService = {
             throw error;
         }
     },
+
+    validateRedeem: async (coupon: string): Promise<{ usedAt: string }> => {
+        try {
+            console.log('[EnterpriseService] Validando cupom:', coupon);
+            const response = await api.post<{ usedAt: string }>(`/enterprises/validate-redeem/${coupon}`);
+            console.log('[EnterpriseService] Cupom validado com sucesso:', response.data);
+            return response.data;
+        } catch (error: any) {
+            console.error('[EnterpriseService] Erro ao validar cupom:', {
+                coupon,
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
+            throw error;
+        }
+    },
 };

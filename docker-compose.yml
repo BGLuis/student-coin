@@ -86,6 +86,8 @@ services:
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
       SPRING_PROFILES_ACTIVE: development
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
     depends_on:
       - db
       - localstack
