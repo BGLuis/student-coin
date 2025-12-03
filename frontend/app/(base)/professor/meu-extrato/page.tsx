@@ -64,7 +64,6 @@ export default function MeuExtratoProfessor() {
     const filteredTransactions = balanceData?.transactions.content.filter(t => {
         const userAccountId = balanceData.transactions.content[0]?.destination.id || 0;
         const partner = getPartner(t, userAccountId);
-        const transType = getTransactionType(t, userAccountId);
         const formattedDate = formatDate(t.createTime);
 
         // Filtro de busca

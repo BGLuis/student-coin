@@ -31,14 +31,14 @@ export const MultiStepForm: React.FC<MultiStepFormProps> = ({
     steps,
     currentStep,
     onNext,
-    onPrevious,
+    onPrevious: _onPrevious,
     onStepClick,
     validatedSteps = [],
     children,
     isLastStep = false,
-    isFirstStep = true,
+    isFirstStep: _isFirstStep = true,
     nextButtonText = "Próximo",
-    previousButtonText = "Anterior",
+    previousButtonText: _previousButtonText = "Anterior",
     disableNext = false,
 }) => {
     // Função para verificar se um passo pode ser clicado

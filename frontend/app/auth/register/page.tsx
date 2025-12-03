@@ -100,20 +100,6 @@ export default function EnterpriseRegister() {
 
     const steps = getSteps();
 
-    const handleNext = () => {
-        if (currentStep < steps.length - 1) {
-            if (!validatedSteps.includes(currentStep)) {
-                setValidatedSteps([...validatedSteps, currentStep]);
-            }
-            setCurrentStep(currentStep + 1);
-        } else {
-            const combined = `${formData.endereco_logradouro || ""}${formData.endereco_numero ? `, ${formData.endereco_numero}` : ""}${formData.endereco_complemento ? ` - ${formData.endereco_complemento}` : ""}${formData.endereco_bairro ? `, ${formData.endereco_bairro}` : ""}${formData.endereco_cidade ? ` - ${formData.endereco_cidade}` : ""}${formData.endereco_estado ? `/${formData.endereco_estado}` : ""}`.trim();
-            setFormData(prev => ({ ...prev, endereco: combined }));
-            console.log("Dados do formulário:", { ...formData, endereco: combined });
-            alert("Formulário enviado com sucesso!");
-        }
-    };
-
     const handlePrevious = () => {
         if (currentStep > 0) {
             setCurrentStep(currentStep - 1);
@@ -142,7 +128,7 @@ export default function EnterpriseRegister() {
         setErrors(prev => ({ ...prev, [name]: error }));
     };
 
-    const validateField = useCallback((name: string, value: any) => {
+    const validateField = useCallback((name: string, value: string | number | undefined) => {
         const v = (value ?? "").toString().trim();
         switch (name) {
             case "tipoCadastro":
@@ -345,7 +331,7 @@ export default function EnterpriseRegister() {
         const newErrors = { ...errors };
         fields.forEach(f => {
             newTouched[f] = true;
-            newErrors[f] = validateField(f, (formData as any)[f]);
+            newErrors[f] = validateField(f, formData[f as keyof typeof formData]);
         });
         setTouched(newTouched);
         setErrors(newErrors);
@@ -385,7 +371,7 @@ export default function EnterpriseRegister() {
         try {
             if (formData.tipoCadastro === "aluno") {
                 const combinedAddress = `${formData.endereco_logradouro || ""}, ${formData.endereco_numero || ""} - ${formData.endereco_bairro || ""}, ${formData.endereco_cidade || ""} - ${formData.endereco_estado || ""}${formData.endereco_complemento ? `, ${formData.endereco_complemento}` : ""}`;
-                
+
                 await authService.registerStudent({
                     name: formData.nome,
                     email: formData.email,
@@ -408,9 +394,10 @@ export default function EnterpriseRegister() {
                 alert("Cadastro realizado com sucesso!");
                 router.push("/empresa/gerenciar-vantagens");
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
-            alert("Erro ao realizar cadastro: " + (error.response?.data?.message || "Ocorreu um erro inesperado."));
+            const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro inesperado.";
+            alert("Erro ao realizar cadastro: " + errorMessage);
         } finally {
             setIsLoading(false);
         }

@@ -44,7 +44,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         const [showPassword, setShowPassword] = useState(false);
         const isPassword = type === "password";
         const inputType = isPassword && showPassword ? "text" : type;
-        const valueProp = (value ?? (rest as any).value) as string | undefined;
+        const valueProp = (value ?? (rest as { value?: string }).value) as string | undefined;
 
         const format = typeof mask === "function"
             ? mask
@@ -78,8 +78,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             setDisplayValue(masked);
 
             const fakeEvent = {
-                target: { name: (rest as any).name ?? "", value: masked },
-                currentTarget: { name: (rest as any).name ?? "", value: masked },
+                target: { name: (rest as { name?: string }).name ?? "", value: masked },
+                currentTarget: { name: (rest as { name?: string }).name ?? "", value: masked },
                 preventDefault: () => {},
                 stopPropagation: () => {},
                 nativeEvent: {},
