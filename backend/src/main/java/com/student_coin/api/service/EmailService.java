@@ -1,5 +1,10 @@
 package com.student_coin.api.service;
 
+import com.mailersend.sdk.MailerSend;
+import com.mailersend.sdk.MailerSendResponse;
+import com.mailersend.sdk.emails.Attachment;
+import com.mailersend.sdk.emails.Email;
+import com.mailersend.sdk.exceptions.MailerSendException;
 import com.student_coin.api.config.MailConfig;
 import com.student_coin.api.entity.Advantage;
 import com.student_coin.api.utils.QRCode;
@@ -9,21 +14,13 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamSource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,47 +30,48 @@ import java.util.Map.Entry;
 @AllArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+    private final MailerSend mailerSend;
     private final MailConfig mailConfig;
 
+
     public void sendEmail(String to, String subject, String templateName, Map<String, Object> variables)
-            throws MessagingException {
+            throws MessagingException, MailerSendException {
         sendEmail(to, subject, templateName, variables, null);
     }
 
     public void sendEmail(String to, String subject, String templateName, Map<String, Object> variables,
-            Map<String, byte[]> images)
-            throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+                          Map<String, byte[]> images)
+            throws MessagingException, MailerSendException {
 
+        Email email = new Email();
+        email.subject = subject;
+        email.addRecipient(null, to);
+        email.setFrom(null, "noreply@" + mailConfig.getDomain());
         Context context = new Context();
         context.setVariables(variables);
-
-        String htmlContent = templateEngine.process(templateName, context);
-
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(htmlContent, true);
-        helper.setFrom("noreply@" + mailConfig.getDomain());
+        email.html = templateEngine.process(templateName, context);
 
         if (images != null) {
             for (Entry<String, byte[]> each : images.entrySet()) {
-                InputStreamSource resouce = new ByteArrayResource(each.getValue());
-                helper.addInline(each.getKey(), resouce, "image/png");
+                Attachment attachment = new Attachment();
+                attachment.id = each.getKey();
+                attachment.filename = each.getKey();
+                attachment.content = Base64.getEncoder().encodeToString(each.getValue());
+                email.attachments.add(attachment);
             }
         }
 
-        mailSender.send(message);
+        mailerSend.emails().send(email);
         log.info("Email enviado com sucesso para: {}", to);
     }
+
 
     @Async
     public void sendEmailAsync(String to, String subject, String templateName, Map<String, Object> variables) {
         try {
             sendEmail(to, subject, templateName, variables);
-        } catch (MessagingException e) {
+        } catch (MessagingException | MailerSendException e) {
             log.error("Erro ao enviar email para: {}", to, e);
         }
     }
@@ -83,7 +81,7 @@ public class EmailService {
             Map<String, byte[]> images) {
         try {
             sendEmail(to, subject, templateName, variables, images);
-        } catch (MessagingException e) {
+        } catch (MessagingException | MailerSendException e) {
             log.error("Erro ao enviar email para: {}", to, e);
         }
     }

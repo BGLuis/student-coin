@@ -9,17 +9,11 @@ spring:
       driverClassName: org.postgresql.Driver
 
   mail:
-    host: ${SMTP_HOST}
-    port: ${SMTP_PORT}
-    test-connection: true
-    username: ${SMTP_USERNAME}
-    password: ${SMTP_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+    token: ${MAIL_TOKEN}
+    domain: ${MAIL_DOMAIN}
+    test-connection: false
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
 
   thymeleaf:
     prefix: classpath:/templates/
