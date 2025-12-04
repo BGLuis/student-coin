@@ -18,6 +18,21 @@ export interface Transaction {
     motive?: string; // Apenas para RewardTransaction
     origin?: Account; // Pode ser null para recarga semestral
     destination: Account;
+    redeem?: {
+        advantage: {
+            id: number;
+            name: string;
+            description: string;
+            price: number;
+            enterprise?: {
+                id: number;
+                person: {
+                    name: string;
+                    email: string;
+                };
+            };
+        };
+    };
 }
 
 export interface BalanceResponse {
@@ -114,7 +129,7 @@ export const transactionService = {
             console.log('[TransactionService] Resgate realizado com sucesso:', response.data);
             return response.data;
         } catch (error: any) {
-             console.error('[TransactionService] Erro ao resgatar vantagem:', {
+            console.error('[TransactionService] Erro ao resgatar vantagem:', {
                 message: error.message,
                 response: error.response?.data,
                 status: error.response?.status

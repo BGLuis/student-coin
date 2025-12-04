@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 interface SelectOption {
     value: string;
     label?: React.ReactNode;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 interface SelectProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
@@ -17,7 +17,7 @@ interface SelectProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChan
     value?: string;
     defaultValue?: string;
     required?: boolean;
-    onChange?: (e: React.ChangeEvent<any>) => void;
+    onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
     onValueChange?: (value: string) => void;
     renderOption?: (
         option: SelectOption,
@@ -78,7 +78,9 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
             if (disabled) return;
             setInternalValue(opt.value);
 
-            onValueChange && onValueChange(opt.value);
+            if (onValueChange) {
+                onValueChange(opt.value);
+            }
 
             if (onChange) {
                 const fakeEvent = {
@@ -144,7 +146,7 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
         const selectedOption = options.find((o) => o.value === internalValue);
 
         return (
-            <div className={`flex flex-col gap-1 ${className}`} {...props} ref={ref as any}>
+            <div className={`flex flex-col gap-1 ${className}`} {...props} ref={ref as React.Ref<HTMLDivElement>}>
                 {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
 
                 <div className="relative" ref={wrapperRef}>
@@ -154,6 +156,7 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
                         onKeyDown={handleKeyDown}
                         aria-haspopup="listbox"
                         aria-expanded={open}
+                        aria-controls={`${name ?? 'select'}-listbox`}
                         role="combobox"
                         aria-disabled={disabled}
                         className={`px-3 py-2 border rounded-md flex items-center justify-between cursor-pointer ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"

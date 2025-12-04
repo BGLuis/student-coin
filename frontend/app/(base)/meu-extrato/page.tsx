@@ -96,7 +96,7 @@ export default function MeuExtrato() {
 
     const getPartner = (transaction: Transaction, userEmail: string): string => {
         if (transaction.redeem) {
-            return transaction.redeem.advantage.enterprise.person.name;
+            return transaction.redeem.advantage.enterprise?.person?.name || "Empresa Parceira";
         }
         if (!transaction.origin) return "Sistema";
         if (transaction.destination?.person?.email === userEmail) {
@@ -250,7 +250,7 @@ export default function MeuExtrato() {
                             <div className="space-y-2 px-6 pb-6">
                                 {filteredTransactions.length > 0 ? (
                                     filteredTransactions.map(transaction => {
-                                        const { type, icon, isPositive } = getTransactionTypeDetails(transaction, userEmail);
+                                        const { type: _type, icon, isPositive } = getTransactionTypeDetails(transaction, userEmail);
                                         const partner = getPartner(transaction, userEmail);
                                         const value = transaction.value;
                                         const motive = transaction.redeem ? `Resgate: ${transaction.redeem.advantage.name}` : transaction.motive || "Transação geral";

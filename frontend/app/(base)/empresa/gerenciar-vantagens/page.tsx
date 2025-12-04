@@ -10,7 +10,7 @@ export default function GerenciarVantagensPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [vantagens, setVantagens] = useState<Advantage[]>([]);
     const [loading, setLoading] = useState(true);
-    const [enterpriseId, setEnterpriseId] = useState<number | null>(null);
+    const [_enterpriseId, setEnterpriseId] = useState<number | null>(null);
 
     useEffect(() => {
         loadData();
@@ -21,7 +21,7 @@ export default function GerenciarVantagensPage() {
             setLoading(true);
             const enterprise = await enterpriseService.getMe();
             setEnterpriseId(enterprise.id);
-            
+
             const response = await advantageService.getByEnterprise(enterprise.id);
             setVantagens(response.content);
         } catch (error) {
@@ -42,7 +42,7 @@ export default function GerenciarVantagensPage() {
                 price: vantagemData.custo,
                 image: vantagemData.imagem
             });
-            
+
             setVantagens([...vantagens, newAdvantage]);
             setIsModalOpen(false);
         } catch (error) {
@@ -84,21 +84,21 @@ export default function GerenciarVantagensPage() {
                             Cadastre e gerencie as vantagens oferecidas pela sua empresa
                         </p>
                     </div>
-                    <Button 
+                    <Button
                         onClick={() => setIsModalOpen(true)}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2"
                     >
-                        <svg 
-                            className="w-5 h-5" 
-                            fill="none" 
-                            stroke="currentColor" 
+                        <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
                             viewBox="0 0 24 24"
                         >
-                            <path 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
-                                strokeWidth={2} 
-                                d="M12 4v16m8-8H4" 
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 4v16m8-8H4"
                             />
                         </svg>
                         Cadastrar Vantagem
@@ -177,7 +177,7 @@ export default function GerenciarVantagensPage() {
                                     <p className="text-gray-600 mb-4 line-clamp-2">
                                         {vantagem.description}
                                     </p>
-                                    
+
                                     {/* Custo em moedas */}
                                     <div className="flex items-center justify-between mb-4">
                                         <div className="flex items-center gap-2">
@@ -208,7 +208,7 @@ export default function GerenciarVantagensPage() {
                                             Excluir
                                         </Button>
                                         <Button
-                                            onClick={() => {/* TODO: Editar */}}
+                                            onClick={() => {/* TODO: Editar */ }}
                                             className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded"
                                         >
                                             Editar

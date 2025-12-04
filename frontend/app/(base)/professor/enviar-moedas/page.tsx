@@ -16,7 +16,7 @@ export default function EnviarMoedas() {
     const [saldoDisponivel, setSaldoDisponivel] = useState(0);
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [_error, setError] = useState<string | null>(null);
 
     // Buscar estudantes e saldo ao carregar a página
     useEffect(() => {
@@ -87,7 +87,7 @@ export default function EnviarMoedas() {
             // Enviar moedas para o estudante
             // O backend espera um UUID para a transação (idempotência) na URL
             const transactionUuid = crypto.randomUUID();
-            
+
             await transactionService.rewardStudent(
                 transactionUuid,
                 {

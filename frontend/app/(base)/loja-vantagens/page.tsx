@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { advantageService, transactionService, type Advantage } from "@/services";
 
 interface VantagemDisplay extends Advantage {
@@ -9,7 +10,6 @@ interface VantagemDisplay extends Advantage {
 }
 
 export default function LojaVantagens() {
-    const [categoriaFiltro, setCategoriaFiltro] = useState("Todas");
     const [searchTerm, setSearchTerm] = useState("");
     const [vantagemSelecionada, setVantagemSelecionada] = useState<VantagemDisplay | null>(null);
     const [modalAberto, setModalAberto] = useState(false);
@@ -26,7 +26,7 @@ export default function LojaVantagens() {
                     advantageService.getAll(0, 100),
                     transactionService.getBalance(0, 1)
                 ]);
-                
+
                 setVantagens(advResponse.content);
                 setSaldoEstudante(balanceResponse.balance);
             } catch (error) {
@@ -41,15 +41,15 @@ export default function LojaVantagens() {
     const abrirModal = async (vantagem: VantagemDisplay) => {
         setVantagemSelecionada(vantagem);
         setModalAberto(true);
-        
+
         // Fetch enterprise info if not already present
         if (!vantagem.empresaName) {
-             try {
-                 const enterprise = await advantageService.getEnterprise(vantagem.id);
-                 setVantagemSelecionada(prev => prev ? { ...prev, empresaName: enterprise.name } : null);
-             } catch (e) {
-                 console.error(e);
-             }
+            try {
+                const enterprise = await advantageService.getEnterprise(vantagem.id);
+                setVantagemSelecionada(prev => prev ? { ...prev, empresaName: enterprise.name } : null);
+            } catch (e) {
+                console.error(e);
+            }
         }
     };
 
@@ -68,18 +68,16 @@ export default function LojaVantagens() {
 
         try {
             const uuid = crypto.randomUUID();
-            await transactionService.redeemAdvantage(uuid, vantageSelecionada.id);
+            await transactionService.redeemAdvantage(uuid, vantagemSelecionada.id);
             alert(`Vantagem resgatada com sucesso!`);
-            setSaldoEstudante(prev => prev - vantageSelecionada.price);
+            setSaldoEstudante(prev => prev - vantagemSelecionada.price);
             fecharModal();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
-            alert("Erro ao resgatar vantagem: " + (error.response?.data?.message || "Erro desconhecido"));
+            const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+            alert("Erro ao resgatar vantagem: " + errorMessage);
         }
     };
-    
-    // Categorias placeholder since backend doesn't have them yet
-    const categorias = ["Todas"]; 
 
     const vantagensFiltradas = vantagens.filter(vantagem => {
         const matchBusca = vantagem.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -146,8 +144,8 @@ export default function LojaVantagens() {
                                         onClick={() => abrirModal(vantagem)}
                                     >
                                         {/* Imagem/Emoji */}
-                                        <div className="bg-gradient-to-br from-teal-50 to-cyan-50 h-40 flex items-center justify-center text-7xl group-hover:scale-110 transition-transform">
-                                            {vantagem.imageUrl ? <img src={vantagem.imageUrl} alt={vantagem.description} className="h-full w-full object-cover" /> : "🎁"}
+                                        <div className="bg-gradient-to-br from-teal-50 to-cyan-50 h-40 flex items-center justify-center text-7xl group-hover:scale-110 transition-transform relative">
+                                            {vantagem.imageUrl ? <Image src={vantagem.imageUrl} alt={vantagem.description} fill className="object-cover" /> : "🎁"}
                                         </div>
 
                                         {/* Conteúdo */}
@@ -191,8 +189,8 @@ export default function LojaVantagens() {
                     >
                         {/* Header do Modal */}
                         <div className="bg-gradient-to-br from-teal-50 to-cyan-50 p-8 text-center relative h-48 flex items-center justify-center">
-                            {vantagemSelecionada.imageUrl ? 
-                                <img src={vantagemSelecionada.imageUrl} alt={vantagemSelecionada.description} className="h-full object-contain" /> :
+                            {vantagemSelecionada.imageUrl ?
+                                <Image src={vantagemSelecionada.imageUrl} alt={vantagemSelecionada.description} fill className="object-contain" /> :
                                 <div className="text-8xl">🎁</div>
                             }
                         </div>
