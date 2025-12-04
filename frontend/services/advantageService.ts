@@ -2,14 +2,14 @@ import api from "@/lib/api";
 
 export interface Advantage {
     id: number;
-    name: string;
+    title: string;
     description: string;
     price: number;
     imageUrl: string;
 }
 
 export interface AdvantageCreateData {
-    name: string;
+    title: string;
     description: string;
     price: number;
     image?: File;
@@ -22,6 +22,11 @@ export interface Page<T> {
     totalElements: number;
     size: number;
     number: number;
+}
+
+interface AdvantagesResponse {
+    enterprise: any;
+    advantages: Page<Advantage>;
 }
 
 export const advantageService = {
@@ -41,10 +46,10 @@ export const advantageService = {
         try {
             // Tentando endpoint específico primeiro, se falhar, tentamos filtro na listagem geral
             // Assumindo /enterprises/{id}/advantages
-            const response = await api.get<Page<Advantage>>(`/enterprises/${enterpriseId}/advantages`, {
+            const response = await api.get<AdvantagesResponse>(`/enterprises/${enterpriseId}/advantages`, {
                 params: { page, size }
             });
-            return response.data;
+            return response.data.advantages;
         } catch (error) {
             console.error("Erro ao buscar vantagens da empresa:", error);
             throw error;
@@ -54,7 +59,7 @@ export const advantageService = {
     create: async (data: AdvantageCreateData): Promise<Advantage> => {
         try {
             const formData = new FormData();
-            formData.append("name", data.name);
+            formData.append("title", data.title);
             formData.append("description", data.description);
             formData.append("price", data.price.toString());
             
@@ -77,7 +82,7 @@ export const advantageService = {
     update: async (id: number, data: Partial<AdvantageCreateData>): Promise<Advantage> => {
         try {
             const formData = new FormData();
-            if (data.name) formData.append("name", data.name);
+            if (data.title) formData.append("title", data.title);
             if (data.description) formData.append("description", data.description);
             if (data.price) formData.append("price", data.price.toString());
             if (data.image) formData.append("image", data.image);

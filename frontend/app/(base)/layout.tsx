@@ -1,35 +1,23 @@
 import { Footer, Header } from "@/components";
 import React, { ReactNode } from "react";
 
-interface BaseLayoutProps {
-    children: ReactNode;
-    showHeader?: boolean;
-    showFooter?: boolean;
-    backgroundColor?: string;
-    className?: string;
-}
-
-export const BaseLayout: React.FC<BaseLayoutProps> = ({
+export default function BaseLayout({
     children,
-    showHeader = true,
-    showFooter = true,
-    backgroundColor = "bg-white",
-    className = "",
-}) => {
+}: Readonly<{
+    children: ReactNode;
+}>) {
     return (
         <div className="h-screen flex flex-col">
             {/* Header */}
-            {showHeader && <Header />}
+            <Header />
 
             {/* Main Content */}
-            <main className={`flex-1 overflow-y-auto ${backgroundColor} ${className}`}>
+            <main className="flex-1 overflow-y-auto bg-white">
                 {children}
             </main>
 
             {/* Footer */}
-            {showFooter && <Footer />}
+            <Footer />
         </div>
     );
-};
-
-export default BaseLayout;
+}

@@ -49,13 +49,23 @@ api.interceptors.response.use(
         return response;
     },
     (error: AxiosError<ApiErrorResponse>) => {
-        console.error('[API] Erro na resposta:', {
-            status: error.response?.status,
-            statusText: error.response?.statusText,
-            url: error.config?.url,
-            message: error.response?.data?.message || error.message,
-            data: error.response?.data
-        });
+        if (error.response) {
+            console.error('[API] Erro na resposta:', {
+                status: error.response.status,
+                statusText: error.response.statusText,
+                url: error.config?.url,
+                message: error.response.data?.message || error.message,
+                data: error.response.data
+            });
+        } else if (error.request) {
+            console.error('[API] Sem resposta do servidor:', {
+                 message: error.message,
+                 code: error.code,
+                 url: error.config?.url
+            });
+        } else {
+             console.error('[API] Erro na configuração da requisição:', error.message);
+        }
 
         if (error.response?.status === 401) {
             console.warn('[API] Erro 401 - Não autorizado. Redirecionando para login...');

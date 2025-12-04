@@ -133,7 +133,7 @@ public class EmailService {
 
         Map<String, byte[]> attachments = new HashMap<>();
         if (code != null) {
-            String url = this.mailConfig.getFrontURL() + "/redeem/confirm?code=" + code;
+            String url = this.mailConfig.getFrontURL() + "/empresa/resgatar-vantagem?code=" + code;
             attachments.put("qr-code.png", QRCode.generateQrCodeImage(url));
         }
 

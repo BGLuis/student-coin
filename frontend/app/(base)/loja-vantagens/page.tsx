@@ -5,11 +5,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { advantageService, transactionService, type Advantage } from "@/services";
 
+import { useToast } from "@/contexts/ToastContext";
+
 interface VantagemDisplay extends Advantage {
     empresaName?: string;
 }
 
 export default function LojaVantagens() {
+    const { addToast } = useToast();
     const [searchTerm, setSearchTerm] = useState("");
     const [vantagemSelecionada, setVantagemSelecionada] = useState<VantagemDisplay | null>(null);
     const [modalAberto, setModalAberto] = useState(false);
@@ -62,20 +65,20 @@ export default function LojaVantagens() {
         if (!vantagemSelecionada) return;
 
         if (saldoEstudante < vantagemSelecionada.price) {
-            alert("Saldo insuficiente!");
+            addToast("Saldo insuficiente!", "error");
             return;
         }
 
         try {
             const uuid = crypto.randomUUID();
             await transactionService.redeemAdvantage(uuid, vantagemSelecionada.id);
-            alert(`Vantagem resgatada com sucesso!`);
+            addToast(`Vantagem resgatada com sucesso!`, "success");
             setSaldoEstudante(prev => prev - vantagemSelecionada.price);
             fecharModal();
         } catch (error: unknown) {
             console.error(error);
             const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
-            alert("Erro ao resgatar vantagem: " + errorMessage);
+            addToast("Erro ao resgatar vantagem: " + errorMessage, "error");
         }
     };
 
@@ -145,7 +148,7 @@ export default function LojaVantagens() {
                                     >
                                         {/* Imagem/Emoji */}
                                         <div className="bg-gradient-to-br from-teal-50 to-cyan-50 h-40 flex items-center justify-center text-7xl group-hover:scale-110 transition-transform relative">
-                                            {vantagem.imageUrl ? <Image src={vantagem.imageUrl} alt={vantagem.description} fill className="object-cover" /> : "🎁"}
+                                            {vantagem.imageUrl ? <Image src={vantagem.imageUrl} alt={vantagem.description} fill className="object-cover" unoptimized /> : "🎁"}
                                         </div>
 
                                         {/* Conteúdo */}

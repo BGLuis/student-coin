@@ -12,7 +12,6 @@ public record AdvantageRequest(
         String description,
         @Min(value = 1, message = "Price must be at least 1")
         Integer price,
-        @NotNull
         MultipartFile image
 ) {
 }

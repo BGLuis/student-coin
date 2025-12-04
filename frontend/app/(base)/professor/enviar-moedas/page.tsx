@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { studentService, transactionService, type Student } from "@/services";
+import { useToast } from "@/contexts/ToastContext";
 
 export default function EnviarMoedas() {
+    const { addToast } = useToast();
     const [categoriaMerito, setCategoriaMerito] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [quantidade, setQuantidade] = useState("");
@@ -65,18 +67,18 @@ export default function EnviarMoedas() {
         e.preventDefault();
 
         if (!selectedStudent || !categoriaMerito || !quantidade || !motivo) {
-            alert("Por favor, preencha todos os campos.");
+            addToast("Por favor, preencha todos os campos.", "warning");
             return;
         }
 
         const valor = parseInt(quantidade);
         if (valor <= 0) {
-            alert("A quantidade deve ser maior que zero!");
+            addToast("A quantidade deve ser maior que zero!", "warning");
             return;
         }
 
         if (valor > saldoDisponivel) {
-            alert("Saldo insuficiente!");
+            addToast("Saldo insuficiente!", "error");
             return;
         }
 
@@ -97,7 +99,7 @@ export default function EnviarMoedas() {
                 }
             );
 
-            alert("Moedas enviadas com sucesso!");
+            addToast("Moedas enviadas com sucesso!", "success");
 
             // Atualizar saldo local
             setSaldoDisponivel(prev => prev - valor);
@@ -110,7 +112,7 @@ export default function EnviarMoedas() {
             setSearchTerm("");
         } catch (err) {
             console.error("Erro ao enviar moedas:", err);
-            alert("Erro ao enviar moedas. Por favor, tente novamente.");
+            addToast("Erro ao enviar moedas. Por favor, tente novamente.", "error");
         } finally {
             setSending(false);
         }
