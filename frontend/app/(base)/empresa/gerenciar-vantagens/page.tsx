@@ -37,7 +37,7 @@ export default function GerenciarVantagensPage() {
     const handleNovaVantagem = async (vantagemData: { nome: string; descricao: string; custo: number; imagem?: File }) => {
         try {
             const newAdvantage = await advantageService.create({
-                name: vantagemData.nome,
+                title: vantagemData.nome,
                 description: vantagemData.descricao,
                 price: vantagemData.custo,
                 image: vantagemData.imagem
@@ -148,7 +148,7 @@ export default function GerenciarVantagensPage() {
                                     {vantagem.imageUrl ? (
                                         <Image
                                             src={vantagem.imageUrl}
-                                            alt={vantagem.name || "Imagem da vantagem"}
+                                            alt={vantagem.title || "Imagem da vantagem"}
                                             fill
                                             className="object-cover"
                                         />
@@ -172,7 +172,7 @@ export default function GerenciarVantagensPage() {
                                 {/* Conteúdo */}
                                 <div className="p-6">
                                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                                        {vantagem.name}
+                                        {vantagem.title}
                                     </h3>
                                     <p className="text-gray-600 mb-4 line-clamp-2">
                                         {vantagem.description}
