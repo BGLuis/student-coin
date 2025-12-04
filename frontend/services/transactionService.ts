@@ -14,10 +14,10 @@ export interface Transaction {
     id: number;
     uuid: string;
     value: number;
-    createTime: string;
+    createdAt: string;
     motive?: string; // Apenas para RewardTransaction
-    origin?: Account; // Pode ser null para recarga semestral
-    destination: Account;
+    origin?: Account; // Pode não vir do backend
+    destination?: Account; // Pode não vir do backend
     redeem?: {
         advantage: {
             id: number;

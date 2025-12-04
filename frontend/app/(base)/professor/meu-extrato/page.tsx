@@ -45,26 +45,21 @@ export default function MeuExtratoProfessor() {
     };
 
     // Função para determinar se é recebimento ou envio
-    const getTransactionType = (transaction: Transaction, userAccountId: number): string => {
-        if (!transaction.origin) return "Recarga Semestral";
-        if (transaction.destination.id === userAccountId) return "Recebimento";
+    const getTransactionType = (transaction: Transaction): string => {
+        if (transaction.value >= 0) return "Recebimento";
         return "Envio de Moedas";
     };
 
     // Função para determinar o parceiro da transação
-    const getPartner = (transaction: Transaction, userAccountId: number): string => {
-        if (!transaction.origin) return "Sistema";
-        if (transaction.destination.id === userAccountId) {
-            return transaction.origin.person.name;
-        }
-        return `Aluno ${transaction.destination.person.name}`;
+    const getPartner = (transaction: Transaction): string => {
+        if (transaction.motive) return "Transferência";
+        return "Sistema";
     };
 
     // Filtrar transações
     const filteredTransactions = balanceData?.transactions.content.filter(t => {
-        const userAccountId = balanceData.transactions.content[0]?.destination.id || 0;
-        const partner = getPartner(t, userAccountId);
-        const formattedDate = formatDate(t.createTime);
+        const partner = getPartner(t);
+        const formattedDate = formatDate(t.createdAt);
 
         // Filtro de busca
         const matchesSearch = partner.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -74,7 +69,7 @@ export default function MeuExtratoProfessor() {
         // Filtro de período
         let matchesPeriod = true;
         if (periodo === "Personalizado" && (dataInicio || dataFim)) {
-            const dataTransacao = new Date(t.createTime);
+            const dataTransacao = new Date(t.createdAt);
 
             if (dataInicio && dataFim) {
                 const inicio = new Date(dataInicio);
@@ -88,7 +83,7 @@ export default function MeuExtratoProfessor() {
                 matchesPeriod = dataTransacao <= fim;
             }
         } else if (periodo !== "Todos") {
-            const dataTransacao = new Date(t.createTime);
+            const dataTransacao = new Date(t.createdAt);
             const hoje = new Date();
             const diffDias = Math.floor((hoje.getTime() - dataTransacao.getTime()) / (1000 * 60 * 60 * 24));
 
@@ -104,7 +99,7 @@ export default function MeuExtratoProfessor() {
         // Filtro de tipo de transação
         let matchesTipo = true;
         if (tipoTransacao !== "Todas") {
-            const isReceiving = t.destination.id === userAccountId;
+            const isReceiving = t.value >= 0;
             if (tipoTransacao === "Recebimento") {
                 matchesTipo = isReceiving;
             } else if (tipoTransacao === "Envio") {
@@ -116,11 +111,10 @@ export default function MeuExtratoProfessor() {
     }) || [];
 
     // Calcular valor com sinal correto
-    const getValueWithSign = (transaction: Transaction, userAccountId: number): { value: number; isPositive: boolean } => {
-        const isReceiving = transaction.destination.id === userAccountId;
+    const getValueWithSign = (transaction: Transaction): { value: number; isPositive: boolean } => {
         return {
-            value: transaction.value,
-            isPositive: isReceiving
+            value: Math.abs(transaction.value),
+            isPositive: transaction.value >= 0
         };
     };
 
@@ -150,8 +144,6 @@ export default function MeuExtratoProfessor() {
             </div>
         );
     }
-
-    const userAccountId = balanceData?.transactions.content[0]?.destination.id || 0;
 
     return (
         <>
@@ -337,12 +329,12 @@ export default function MeuExtratoProfessor() {
                                     </thead>
                                     <tbody>
                                         {filteredTransactions.map((transaction) => {
-                                            const { value, isPositive } = getValueWithSign(transaction, userAccountId);
+                                            const { value, isPositive } = getValueWithSign(transaction);
                                             return (
                                                 <tr key={transaction.id} className="border-b border-gray-100 hover:bg-gray-50">
-                                                    <td className="py-4 px-4 text-sm text-gray-700">{formatDate(transaction.createTime)}</td>
-                                                    <td className="py-4 px-4 text-sm text-gray-700">{getTransactionType(transaction, userAccountId)}</td>
-                                                    <td className="py-4 px-4 text-sm text-gray-700">{getPartner(transaction, userAccountId)}</td>
+                                                    <td className="py-4 px-4 text-sm text-gray-700">{formatDate(transaction.createdAt)}</td>
+                                                    <td className="py-4 px-4 text-sm text-gray-700">{getTransactionType(transaction)}</td>
+                                                    <td className="py-4 px-4 text-sm text-gray-700">{getPartner(transaction)}</td>
                                                     <td className={`py-4 px-4 text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
                                                         {isPositive ? '+ ' : '- '}
                                                         {value}

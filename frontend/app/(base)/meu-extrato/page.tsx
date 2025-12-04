@@ -110,7 +110,7 @@ export default function MeuExtrato() {
     const filteredTransactions = transactions.filter(t => {
         const partner = getPartner(t, userEmail);
         const { type } = getTransactionTypeDetails(t, userEmail);
-        const formattedDate = formatDate(t.createTime);
+        const formattedDate = formatDate(t.createdAt);
 
         const matchesSearch = partner.toLowerCase().includes(searchTerm.toLowerCase()) ||
             (t.motive && t.motive.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -118,7 +118,7 @@ export default function MeuExtrato() {
 
         let matchesPeriod = true;
         if (periodo !== "Todos") {
-            const dataTransacao = new Date(t.createTime);
+            const dataTransacao = new Date(t.createdAt);
             if (periodo === "Personalizado" && (dataInicio || dataFim)) {
                 const inicio = dataInicio ? new Date(dataInicio) : null;
                 const fim = dataFim ? new Date(dataFim) : null;
@@ -268,7 +268,7 @@ export default function MeuExtrato() {
                                                     <p className={`font-bold text-lg ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
                                                         {isPositive ? '+' : '-'} M$ {value.toFixed(2)}
                                                     </p>
-                                                    <p className="text-sm text-gray-500">{formatDate(transaction.createTime)}</p>
+                                                    <p className="text-sm text-gray-500">{formatDate(transaction.createdAt)}</p>
                                                 </div>
                                             </div>
                                         );
