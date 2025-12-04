@@ -32,7 +32,7 @@ public class ConfigCors {
             );
         }
 
-        config.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*", "https://student-coin-five.vercel.app/*"));
+        config.setAllowedOriginPatterns(origins);
         config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
