@@ -24,7 +24,7 @@ public class ConfigCors {
         List<String> origins;
 
         if (env.equalsIgnoreCase("prod")) {
-            origins = List.of("https://student-coin-five.vercel.app/*");
+            origins = List.of("https://student-coin-five.vercel.app");
         } else {
             origins = List.of(
                     "http://localhost:*",
