@@ -12,7 +12,7 @@ import org.mapstruct.SubclassExhaustiveStrategy;
 import org.mapstruct.SubclassMapping;
 import org.springframework.data.domain.Page;
 
-@Mapper(componentModel = "spring", subclassExhaustiveStrategy = SubclassExhaustiveStrategy.RUNTIME_EXCEPTION)
+@Mapper(componentModel = "spring", subclassExhaustiveStrategy = SubclassExhaustiveStrategy.RUNTIME_EXCEPTION, uses = {AdvantageMapper.class})
 public interface TransactionMapper {
     @Mapping(target = "createdAt", source = "createTime")
     RewardTransactionResponse toRewardResponse(RewardTransaction rewardTransaction);

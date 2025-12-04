@@ -78,6 +78,7 @@ export const Header: React.FC = () => {
                     links: [
                         { href: '/', label: 'Home' },
                         { href: '/loja-vantagens', label: 'Loja de Vantagens' },
+                        { href: '/minhas-vantagens', label: 'Minhas Vantagens' },
                         { href: '/meu-extrato', label: 'Meu Extrato' }
                     ],
                     showCoins: true,

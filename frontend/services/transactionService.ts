@@ -16,6 +16,13 @@ export interface Transaction {
     value: number;
     createdAt: string;
     coupon?: string;
+    advantage?: {
+        id: number;
+        title: string;
+        description: string;
+        imageUrl: string;
+        price: number;
+    };
     motive?: string; // Apenas para RewardTransaction
     origin?: Account; // Pode não vir do backend
     destination?: Account; // Pode não vir do backend

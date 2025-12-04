@@ -10,3 +10,4 @@ export { default as Modal } from "./Modal";
 export { MultiStepForm } from "./MultiStepForm";
 export { default as CadastrarVantagemModal } from "./CadastrarVantagemModal";
 export { Toast } from "./Toast";
+export { default as QrCodeReader } from "./QrCodeReader";
