@@ -5,8 +5,10 @@ import Image from "next/image";
 import { Button, CadastrarVantagemModal } from "@/components";
 import { advantageService, type Advantage } from "@/services/advantageService";
 import { enterpriseService } from "@/services/enterpriseService";
+import { useToast } from "@/contexts/ToastContext";
 
 export default function GerenciarVantagensPage() {
+    const { addToast } = useToast();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [vantagens, setVantagens] = useState<Advantage[]>([]);
     const [loading, setLoading] = useState(true);
@@ -67,9 +69,10 @@ export default function GerenciarVantagensPage() {
             }
             setIsModalOpen(false);
             setEditingAdvantage(null);
+            addToast(editingAdvantage ? "Vantagem atualizada com sucesso!" : "Vantagem criada com sucesso!", "success");
         } catch (error) {
             console.error("Erro ao salvar vantagem:", error);
-            alert("Erro ao salvar vantagem. Tente novamente.");
+            addToast("Erro ao salvar vantagem. Tente novamente.", "error");
         }
     };
 
@@ -78,9 +81,10 @@ export default function GerenciarVantagensPage() {
             try {
                 await advantageService.delete(id);
                 setVantagens(vantagens.filter(v => v.id !== id));
+                addToast("Vantagem excluída com sucesso!", "success");
             } catch (error) {
                 console.error("Erro ao excluir vantagem:", error);
-                alert("Erro ao excluir vantagem. Pode haver transações associadas.");
+                addToast("Erro ao excluir vantagem. Pode haver transações associadas.", "error");
             }
         }
     };

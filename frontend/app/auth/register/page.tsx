@@ -5,6 +5,7 @@ import { Input, Select } from "@/components";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/authService";
+import { useToast } from "@/contexts/ToastContext";
 
 function isValidCPF(cpf: string) {
     if (!cpf || cpf.length !== 11) return false;
@@ -43,6 +44,7 @@ function isValidCNPJ(cnpj: string) {
 }
 
 export default function EnterpriseRegister() {
+    const { addToast } = useToast();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
@@ -382,7 +384,7 @@ export default function EnterpriseRegister() {
                     address: combinedAddress,
                     educationalInstitute: formData.instituicao
                 });
-                alert("Cadastro realizado com sucesso!");
+                addToast("Cadastro realizado com sucesso!", "success");
                 router.push("/loja-vantagens");
             } else if (formData.tipoCadastro === "empresa") {
                 await authService.registerEnterprise({
@@ -391,13 +393,13 @@ export default function EnterpriseRegister() {
                     password: formData.senha,
                     cnpj: formData.cnpj.replace(/\D/g, "")
                 });
-                alert("Cadastro realizado com sucesso!");
+                addToast("Cadastro realizado com sucesso!", "success");
                 router.push("/empresa/gerenciar-vantagens");
             }
         } catch (error: unknown) {
             console.error(error);
             const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro inesperado.";
-            alert("Erro ao realizar cadastro: " + errorMessage);
+            addToast("Erro ao realizar cadastro: " + errorMessage, "error");
         } finally {
             setIsLoading(false);
         }

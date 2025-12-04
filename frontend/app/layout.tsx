@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { UserProvider } from "@/contexts/UserContext";
+import { ToastProvider } from "@/contexts/ToastContext";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -31,7 +32,9 @@ export default function RootLayout({
         className={`${poppins.variable} ${geistMono.variable} antialiased`}
       >
         <UserProvider>
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </UserProvider>
       </body>
     </html>
