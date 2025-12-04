@@ -36,6 +36,9 @@ public class AdvantageService {
     }
 
     public Advantage register(Enterprise enterprise, AdvantageRequest advantageRequest) throws IOException {
+        if (advantageRequest.image() == null || advantageRequest.image().isEmpty()) {
+            throw new IllegalArgumentException("Image is mandatory for registration");
+        }
         String imageUrl = this.saveImage(UUID.randomUUID().toString(), advantageRequest.image());
 
         Advantage advantage = this.advantageMapper.toAdvantage(advantageRequest);
@@ -60,6 +63,15 @@ public class AdvantageService {
 
         if (!advantage.getEnterprise().getId().equals(enterprise.getId())) {
             throw new SecurityException("You do not have permission to update this advantage");
+        }
+        
+        try {
+            if (advantageRequest.image() != null && !advantageRequest.image().isEmpty()) {
+                String imageUrl = this.saveImage(UUID.randomUUID().toString(), advantageRequest.image());
+                advantage.setImageUrl(imageUrl);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error uploading image", e);
         }
 
         this.advantageMapper.toAdvantage(advantageRequest, advantage);

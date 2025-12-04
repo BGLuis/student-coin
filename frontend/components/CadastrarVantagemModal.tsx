@@ -12,12 +12,19 @@ interface CadastrarVantagemModalProps {
         custo: number;
         imagem?: File;
     }) => void;
+    initialData?: {
+        nome: string;
+        descricao: string;
+        custo: number;
+        imageUrl?: string;
+    };
 }
 
 export default function CadastrarVantagemModal({
     isOpen,
     onClose,
     onSave,
+    initialData,
 }: CadastrarVantagemModalProps) {
     const [nome, setNome] = useState("");
     const [descricao, setDescricao] = useState("");
@@ -27,19 +34,28 @@ export default function CadastrarVantagemModal({
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Limpar formulário ao fechar
+    const isEditing = !!initialData;
+
+    // Limpar formulário ao fechar ou preencher com initialData
     useEffect(() => {
-        if (!isOpen) {
-            setNome("");
-            setDescricao("");
-            setCusto("");
-            setImagem(null);
+        if (isOpen) {
+            if (initialData) {
+                setNome(initialData.nome);
+                setDescricao(initialData.descricao);
+                setCusto(initialData.custo.toString());
+                setImagem(null); // Reset file input, we have URL
+            } else {
+                setNome("");
+                setDescricao("");
+                setCusto("");
+                setImagem(null);
+            }
             setErrors({});
             if (fileInputRef.current) {
                 fileInputRef.current.value = "";
             }
         }
-    }, [isOpen]);
+    }, [isOpen, initialData]);
 
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
@@ -54,6 +70,12 @@ export default function CadastrarVantagemModal({
 
         if (!custo || parseFloat(custo) <= 0) {
             newErrors.custo = "Custo deve ser maior que zero";
+        }
+
+        // Image is mandatory only if creating, or if editing and no previous image (which shouldn't happen but good to check)
+        // However, if editing, we might not select a new image.
+        if (!isEditing && !imagem) {
+            newErrors.imagem = "Imagem da vantagem é obrigatória";
         }
 
         setErrors(newErrors);
@@ -119,10 +141,10 @@ export default function CadastrarVantagemModal({
                             </svg>
                         </div>
                         <h3 className="text-lg font-medium text-gray-900 mb-2">
-                            Vantagem cadastrada!
+                            {isEditing ? "Vantagem atualizada!" : "Vantagem cadastrada!"}
                         </h3>
                         <p className="text-sm text-gray-500">
-                            A vantagem foi cadastrada com sucesso.
+                            A vantagem foi {isEditing ? "atualizada" : "cadastrada"} com sucesso.
                         </p>
                     </div>
                 </div>
@@ -143,7 +165,7 @@ export default function CadastrarVantagemModal({
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-200">
                     <h2 className="text-2xl font-bold text-gray-900">
-                        Cadastrar Nova Vantagem
+                        {isEditing ? "Editar Vantagem" : "Cadastrar Nova Vantagem"}
                     </h2>
                     <button
                         onClick={handleCancel}
@@ -259,7 +281,7 @@ export default function CadastrarVantagemModal({
                                 htmlFor="imagem"
                                 className="block text-sm font-medium text-gray-700 mb-2"
                             >
-                                Imagem da Vantagem (opcional)
+                                Imagem da Vantagem *
                             </label>
                             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-blue-400 transition-colors cursor-pointer"
                                 onClick={() => fileInputRef.current?.click()}
@@ -298,6 +320,9 @@ export default function CadastrarVantagemModal({
                                     </p>
                                 </div>
                             </div>
+                            {errors.imagem && (
+                                <p className="mt-1 text-sm text-red-600">{errors.imagem}</p>
+                            )}
                         </div>
                     </div>
 
@@ -314,7 +339,7 @@ export default function CadastrarVantagemModal({
                             type="submit"
                             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
                         >
-                            Cadastrar Vantagem
+                            {isEditing ? "Salvar Alterações" : "Cadastrar Vantagem"}
                         </Button>
                     </div>
                 </form>

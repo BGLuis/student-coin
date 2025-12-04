@@ -145,7 +145,7 @@ export default function LojaVantagens() {
                                     >
                                         {/* Imagem/Emoji */}
                                         <div className="bg-gradient-to-br from-teal-50 to-cyan-50 h-40 flex items-center justify-center text-7xl group-hover:scale-110 transition-transform relative">
-                                            {vantagem.imageUrl ? <Image src={vantagem.imageUrl} alt={vantagem.description} fill className="object-cover" /> : "🎁"}
+                                            {vantagem.imageUrl ? <Image src={vantagem.imageUrl} alt={vantagem.description} fill className="object-cover" unoptimized /> : "🎁"}
                                         </div>
 
                                         {/* Conteúdo */}

@@ -11,6 +11,7 @@ export default function GerenciarVantagensPage() {
     const [vantagens, setVantagens] = useState<Advantage[]>([]);
     const [loading, setLoading] = useState(true);
     const [_enterpriseId, setEnterpriseId] = useState<number | null>(null);
+    const [editingAdvantage, setEditingAdvantage] = useState<Advantage | null>(null);
 
     useEffect(() => {
         loadData();
@@ -34,20 +35,41 @@ export default function GerenciarVantagensPage() {
         }
     };
 
-    const handleNovaVantagem = async (vantagemData: { nome: string; descricao: string; custo: number; imagem?: File }) => {
-        try {
-            const newAdvantage = await advantageService.create({
-                title: vantagemData.nome,
-                description: vantagemData.descricao,
-                price: vantagemData.custo,
-                image: vantagemData.imagem
-            });
+    const handleOpenModal = (advantage?: Advantage) => {
+        if (advantage) {
+            setEditingAdvantage(advantage);
+        } else {
+            setEditingAdvantage(null);
+        }
+        setIsModalOpen(true);
+    };
 
-            setVantagens([...vantagens, newAdvantage]);
+    const handleSaveVantagem = async (vantagemData: { nome: string; descricao: string; custo: number; imagem?: File }) => {
+        try {
+            if (editingAdvantage) {
+                const updatedAdvantage = await advantageService.update(editingAdvantage.id, {
+                    title: vantagemData.nome,
+                    description: vantagemData.descricao,
+                    price: vantagemData.custo,
+                    image: vantagemData.imagem
+                });
+                
+                setVantagens(vantagens.map(v => v.id === updatedAdvantage.id ? updatedAdvantage : v));
+            } else {
+                const newAdvantage = await advantageService.create({
+                    title: vantagemData.nome,
+                    description: vantagemData.descricao,
+                    price: vantagemData.custo,
+                    image: vantagemData.imagem
+                });
+    
+                setVantagens([...vantagens, newAdvantage]);
+            }
             setIsModalOpen(false);
+            setEditingAdvantage(null);
         } catch (error) {
-            console.error("Erro ao criar vantagem:", error);
-            alert("Erro ao criar vantagem. Tente novamente.");
+            console.error("Erro ao salvar vantagem:", error);
+            alert("Erro ao salvar vantagem. Tente novamente.");
         }
     };
 
@@ -58,7 +80,7 @@ export default function GerenciarVantagensPage() {
                 setVantagens(vantagens.filter(v => v.id !== id));
             } catch (error) {
                 console.error("Erro ao excluir vantagem:", error);
-                alert("Erro ao excluir vantagem. Tente novamente.");
+                alert("Erro ao excluir vantagem. Pode haver transações associadas.");
             }
         }
     };
@@ -85,7 +107,7 @@ export default function GerenciarVantagensPage() {
                         </p>
                     </div>
                     <Button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => handleOpenModal()}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2"
                     >
                         <svg
@@ -129,7 +151,7 @@ export default function GerenciarVantagensPage() {
                         </p>
                         <div className="mt-6">
                             <Button
-                                onClick={() => setIsModalOpen(true)}
+                                onClick={() => handleOpenModal()}
                                 className="bg-blue-600 hover:bg-blue-700 text-white"
                             >
                                 Cadastrar Primeira Vantagem
@@ -151,6 +173,7 @@ export default function GerenciarVantagensPage() {
                                             alt={vantagem.title || "Imagem da vantagem"}
                                             fill
                                             className="object-cover"
+                                            unoptimized
                                         />
                                     ) : (
                                         <svg
@@ -208,7 +231,7 @@ export default function GerenciarVantagensPage() {
                                             Excluir
                                         </Button>
                                         <Button
-                                            onClick={() => {/* TODO: Editar */ }}
+                                            onClick={() => handleOpenModal(vantagem)}
                                             className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded"
                                         >
                                             Editar
@@ -224,8 +247,14 @@ export default function GerenciarVantagensPage() {
             {/* Modal de cadastro */}
             <CadastrarVantagemModal
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onSave={handleNovaVantagem}
+                onClose={() => { setIsModalOpen(false); setEditingAdvantage(null); }}
+                onSave={handleSaveVantagem}
+                initialData={editingAdvantage ? {
+                    nome: editingAdvantage.title,
+                    descricao: editingAdvantage.description,
+                    custo: editingAdvantage.price,
+                    imageUrl: editingAdvantage.imageUrl
+                } : undefined}
             />
         </div>
     );
