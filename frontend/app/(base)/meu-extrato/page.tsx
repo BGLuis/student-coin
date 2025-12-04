@@ -39,6 +39,18 @@ export default function MeuExtrato() {
     const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const [visibleCoupons, setVisibleCoupons] = useState<Set<string>>(new Set());
+
+    const toggleCouponVisibility = (uuid: string) => {
+        const newSet = new Set(visibleCoupons);
+        if (newSet.has(uuid)) {
+            newSet.delete(uuid);
+        } else {
+            newSet.add(uuid);
+        }
+        setVisibleCoupons(newSet);
+    };
+
     useEffect(() => {
         const fetchBalance = async () => {
             try {
@@ -81,35 +93,39 @@ export default function MeuExtrato() {
         return date.toLocaleDateString("pt-BR", { day: '2-digit', month: '2-digit', year: 'numeric' });
     };
 
-    const getTransactionTypeDetails = (transaction: Transaction, userEmail: string) => {
-        if (transaction.redeem) {
+    const getTransactionTypeDetails = (transaction: Transaction) => {
+        const isPositive = transaction.value >= 0;
+        
+        if (transaction.coupon) {
             return { type: "Resgate", icon: <ArrowUpIcon />, isPositive: false };
         }
-        if (!transaction.origin) {
+        
+        if (isPositive) {
+            if (transaction.motive) {
+                return { type: "Recebimento", icon: <ArrowDownIcon />, isPositive: true };
+            }
             return { type: "Recarga Semestral", icon: <CoinsIcon />, isPositive: true };
         }
-        if (transaction.destination?.person?.email === userEmail) {
-            return { type: "Recebimento", icon: <ArrowDownIcon />, isPositive: true };
-        }
+        
         return { type: "Envio", icon: <ArrowUpIcon />, isPositive: false };
     };
 
-    const getPartner = (transaction: Transaction, userEmail: string): string => {
-        if (transaction.redeem) {
-            return transaction.redeem.advantage.enterprise?.person?.name || "Empresa Parceira";
+    const getPartner = (transaction: Transaction, _userEmail: string): string => {
+        if (transaction.coupon) {
+            // Ideally we would show enterprise name, but we don't have it in the simplified response
+            return "Empresa Parceira";
         }
-        if (!transaction.origin) return "Sistema";
-        if (transaction.destination?.person?.email === userEmail) {
-            return transaction.origin.person.name;
+        if (transaction.value >= 0) {
+             return !transaction.motive ? "Sistema" : "Professor";
         }
-        return transaction.destination?.person?.name || "Desconhecido";
+        return "Transferência";
     };
 
     const userEmail = authService.decodeToken()?.email || "";
 
     const filteredTransactions = transactions.filter(t => {
         const partner = getPartner(t, userEmail);
-        const { type } = getTransactionTypeDetails(t, userEmail);
+        const { type } = getTransactionTypeDetails(t);
         const formattedDate = formatDate(t.createdAt);
 
         const matchesSearch = partner.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -250,23 +266,49 @@ export default function MeuExtrato() {
                             <div className="space-y-2 px-6 pb-6">
                                 {filteredTransactions.length > 0 ? (
                                     filteredTransactions.map(transaction => {
-                                        const { type: _type, icon, isPositive } = getTransactionTypeDetails(transaction, userEmail);
+                                        const { type: _type, icon, isPositive } = getTransactionTypeDetails(transaction);
                                         const partner = getPartner(transaction, userEmail);
                                         const value = transaction.value;
-                                        const motive = transaction.redeem ? `Resgate: ${transaction.redeem.advantage.name}` : transaction.motive || "Transação geral";
+                                        const isCouponVisible = visibleCoupons.has(transaction.uuid);
 
                                         return (
-                                            <div key={transaction.id} className="flex items-center p-4 rounded-lg hover:bg-gray-50 border-b border-gray-100 last:border-b-0">
+                                            <div key={transaction.uuid} className="flex items-center p-4 rounded-lg hover:bg-gray-50 border-b border-gray-100 last:border-b-0">
                                                 <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-4">
                                                     {icon}
                                                 </div>
                                                 <div className="flex-grow">
                                                     <p className="font-semibold text-gray-800">{partner}</p>
-                                                    <p className="text-sm text-gray-500">{motive}</p>
+                                                    {transaction.coupon ? (
+                                                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                                                            <span>Resgate (Cupom:</span>
+                                                            <span className={`font-mono bg-gray-100 px-1 rounded ${!isCouponVisible ? 'blur-sm select-none' : ''}`}>
+                                                                {transaction.coupon}
+                                                            </span>
+                                                            <span>)</span>
+                                                            <button
+                                                                onClick={() => toggleCouponVisibility(transaction.uuid)}
+                                                                className="ml-1 text-gray-400 hover:text-teal-600 focus:outline-none"
+                                                                title={isCouponVisible ? "Ocultar cupom" : "Mostrar cupom"}
+                                                            >
+                                                                {isCouponVisible ? (
+                                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                                                    </svg>
+                                                                ) : (
+                                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                                    </svg>
+                                                                )}
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <p className="text-sm text-gray-500">{transaction.motive || "Transação geral"}</p>
+                                                    )}
                                                 </div>
                                                 <div className="text-right">
                                                     <p className={`font-bold text-lg ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                                                        {isPositive ? '+' : '-'} M$ {value.toFixed(2)}
+                                                        {isPositive ? '+' : '-'} M$ {Math.abs(value).toFixed(2)}
                                                     </p>
                                                     <p className="text-sm text-gray-500">{formatDate(transaction.createdAt)}</p>
                                                 </div>

@@ -15,6 +15,7 @@ export interface Transaction {
     uuid: string;
     value: number;
     createdAt: string;
+    coupon?: string;
     motive?: string; // Apenas para RewardTransaction
     origin?: Account; // Pode não vir do backend
     destination?: Account; // Pode não vir do backend

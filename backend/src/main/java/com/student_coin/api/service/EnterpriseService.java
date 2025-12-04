@@ -101,6 +101,7 @@ public class EnterpriseService {
                 advantages);
     }
 
+    @Transactional
     public TransactionRedeem validateRedeem(Enterprise enterprise, String coupon) {
         TransactionRedeem transaction = this.transactionRedeemRepository.findByCoupon(coupon)
                 .orElseThrow(() -> new EntityNotFoundException("The coupon " + coupon + " is not valid"));

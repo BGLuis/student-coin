@@ -331,7 +331,7 @@ export default function MeuExtratoProfessor() {
                                         {filteredTransactions.map((transaction) => {
                                             const { value, isPositive } = getValueWithSign(transaction);
                                             return (
-                                                <tr key={transaction.id} className="border-b border-gray-100 hover:bg-gray-50">
+                                                <tr key={transaction.uuid} className="border-b border-gray-100 hover:bg-gray-50">
                                                     <td className="py-4 px-4 text-sm text-gray-700">{formatDate(transaction.createdAt)}</td>
                                                     <td className="py-4 px-4 text-sm text-gray-700">{getTransactionType(transaction)}</td>
                                                     <td className="py-4 px-4 text-sm text-gray-700">{getPartner(transaction)}</td>

@@ -125,7 +125,7 @@ public class AccountService {
                 target.getAccount().getId(),
                 target.getAccount().getId(),
                 filters.pageable()).map(transaction -> {
-            if (transaction.getOrigin().equals(target.getAccount())) {
+            if (transaction.getOrigin() != null && transaction.getOrigin().equals(target.getAccount())) {
                 transaction.setValue(-transaction.getValue());
             }
             return transaction;
