@@ -95,18 +95,18 @@ export default function MeuExtrato() {
 
     const getTransactionTypeDetails = (transaction: Transaction) => {
         const isPositive = transaction.value >= 0;
-        
+
         if (transaction.coupon) {
             return { type: "Resgate", icon: <ArrowUpIcon />, isPositive: false };
         }
-        
+
         if (isPositive) {
             if (transaction.motive) {
                 return { type: "Recebimento", icon: <ArrowDownIcon />, isPositive: true };
             }
             return { type: "Recarga Semestral", icon: <CoinsIcon />, isPositive: true };
         }
-        
+
         return { type: "Envio", icon: <ArrowUpIcon />, isPositive: false };
     };
 
@@ -116,7 +116,7 @@ export default function MeuExtrato() {
             return "Empresa Parceira";
         }
         if (transaction.value >= 0) {
-             return !transaction.motive ? "Sistema" : "Professor";
+            return !transaction.motive ? "Sistema" : "Professor";
         }
         return "Transferência";
     };

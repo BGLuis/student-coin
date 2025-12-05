@@ -70,7 +70,7 @@ function RedeemContent() {
                     <p className="text-sm text-gray-600">
                         Digite o código do cupom apresentado pelo aluno ou leia o QR Code.
                     </p>
-                    
+
                     <div className="flex gap-2 items-end">
                         <div className="flex-1">
                             <Input
@@ -81,8 +81,8 @@ function RedeemContent() {
                                 error={error || undefined}
                             />
                         </div>
-                        <Button 
-                            type="button" 
+                        <Button
+                            type="button"
                             onClick={() => setShowScanner(!showScanner)}
                             className="bg-gray-200 hover:bg-gray-300 text-gray-700 mb-[2px] h-[42px] px-3"
                             title="Ler QR Code"
@@ -96,11 +96,11 @@ function RedeemContent() {
 
                 {showScanner && (
                     <div className="border rounded-lg overflow-hidden bg-black">
-                        <QrCodeReader 
-                            onScanSuccess={handleScan} 
+                        <QrCodeReader
+                            onScanSuccess={handleScan}
                             onScanFailure={(err) => console.warn(err)}
                         />
-                        <button 
+                        <button
                             onClick={() => setShowScanner(false)}
                             className="w-full py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 text-sm font-medium"
                         >

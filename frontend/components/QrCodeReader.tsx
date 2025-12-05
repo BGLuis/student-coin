@@ -13,7 +13,7 @@ const QrCodeReader = ({ onScanSuccess, onScanFailure }: QrCodeReaderProps) => {
 
     useEffect(() => {
         const elementId = "html5qr-code-full-region";
-        
+
         // Prevent double initialization
         if (scannerRef.current) {
             return;
@@ -21,20 +21,20 @@ const QrCodeReader = ({ onScanSuccess, onScanFailure }: QrCodeReaderProps) => {
 
         const scanner = new Html5QrcodeScanner(
             elementId,
-            { 
-                fps: 10, 
+            {
+                fps: 10,
                 qrbox: { width: 250, height: 250 },
                 aspectRatio: 1.0
             },
             /* verbose= */ false
         );
-        
+
         scannerRef.current = scanner;
-        
+
         scanner.render(
             (decodedText) => {
                 onScanSuccess(decodedText);
-            }, 
+            },
             (error) => {
                 if (onScanFailure) onScanFailure(error);
             }

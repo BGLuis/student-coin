@@ -53,7 +53,7 @@ export default function GerenciarVantagensPage() {
                     price: vantagemData.custo,
                     image: vantagemData.imagem
                 });
-                
+
                 setVantagens(vantagens.map(v => v.id === updatedAdvantage.id ? updatedAdvantage : v));
             } else {
                 const newAdvantage = await advantageService.create({
@@ -62,7 +62,7 @@ export default function GerenciarVantagensPage() {
                     price: vantagemData.custo,
                     image: vantagemData.imagem
                 });
-    
+
                 setVantagens([...vantagens, newAdvantage]);
             }
             setIsModalOpen(false);
