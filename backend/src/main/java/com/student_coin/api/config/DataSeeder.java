@@ -29,7 +29,8 @@ public class DataSeeder implements CommandLineRunner {
 
     private final String mockStudentEmail = "student@mock.com";
     private final String mockTeacherEmail = "teacher@mock.com";
-    private final String mockEnterpriseEmail = "enterprise@mock.com";
+    private final String mockEnterpriseEmail = "
+    @mock.com";
 
     private void mockStudent() {
         Account account = new Account();

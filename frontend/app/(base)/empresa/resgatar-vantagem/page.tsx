@@ -34,8 +34,9 @@ function RedeemContent() {
             await enterpriseService.validateRedeem(coupon);
             setSuccess("Vantagem resgatada com sucesso!");
             addToast("Vantagem resgatada com sucesso!", "success");
-        } catch (err: any) {
-            const msg = err.response?.data?.message || "Erro ao validar o cupom. Verifique se o código está correto.";
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { message?: string } } };
+            const msg = error.response?.data?.message || "Erro ao validar o cupom. Verifique se o código está correto.";
             setError(msg);
             addToast(msg, "error");
         } finally {

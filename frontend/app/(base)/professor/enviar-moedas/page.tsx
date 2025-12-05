@@ -18,14 +18,12 @@ export default function EnviarMoedas() {
     const [saldoDisponivel, setSaldoDisponivel] = useState(0);
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
-    const [_error, setError] = useState<string | null>(null);
 
     // Buscar estudantes e saldo ao carregar a página
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                setError(null);
 
                 // Buscar lista de estudantes
                 const studentsData = await studentService.getAll();
@@ -36,14 +34,14 @@ export default function EnviarMoedas() {
                 setSaldoDisponivel(balanceData.balance);
             } catch (err) {
                 console.error("Erro ao buscar dados:", err);
-                setError("Erro ao carregar dados. Por favor, tente novamente.");
+                addToast("Erro ao carregar dados. Por favor, tente novamente.", "error");
             } finally {
                 setLoading(false);
             }
         };
 
         fetchData();
-    }, []);
+    }, [addToast]);
 
     // Categorias de mérito
     const categorias = [
@@ -84,7 +82,6 @@ export default function EnviarMoedas() {
 
         try {
             setSending(true);
-            setError(null);
 
             // Enviar moedas para o estudante
             // O backend espera um UUID para a transação (idempotência) na URL

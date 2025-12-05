@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { transactionService, authService, type Transaction, type BalanceResponse } from "@/services";
+import { transactionService, type Transaction, type BalanceResponse } from "@/services";
 
 // Ícones para a interface
 const ArrowDownIcon = () => (
@@ -110,7 +110,7 @@ export default function MeuExtrato() {
         return { type: "Envio", icon: <ArrowUpIcon />, isPositive: false };
     };
 
-    const getPartner = (transaction: Transaction, _userEmail: string): string => {
+    const getPartner = (transaction: Transaction): string => {
         if (transaction.coupon) {
             // Ideally we would show enterprise name, but we don't have it in the simplified response
             return "Empresa Parceira";
@@ -121,10 +121,8 @@ export default function MeuExtrato() {
         return "Transferência";
     };
 
-    const userEmail = authService.decodeToken()?.email || "";
-
     const filteredTransactions = transactions.filter(t => {
-        const partner = getPartner(t, userEmail);
+        const partner = getPartner(t);
         const { type } = getTransactionTypeDetails(t);
         const formattedDate = formatDate(t.createdAt);
 
@@ -266,8 +264,8 @@ export default function MeuExtrato() {
                             <div className="space-y-2 px-6 pb-6">
                                 {filteredTransactions.length > 0 ? (
                                     filteredTransactions.map(transaction => {
-                                        const { type: _type, icon, isPositive } = getTransactionTypeDetails(transaction);
-                                        const partner = getPartner(transaction, userEmail);
+                                        const { icon, isPositive } = getTransactionTypeDetails(transaction);
+                                        const partner = getPartner(transaction);
                                         const value = transaction.value;
                                         const isCouponVisible = visibleCoupons.has(transaction.uuid);
 

@@ -1,67 +1,124 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
-<body>
-<div th:replace="~{email/base :: layout}">
-    <div th:fragment="content">
-        <div class="greeting">
-            Parabéns, <span th:text="${studentName}">Aluno</span>! 🎁
-        </div>
+<html
+	xmlns:th="http://www.thymeleaf.org"
+	lang="pt-BR"
+>
+	<body>
+		<div th:replace="~{email/base :: layout}">
+			<div th:fragment="content">
+				<div class="greeting">
+					Parabéns, <span th:text="${studentName}">Aluno</span>! 🎁
+				</div>
 
-        <div class="content-body">
-            <p>Seu resgate foi realizado com sucesso!</p>
+				<div class="content-body">
+					<p>Seu resgate foi realizado com sucesso!</p>
 
-            <p>Você resgatou a vantagem <strong th:text="${advantageName}">Nome da Vantagem</strong> 
-            utilizando suas moedas acumuladas.</p>
-        </div>
+					<p>
+						Você resgatou a vantagem
+						<strong th:text="${advantageName}"
+							>Nome da Vantagem</strong
+						>
+						utilizando suas moedas acumuladas.
+					</p>
+				</div>
 
-        <div class="info-box" style="background-color: #fef3c7; border-left-color: #f59e0b;">
-            <h3 style="color: #92400e;">🎯 Detalhes do Resgate</h3>
-            <img th:src="${advantageImageUrl}" th:alt="|Imagem da vantagem ${advantageName}|" style="width: 100%;" />
-            <p style="color: #78350f;"><strong>Vantagem:</strong> <span th:text="${advantageName}">Nome</span></p>
-            <p style="color: #78350f;"><strong>Custo:</strong> <span th:text="${cost}">0</span> moedas</p>
-            <p style="color: #78350f;"><strong>Seu novo saldo:</strong> <span th:text="${newBalance}">0</span> moedas</p>
-            <div th:if="${hasCode}" style="text-align: center;">
-                <p style="color: #78350f; margin-top: 15px;">
-                    <strong>Código de Resgate:</strong><br>
-                    <span style="font-size: 24px; font-weight: 700; color: #92400e; display: block; margin-top: 5px; background-color: white; padding: 10px; border-radius: 4px; text-align: center; letter-spacing: 2px;" 
-                          th:text="${code}">CODIGO123</span>
-                </p>
-                <p>OU</p>
-                <p>Mostre o QRCode Para o(a) Atendente</p>
-                <img src="cid:qr-code.png" alt="QRCode to redeem the advantage" />
-            </div>
-        </div>
+				<div
+					class="info-box"
+					style="
+						background-color: #fef3c7;
+						border-left-color: #f59e0b;
+					"
+				>
+					<h3 style="color: #92400e">🎯 Detalhes do Resgate</h3>
+					<img
+						th:src="${advantageImageUrl}"
+						th:alt="|Imagem da vantagem ${advantageName}|"
+						style="width: 100%"
+					/>
+					<p style="color: #78350f">
+						<strong>Vantagem:</strong>
+						<span th:text="${advantageName}">Nome</span>
+					</p>
+					<p style="color: #78350f">
+						<strong>Custo:</strong>
+						<span th:text="${cost}">0</span> moedas
+					</p>
+					<p style="color: #78350f">
+						<strong>Seu novo saldo:</strong>
+						<span th:text="${newBalance}">0</span> moedas
+					</p>
+					<div
+						th:if="${hasCode}"
+						style="text-align: center"
+					>
+						<p style="color: #78350f; margin-top: 15px">
+							<strong>Código de Resgate:</strong><br />
+							<span
+								style="
+									font-size: 24px;
+									font-weight: 700;
+									color: #92400e;
+									display: block;
+									margin-top: 5px;
+									background-color: white;
+									padding: 10px;
+									border-radius: 4px;
+									text-align: center;
+									letter-spacing: 2px;
+								"
+								th:text="${code}"
+								>CODIGO123</span
+							>
+						</p>
+						<p>OU</p>
+						<p>Mostre o QRCode Para o(a) Atendente</p>
+						<img
+							src="cid:qr-code.png"
+							alt="QRCode to redeem the advantage"
+						/>
+					</div>
+				</div>
 
-        <div class="content-body">
-            <p th:if="${hasCode}">
-                <strong>Importante:</strong> Guarde bem este código! Você precisará apresentá-lo para 
-                utilizar sua vantagem. Recomendamos fazer uma captura de tela deste email.
-            </p>
-            <p th:if="${!hasCode}">
-                A empresa parceira entrará em contato com você em breve para fornecer mais informações 
-                sobre como utilizar sua vantagem.
-            </p>
+				<div class="content-body">
+					<p th:if="${hasCode}">
+						<strong>Importante:</strong> Guarde bem este código!
+						Você precisará apresentá-lo para utilizar sua vantagem.
+						Recomendamos fazer uma captura de tela deste email.
+					</p>
+					<p th:if="${!hasCode}">
+						A empresa parceira entrará em contato com você em breve
+						para fornecer mais informações sobre como utilizar sua
+						vantagem.
+					</p>
 
-            <p style="margin-top: 15px;">
-                Continue acumulando moedas para resgatar mais vantagens! Quanto mais você se destaca, 
-                mais benefícios pode aproveitar.
-            </p>
-        </div>
+					<p style="margin-top: 15px">
+						Continue acumulando moedas para resgatar mais vantagens!
+						Quanto mais você se destaca, mais benefícios pode
+						aproveitar.
+					</p>
+				</div>
 
-        <div class="button-container">
-            <a th:href="|${frontEndURL}/meu-extrato|" class="button"> 
-                Ver Meus Resgates
-            </a>
-        </div>
+				<div class="button-container">
+					<a
+						th:href="|${frontEndURL}/meu-extrato|"
+						class="button"
+					>
+						Ver Meus Resgates
+					</a>
+				</div>
 
-        <div class="divider"></div>
+				<div class="divider"></div>
 
-        <div class="content-body" style="font-size: 14px; color: #6b7280;">
-            <p>
-                🛍️ Explore mais vantagens disponíveis na Loja de Vantagens e continue aproveitando seus benefícios!
-            </p>
-        </div>
-    </div>
-</div>
-</body>
+				<div
+					class="content-body"
+					style="font-size: 14px; color: #6b7280"
+				>
+					<p>
+						🛍️ Explore mais vantagens disponíveis na Loja de
+						Vantagens e continue aproveitando seus benefícios!
+					</p>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>

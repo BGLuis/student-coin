@@ -5,7 +5,7 @@ import { Html5QrcodeScanner } from "html5-qrcode";
 
 interface QrCodeReaderProps {
     onScanSuccess: (decodedText: string) => void;
-    onScanFailure?: (error: any) => void;
+    onScanFailure?: (error: string) => void;
 }
 
 const QrCodeReader = ({ onScanSuccess, onScanFailure }: QrCodeReaderProps) => {

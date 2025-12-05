@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { transactionService, type Transaction } from "@/services";
-import { Modal } from "@/components";
 
 export default function MinhasVantagensPage() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -155,6 +154,7 @@ export default function MinhasVantagensPage() {
                             </p>
 
                             <div className="bg-white p-4 rounded-xl border-2 border-gray-100 inline-block mb-4">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
                                     src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${window.location.origin}/empresa/resgatar-vantagem?code=${selectedTransaction.coupon || ""}`)}`}
                                     alt="QR Code"

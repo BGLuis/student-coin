@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 type MaskType = "cpf" | "cnpj" | "phone";
 
@@ -46,15 +46,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         const inputType = isPassword && showPassword ? "text" : type;
         const valueProp = (value ?? (rest as { value?: string }).value) as string | undefined;
 
-        const format = typeof mask === "function"
-            ? mask
-            : mask === "cpf"
-                ? (d: string) => formatCPF(d)
-                : mask === "cnpj"
-                    ? (d: string) => formatCNPJ(d)
-                    : mask === "phone"
-                        ? (d: string) => formatPhone(d)
-                        : undefined;
+        const format = useMemo(() => {
+            if (typeof mask === "function") return mask;
+            if (mask === "cpf") return (d: string) => formatCPF(d);
+            if (mask === "cnpj") return (d: string) => formatCNPJ(d);
+            if (mask === "phone") return (d: string) => formatPhone(d);
+            return undefined;
+        }, [mask]);
 
         const [displayValue, setDisplayValue] = useState<string>(() =>
             format ? format(digitsOnly(valueProp ?? "")) : (valueProp ?? "")

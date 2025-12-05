@@ -12,7 +12,6 @@ export default function GerenciarVantagensPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [vantagens, setVantagens] = useState<Advantage[]>([]);
     const [loading, setLoading] = useState(true);
-    const [_enterpriseId, setEnterpriseId] = useState<number | null>(null);
     const [editingAdvantage, setEditingAdvantage] = useState<Advantage | null>(null);
 
     useEffect(() => {
@@ -23,7 +22,6 @@ export default function GerenciarVantagensPage() {
         try {
             setLoading(true);
             const enterprise = await enterpriseService.getMe();
-            setEnterpriseId(enterprise.id);
 
             const response = await advantageService.getByEnterprise(enterprise.id);
             setVantagens(response.content);
